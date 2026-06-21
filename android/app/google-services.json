@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "470716340911",
+    "project_id": "hinam-4eacd",
+    "storage_bucket": "hinam-4eacd.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:470716340911:android:90c1f4e5e0f22326f4125a",
+        "android_client_info": {
+          "package_name": "com.example.hinam"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAHKWQqG8_FNQGdULhHZnlwdo4mS8ssofI"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
