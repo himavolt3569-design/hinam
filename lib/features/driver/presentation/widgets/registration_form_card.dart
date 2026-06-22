@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hinam/core/theme/app_colors.dart';
 
 import 'bus_type_selector.dart';
 import 'section_label.dart';
@@ -23,17 +24,12 @@ class RegistrationFormCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return Container(
-      padding: const EdgeInsets.all(24),
+      padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: colorScheme.surface,
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(color: colorScheme.shadow.withValues(alpha: 0.08), blurRadius: 32, offset: const Offset(0, 8)),
-          BoxShadow(color: colorScheme.shadow.withValues(alpha: 0.04), blurRadius: 8, offset: const Offset(0, 2)),
-        ],
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.border),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -49,14 +45,12 @@ class RegistrationFormCard extends StatelessWidget {
               prefixIcon: Icon(Icons.person_outline),
             ),
             validator: (value) {
-              if (value == null || value.trim().isEmpty) {
-                return 'Please enter your name';
-              }
+              if (value == null || value.trim().isEmpty) return 'Please enter your name';
               return null;
             },
           ),
 
-          const SizedBox(height: 16),
+          const SizedBox(height: 14),
 
           TextFormField(
             controller: busNumberController,
@@ -66,21 +60,19 @@ class RegistrationFormCard extends StatelessWidget {
               prefixIcon: Icon(Icons.directions_bus_outlined),
             ),
             validator: (value) {
-              if (value == null || value.trim().isEmpty) {
-                return 'Please enter bus number';
-              }
+              if (value == null || value.trim().isEmpty) return 'Please enter bus number';
               return null;
             },
           ),
 
-          const SizedBox(height: 24),
+          const SizedBox(height: 20),
 
           SectionLabel(label: 'Bus Type'),
           const SizedBox(height: 12),
 
           BusTypeSelector(busType: busType, onChanged: onBusTypeChanged),
 
-          const SizedBox(height: 20),
+          const SizedBox(height: 16),
 
           if (busType == 'public')
             TextFormField(

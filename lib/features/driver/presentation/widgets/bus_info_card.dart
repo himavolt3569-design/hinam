@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hinam/core/theme/app_colors.dart';
 
 class BusInfoCard extends StatelessWidget {
   final String busNumber;
@@ -14,60 +15,46 @@ class BusInfoCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    final text = Theme.of(context).textTheme;
-
     return Container(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-          colors: [scheme.primary, scheme.primary.withValues(alpha: 0.82)],
-        ),
-        borderRadius: BorderRadius.circular(24),
-        boxShadow: [
-          BoxShadow(
-            color: scheme.primary.withValues(alpha: 0.35),
-            blurRadius: 24,
-            offset: const Offset(0, 10),
-          ),
-        ],
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: AppColors.border),
       ),
       child: Row(
         children: [
           Container(
-            width: 56,
-            height: 56,
+            width: 48,
+            height: 48,
             decoration: BoxDecoration(
-              color: Colors.white.withValues(alpha: 0.18),
-              borderRadius: BorderRadius.circular(16),
+              color: AppColors.primaryBg,
+              borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(
               isPublic ? Icons.directions_bus_rounded : Icons.school_rounded,
-              color: Colors.white,
-              size: 28,
+              color: AppColors.primary,
+              size: 24,
             ),
           ),
-          const SizedBox(width: 16),
+          const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
                   busNumber,
-                  style: text.titleLarge?.copyWith(
-                    color: Colors.white,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 1,
+                  style: const TextStyle(
+                    fontSize: 17,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textPrimary,
+                    letterSpacing: 0.3,
                   ),
                 ),
                 const SizedBox(height: 2),
                 Text(
                   isPublic ? 'Public Bus' : 'School Bus',
-                  style: text.bodySmall?.copyWith(
-                    color: Colors.white.withValues(alpha: 0.75),
-                  ),
+                  style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
                 ),
               ],
             ),
@@ -85,18 +72,14 @@ class _ApprovalBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final color = isApproved ? AppColors.success : AppColors.warning;
+    final bg = isApproved ? AppColors.successBg : AppColors.warningBg;
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
       decoration: BoxDecoration(
-        color: isApproved
-            ? Colors.white.withValues(alpha: 0.2)
-            : Colors.orange.withValues(alpha: 0.2),
+        color: bg,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(
-          color: isApproved
-              ? Colors.white.withValues(alpha: 0.4)
-              : Colors.orange.withValues(alpha: 0.5),
-        ),
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -104,16 +87,12 @@ class _ApprovalBadge extends StatelessWidget {
           Icon(
             isApproved ? Icons.check_circle_rounded : Icons.pending_rounded,
             size: 12,
-            color: isApproved ? Colors.white : Colors.orange[300],
+            color: color,
           ),
           const SizedBox(width: 4),
           Text(
             isApproved ? 'Approved' : 'Pending',
-            style: TextStyle(
-              fontSize: 11,
-              fontWeight: FontWeight.w600,
-              color: isApproved ? Colors.white : Colors.orange[300],
-            ),
+            style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: color),
           ),
         ],
       ),

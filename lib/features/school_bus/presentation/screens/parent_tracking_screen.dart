@@ -3,6 +3,7 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:latlong2/latlong.dart';
 
+import 'package:hinam/core/theme/app_colors.dart';
 import 'package:hinam/features/passenger/presentation/widgets/bus_count_badge.dart';
 import 'package:hinam/features/school_bus/presentation/providers/school_bus_providers.dart';
 import 'package:hinam/features/school_bus/presentation/widgets/school_bus_detail_sheet.dart';
@@ -30,20 +31,11 @@ class _ParentTrackingScreenState extends ConsumerState<ParentTrackingScreen> {
     final visibleBuses = ref.watch(filteredSchoolBusesProvider(_selectedSchool));
 
     return Scaffold(
-      extendBodyBehindAppBar: true,
       appBar: AppBar(
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        title: const Text(
-          'Track School Bus',
-          style: TextStyle(color: Colors.white, fontWeight: FontWeight.w700, shadows: [
-            Shadow(color: Colors.black26, blurRadius: 4),
-          ]),
-        ),
-        iconTheme: const IconThemeData(color: Colors.white),
+        title: const Text('Track School Bus'),
         actions: [
           Padding(
-            padding: const EdgeInsets.only(right: 16),
+            padding: const EdgeInsets.only(right: 12),
             child: schoolBusesAsync.maybeWhen(
               data: (buses) => BusCountBadge(count: buses.length, icon: Icons.school_rounded),
               orElse: () => const SizedBox(),
@@ -64,27 +56,9 @@ class _ParentTrackingScreenState extends ConsumerState<ParentTrackingScreen> {
             ],
           ),
 
-          // Header gradient
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            height: 110,
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [Colors.green.shade700.withValues(alpha: 0.85), Colors.transparent],
-                ),
-              ),
-            ),
-          ),
-
-          // School filter bar
           if (schoolNames.isNotEmpty)
             Positioned(
-              top: MediaQuery.of(context).padding.top + 60,
+              top: 12,
               left: 16,
               right: 16,
               child: SchoolFilterBar(
@@ -94,7 +68,6 @@ class _ParentTrackingScreenState extends ConsumerState<ParentTrackingScreen> {
               ),
             ),
 
-          // Empty state
           schoolBusesAsync.when(
             data: (buses) {
               if (buses.isEmpty) {
@@ -107,9 +80,7 @@ class _ParentTrackingScreenState extends ConsumerState<ParentTrackingScreen> {
               }
               return const SizedBox.shrink();
             },
-            loading: () => Center(
-              child: CircularProgressIndicator(color: Colors.green.shade600),
-            ),
+            loading: () => const Center(child: CircularProgressIndicator()),
             error: (e, _) => Center(child: Text(e.toString())),
           ),
         ],
@@ -120,24 +91,24 @@ class _ParentTrackingScreenState extends ConsumerState<ParentTrackingScreen> {
   Marker _buildMarker(BuildContext context, BusLocationModel bus) {
     return Marker(
       point: LatLng(bus.latitude, bus.longitude),
-      width: 52,
-      height: 52,
+      width: 48,
+      height: 48,
       child: GestureDetector(
         onTap: () => _showBusSheet(context, bus),
         child: Container(
           decoration: BoxDecoration(
-            color: Colors.green.shade700,
+            color: AppColors.schoolGreen,
             shape: BoxShape.circle,
             border: Border.all(color: Colors.white, width: 2.5),
             boxShadow: [
               BoxShadow(
-                color: Colors.green.withValues(alpha: 0.45),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
+                color: AppColors.schoolGreen.withValues(alpha: 0.4),
+                blurRadius: 8,
+                offset: const Offset(0, 3),
               ),
             ],
           ),
-          child: const Icon(Icons.school_rounded, color: Colors.white, size: 24),
+          child: const Icon(Icons.school_rounded, color: Colors.white, size: 22),
         ),
       ),
     );
@@ -147,10 +118,6 @@ class _ParentTrackingScreenState extends ConsumerState<ParentTrackingScreen> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
-      backgroundColor: Theme.of(context).colorScheme.surface,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
-      ),
       builder: (_) => SchoolBusDetailSheet(bus: bus),
     );
   }

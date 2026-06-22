@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hinam/features/driver/presentation/providers/driver_provider.dart';
 
 import '../../../../core/routes/app_routes.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../providers/auth_controller.dart';
 import '../widgets/auth_button.dart';
 import '../widgets/auth_scaffold.dart';
@@ -77,8 +78,6 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
   @override
   Widget build(BuildContext context) {
     final authState = ref.watch(authControllerProvider);
-    final colorScheme = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
 
     return AuthScaffold(
       child: Column(
@@ -86,96 +85,78 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
         children: [
           const SizedBox(height: 16),
 
-          // Back button
           Align(
             alignment: Alignment.centerLeft,
             child: IconButton(
               onPressed: () => Navigator.pop(context),
               icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
               style: IconButton.styleFrom(
-                backgroundColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.5),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                backgroundColor: AppColors.inputFill,
+                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
               ),
             ),
-          ),
-
-          const SizedBox(height: 32),
-
-          // Lock icon
-          Center(
-            child: Container(
-              width: 80,
-              height: 80,
-              decoration: BoxDecoration(
-                color: colorScheme.primary,
-                borderRadius: BorderRadius.circular(22),
-                boxShadow: [
-                  BoxShadow(
-                    color: colorScheme.primary.withValues(alpha: 0.32),
-                    blurRadius: 24,
-                    offset: const Offset(0, 10),
-                  ),
-                ],
-              ),
-              child: Icon(Icons.lock_outline_rounded, size: 38, color: colorScheme.onPrimary),
-            ),
-          ),
-
-          const SizedBox(height: 24),
-
-          Text(
-            'Verify OTP',
-            textAlign: TextAlign.center,
-            style: textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.w800, letterSpacing: 0.5),
-          ),
-
-          const SizedBox(height: 8),
-
-          Text(
-            'We sent a verification code to',
-            textAlign: TextAlign.center,
-            style: textTheme.bodyMedium?.copyWith(color: colorScheme.onSurface.withValues(alpha: 0.45)),
-          ),
-
-          const SizedBox(height: 4),
-
-          Text(
-            widget.phoneNumber,
-            textAlign: TextAlign.center,
-            style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600, color: colorScheme.primary),
           ),
 
           const SizedBox(height: 40),
 
-          // OTP Card
           Container(
-            padding: const EdgeInsets.all(24),
+            width: 56,
+            height: 56,
             decoration: BoxDecoration(
-              color: colorScheme.surface,
-              borderRadius: BorderRadius.circular(24),
-              boxShadow: [
-                BoxShadow(color: colorScheme.shadow.withValues(alpha: 0.08), blurRadius: 32, offset: const Offset(0, 8)),
-                BoxShadow(color: colorScheme.shadow.withValues(alpha: 0.04), blurRadius: 8, offset: const Offset(0, 2)),
+              color: AppColors.primary,
+              borderRadius: BorderRadius.circular(14),
+            ),
+            child: const Icon(Icons.lock_outline_rounded, color: Colors.white, size: 28),
+          ),
+
+          const SizedBox(height: 20),
+
+          const Text(
+            'Verify your number',
+            style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
+          ),
+
+          const SizedBox(height: 6),
+
+          RichText(
+            text: TextSpan(
+              style: const TextStyle(fontSize: 14, color: AppColors.textSecondary),
+              children: [
+                const TextSpan(text: 'Code sent to '),
+                TextSpan(
+                  text: widget.phoneNumber,
+                  style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.textPrimary),
+                ),
               ],
             ),
-            child: Form(
-              key: _formKey,
-              child: AutofillGroup(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Enter 6-digit code', style: textTheme.titleMedium?.copyWith(fontWeight: FontWeight.w600)),
-                    const SizedBox(height: 4),
-                    Text(
-                      'Code expires in 10 minutes',
-                      style: textTheme.bodySmall?.copyWith(color: colorScheme.onSurface.withValues(alpha: 0.4)),
-                    ),
-                    const SizedBox(height: 20),
-                    OtpInputField(controller: _otpController),
-                    const SizedBox(height: 20),
-                    AuthButton(text: 'Verify', isLoading: authState.isLoading, onPressed: _verifyOtp),
-                  ],
-                ),
+          ),
+
+          const SizedBox(height: 36),
+
+          Form(
+            key: _formKey,
+            child: AutofillGroup(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const Text(
+                    '6-digit code',
+                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.textPrimary),
+                  ),
+                  const SizedBox(height: 6),
+                  OtpInputField(controller: _otpController),
+                  const SizedBox(height: 6),
+                  const Text(
+                    'Code expires in 10 minutes',
+                    style: TextStyle(fontSize: 12, color: AppColors.textTertiary),
+                  ),
+                  const SizedBox(height: 20),
+                  AuthButton(
+                    text: 'Verify',
+                    isLoading: authState.isLoading,
+                    onPressed: _verifyOtp,
+                  ),
+                ],
               ),
             ),
           ),

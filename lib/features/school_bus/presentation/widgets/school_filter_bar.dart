@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hinam/core/theme/app_colors.dart';
 
 class SchoolFilterBar extends StatelessWidget {
   final List<String> schoolNames;
@@ -14,15 +15,14 @@ class SchoolFilterBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
       decoration: BoxDecoration(
-        color: scheme.surface.withValues(alpha: 0.95),
-        borderRadius: BorderRadius.circular(14),
+        color: AppColors.surface,
+        borderRadius: BorderRadius.circular(10),
+        border: Border.all(color: AppColors.border),
         boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.08), blurRadius: 12, offset: const Offset(0, 2)),
+          BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 8, offset: const Offset(0, 2)),
         ],
       ),
       child: SingleChildScrollView(
@@ -57,8 +57,6 @@ class _FilterChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-
     return Padding(
       padding: const EdgeInsets.only(right: 8),
       child: GestureDetector(
@@ -67,10 +65,10 @@ class _FilterChip extends StatelessWidget {
           duration: const Duration(milliseconds: 150),
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
           decoration: BoxDecoration(
-            color: selected ? Colors.green.shade700 : scheme.surface,
+            color: selected ? AppColors.schoolGreen : AppColors.surface,
             borderRadius: BorderRadius.circular(20),
             border: Border.all(
-              color: selected ? Colors.green.shade700 : scheme.outlineVariant,
+              color: selected ? AppColors.schoolGreen : AppColors.border,
             ),
           ),
           child: Text(
@@ -78,7 +76,7 @@ class _FilterChip extends StatelessWidget {
             style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.w600,
-              color: selected ? Colors.white : scheme.onSurface.withValues(alpha: 0.7),
+              color: selected ? Colors.white : AppColors.textSecondary,
             ),
           ),
         ),
