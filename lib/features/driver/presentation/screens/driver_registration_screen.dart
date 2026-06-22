@@ -13,10 +13,12 @@ class DriverRegistrationScreen extends ConsumerStatefulWidget {
   const DriverRegistrationScreen({super.key});
 
   @override
-  ConsumerState<DriverRegistrationScreen> createState() => _DriverRegistrationScreenState();
+  ConsumerState<DriverRegistrationScreen> createState() =>
+      _DriverRegistrationScreenState();
 }
 
-class _DriverRegistrationScreenState extends ConsumerState<DriverRegistrationScreen> {
+class _DriverRegistrationScreenState
+    extends ConsumerState<DriverRegistrationScreen> {
   final _formKey = GlobalKey<FormState>();
 
   final _nameController = TextEditingController();
@@ -60,10 +62,16 @@ class _DriverRegistrationScreenState extends ConsumerState<DriverRegistrationScr
       await ref.read(driverRepositoryProvider).createDriver(driver);
 
       if (!mounted) return;
-      Navigator.pushNamedAndRemoveUntil(context, AppRoutes.dashboard, (_) => false);
+      Navigator.pushNamedAndRemoveUntil(
+        context,
+        AppRoutes.dashboard,
+        (_) => false,
+      );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }
@@ -94,14 +102,22 @@ class _DriverRegistrationScreenState extends ConsumerState<DriverRegistrationScr
                   color: AppColors.primary,
                   borderRadius: BorderRadius.circular(14),
                 ),
-                child: const Icon(Icons.badge_outlined, color: Colors.white, size: 28),
+                child: const Icon(
+                  Icons.badge_outlined,
+                  color: Colors.white,
+                  size: 28,
+                ),
               ),
 
               const SizedBox(height: 16),
 
               const Text(
                 'Complete Your Profile',
-                style: TextStyle(fontSize: 22, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
+                style: TextStyle(
+                  fontSize: 22,
+                  fontWeight: FontWeight.w700,
+                  color: AppColors.textPrimary,
+                ),
               ),
 
               const SizedBox(height: 4),
@@ -132,7 +148,10 @@ class _DriverRegistrationScreenState extends ConsumerState<DriverRegistrationScr
                       ? const SizedBox(
                           width: 18,
                           height: 18,
-                          child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                          child: CircularProgressIndicator(
+                            strokeWidth: 2,
+                            color: Colors.white,
+                          ),
                         )
                       : const Text('Complete Registration'),
                 ),

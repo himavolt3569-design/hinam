@@ -17,17 +17,28 @@ class OtpInputField extends StatelessWidget {
       textAlign: TextAlign.center,
       autofillHints: const [AutofillHints.oneTimeCode],
       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-      style: Theme.of(context).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.w700, letterSpacing: 10),
+      style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+        fontWeight: FontWeight.w700,
+        letterSpacing: 10,
+      ),
       decoration: InputDecoration(
         hintText: '——————',
-        hintStyle: TextStyle(color: colorScheme.onSurface.withValues(alpha: 0.2), letterSpacing: 6),
+        hintStyle: TextStyle(
+          color: colorScheme.onSurface.withValues(alpha: 0.2),
+          letterSpacing: 6,
+        ),
         counterText: '',
         filled: true,
         fillColor: colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(14), borderSide: BorderSide.none),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(14),
+          borderSide: BorderSide.none,
+        ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),
-          borderSide: BorderSide(color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
+          borderSide: BorderSide(
+            color: colorScheme.outlineVariant.withValues(alpha: 0.5),
+          ),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(14),

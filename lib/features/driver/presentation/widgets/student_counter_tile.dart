@@ -68,11 +68,18 @@ class StudentCounterTile extends StatelessWidget {
                 child: Text(
                   '$count',
                   textAlign: TextAlign.center,
-                  style: text.titleLarge?.copyWith(fontWeight: FontWeight.w800, color: scheme.primary),
+                  style: text.titleLarge?.copyWith(
+                    fontWeight: FontWeight.w800,
+                    color: scheme.primary,
+                  ),
                 ),
               ),
               const SizedBox(width: 4),
-              _CountButton(icon: Icons.add_rounded, onTap: onIncrement, enabled: true),
+              _CountButton(
+                icon: Icons.add_rounded,
+                onTap: onIncrement,
+                enabled: true,
+              ),
             ],
           ),
         ],
@@ -86,7 +93,11 @@ class _CountButton extends StatelessWidget {
   final VoidCallback onTap;
   final bool enabled;
 
-  const _CountButton({required this.icon, required this.onTap, required this.enabled});
+  const _CountButton({
+    required this.icon,
+    required this.onTap,
+    required this.enabled,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -98,13 +109,17 @@ class _CountButton extends StatelessWidget {
         width: 32,
         height: 32,
         decoration: BoxDecoration(
-          color: enabled ? scheme.primary.withValues(alpha: 0.1) : scheme.onSurface.withValues(alpha: 0.05),
+          color: enabled
+              ? scheme.primary.withValues(alpha: 0.1)
+              : scheme.onSurface.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Icon(
           icon,
           size: 18,
-          color: enabled ? scheme.primary : scheme.onSurface.withValues(alpha: 0.3),
+          color: enabled
+              ? scheme.primary
+              : scheme.onSurface.withValues(alpha: 0.3),
         ),
       ),
     );

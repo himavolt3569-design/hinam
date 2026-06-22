@@ -4,7 +4,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hinam/features/driver/data/datasources/driver_remote_datasource.dart';
 import 'package:hinam/features/driver/data/repositories/driver_repository.dart';
 
-final driverFirestoreProvider = Provider<FirebaseFirestore>((ref) => FirebaseFirestore.instance);
+final driverFirestoreProvider = Provider<FirebaseFirestore>(
+  (ref) => FirebaseFirestore.instance,
+);
 
 final driverDatasourceProvider = Provider<DriverRemoteDatasource>(
   (ref) => DriverRemoteDatasource(ref.read(driverFirestoreProvider)),

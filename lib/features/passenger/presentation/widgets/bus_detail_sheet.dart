@@ -47,7 +47,9 @@ class BusDetailSheet extends ConsumerWidget {
                   borderRadius: BorderRadius.circular(14),
                 ),
                 child: Icon(
-                  isPublic ? Icons.directions_bus_rounded : Icons.school_rounded,
+                  isPublic
+                      ? Icons.directions_bus_rounded
+                      : Icons.school_rounded,
                   color: scheme.primary,
                   size: 26,
                 ),
@@ -57,19 +59,30 @@ class BusDetailSheet extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(bus.busNumber, style: text.titleLarge?.copyWith(fontWeight: FontWeight.w800)),
+                    Text(
+                      bus.busNumber,
+                      style: text.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
                     const SizedBox(height: 2),
                     Row(
                       children: [
                         Container(
                           width: 7,
                           height: 7,
-                          decoration: const BoxDecoration(color: Colors.green, shape: BoxShape.circle),
+                          decoration: const BoxDecoration(
+                            color: Colors.green,
+                            shape: BoxShape.circle,
+                          ),
                         ),
                         const SizedBox(width: 5),
                         Text(
                           'Active now',
-                          style: text.bodySmall?.copyWith(color: Colors.green[600], fontWeight: FontWeight.w500),
+                          style: text.bodySmall?.copyWith(
+                            color: Colors.green[600],
+                            fontWeight: FontWeight.w500,
+                          ),
                         ),
                       ],
                     ),
@@ -77,14 +90,20 @@ class BusDetailSheet extends ConsumerWidget {
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 5,
+                ),
                 decoration: BoxDecoration(
                   color: scheme.primary.withValues(alpha: 0.08),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Text(
                   isPublic ? 'Public' : 'School',
-                  style: text.labelSmall?.copyWith(color: scheme.primary, fontWeight: FontWeight.w600),
+                  style: text.labelSmall?.copyWith(
+                    color: scheme.primary,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
               ),
             ],
@@ -96,7 +115,9 @@ class BusDetailSheet extends ConsumerWidget {
 
           if (routeOrSchool != null) ...[
             MapInfoRow(
-              icon: isPublic ? Icons.route_outlined : Icons.location_city_outlined,
+              icon: isPublic
+                  ? Icons.route_outlined
+                  : Icons.location_city_outlined,
               label: isPublic ? 'Route' : 'School',
               value: routeOrSchool,
             ),
@@ -112,7 +133,8 @@ class BusDetailSheet extends ConsumerWidget {
           MapInfoRow(
             icon: Icons.my_location_rounded,
             label: 'Position',
-            value: '${bus.latitude.toStringAsFixed(4)}, ${bus.longitude.toStringAsFixed(4)}',
+            value:
+                '${bus.latitude.toStringAsFixed(4)}, ${bus.longitude.toStringAsFixed(4)}',
           ),
 
           if (nearestStop != null) ...[

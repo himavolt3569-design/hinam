@@ -50,7 +50,10 @@ class RouteSchoolTile extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 2),
-                Text(value, style: text.bodyMedium?.copyWith(fontWeight: FontWeight.w600)),
+                Text(
+                  value,
+                  style: text.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+                ),
               ],
             ),
           ),

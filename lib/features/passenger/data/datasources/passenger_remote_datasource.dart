@@ -12,6 +12,10 @@ class PassengerRemoteDatasource {
         .collection('bus_locations')
         .where('isTracking', isEqualTo: true)
         .snapshots()
-        .map((snapshot) => snapshot.docs.map((doc) => BusLocationModel.fromMap(doc.data())).toList());
+        .map(
+          (snapshot) => snapshot.docs
+              .map((doc) => BusLocationModel.fromMap(doc.data()))
+              .toList(),
+        );
   }
 }

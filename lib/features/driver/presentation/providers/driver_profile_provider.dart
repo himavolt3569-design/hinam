@@ -3,7 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hinam/features/driver/data/models/driver_model.dart';
 import 'driver_provider.dart';
 
-final driverProfileProvider = AsyncNotifierProvider<DriverProfileNotifier, DriverModel?>(DriverProfileNotifier.new);
+final driverProfileProvider =
+    AsyncNotifierProvider<DriverProfileNotifier, DriverModel?>(
+      DriverProfileNotifier.new,
+    );
 
 class DriverProfileNotifier extends AsyncNotifier<DriverModel?> {
   @override

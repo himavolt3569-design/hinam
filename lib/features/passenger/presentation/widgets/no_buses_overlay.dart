@@ -30,14 +30,20 @@ class NoBusesOverlay extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
-              hasQuery ? Icons.search_off_rounded : Icons.directions_bus_outlined,
+              hasQuery
+                  ? Icons.search_off_rounded
+                  : Icons.directions_bus_outlined,
               size: 20,
               color: scheme.onSurface.withValues(alpha: 0.4),
             ),
             const SizedBox(width: 10),
             Text(
-              hasQuery ? 'No buses match your search' : 'No buses are currently active',
-              style: text.bodyMedium?.copyWith(color: scheme.onSurface.withValues(alpha: 0.7)),
+              hasQuery
+                  ? 'No buses match your search'
+                  : 'No buses are currently active',
+              style: text.bodyMedium?.copyWith(
+                color: scheme.onSurface.withValues(alpha: 0.7),
+              ),
             ),
           ],
         ),

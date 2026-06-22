@@ -6,21 +6,22 @@ import 'app_colors.dart';
 class AppTheme {
   static ThemeData lightTheme = ThemeData(
     useMaterial3: true,
-    colorScheme: ColorScheme.fromSeed(
-      seedColor: AppColors.primary,
-      brightness: Brightness.light,
-    ).copyWith(
-      primary: AppColors.primary,
-      onPrimary: Colors.white,
-      primaryContainer: AppColors.primaryBg,
-      surface: AppColors.surface,
-      onSurface: AppColors.textPrimary,
-      surfaceContainerHighest: AppColors.inputFill,
-      outline: AppColors.border,
-      outlineVariant: AppColors.border,
-      error: AppColors.error,
-      onError: Colors.white,
-    ),
+    colorScheme:
+        ColorScheme.fromSeed(
+          seedColor: AppColors.primary,
+          brightness: Brightness.light,
+        ).copyWith(
+          primary: AppColors.primary,
+          onPrimary: Colors.white,
+          primaryContainer: AppColors.primaryBg,
+          surface: AppColors.surface,
+          onSurface: AppColors.textPrimary,
+          surfaceContainerHighest: AppColors.inputFill,
+          outline: AppColors.border,
+          outlineVariant: AppColors.border,
+          error: AppColors.error,
+          onError: Colors.white,
+        ),
     scaffoldBackgroundColor: AppColors.background,
 
     appBarTheme: const AppBarTheme(
@@ -134,7 +135,10 @@ class AppTheme {
         borderSide: const BorderSide(color: AppColors.error, width: 1.5),
       ),
       contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-      hintStyle: const TextStyle(color: AppColors.textTertiary, fontWeight: FontWeight.w400),
+      hintStyle: const TextStyle(
+        color: AppColors.textTertiary,
+        fontWeight: FontWeight.w400,
+      ),
       labelStyle: const TextStyle(color: AppColors.textSecondary),
       errorStyle: const TextStyle(fontSize: 12, color: AppColors.error),
     ),
@@ -145,7 +149,11 @@ class AppTheme {
         foregroundColor: Colors.white,
         minimumSize: const Size(double.infinity, 48),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
-        textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, letterSpacing: 0),
+        textStyle: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0,
+        ),
         elevation: 0,
       ),
     ),
@@ -156,7 +164,11 @@ class AppTheme {
         minimumSize: const Size(double.infinity, 48),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
         side: const BorderSide(color: AppColors.border),
-        textStyle: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, letterSpacing: 0),
+        textStyle: const TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.w600,
+          letterSpacing: 0,
+        ),
       ),
     ),
 

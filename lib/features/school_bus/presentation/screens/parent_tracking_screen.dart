@@ -18,7 +18,8 @@ class ParentTrackingScreen extends ConsumerStatefulWidget {
   const ParentTrackingScreen({super.key});
 
   @override
-  ConsumerState<ParentTrackingScreen> createState() => _ParentTrackingScreenState();
+  ConsumerState<ParentTrackingScreen> createState() =>
+      _ParentTrackingScreenState();
 }
 
 class _ParentTrackingScreenState extends ConsumerState<ParentTrackingScreen> {
@@ -28,7 +29,9 @@ class _ParentTrackingScreenState extends ConsumerState<ParentTrackingScreen> {
   Widget build(BuildContext context) {
     final schoolBusesAsync = ref.watch(schoolBusesProvider);
     final schoolNames = ref.watch(activeSchoolNamesProvider);
-    final visibleBuses = ref.watch(filteredSchoolBusesProvider(_selectedSchool));
+    final visibleBuses = ref.watch(
+      filteredSchoolBusesProvider(_selectedSchool),
+    );
 
     return Scaffold(
       appBar: AppBar(
@@ -37,7 +40,10 @@ class _ParentTrackingScreenState extends ConsumerState<ParentTrackingScreen> {
           Padding(
             padding: const EdgeInsets.only(right: 12),
             child: schoolBusesAsync.maybeWhen(
-              data: (buses) => BusCountBadge(count: buses.length, icon: Icons.school_rounded),
+              data: (buses) => BusCountBadge(
+                count: buses.length,
+                icon: Icons.school_rounded,
+              ),
               orElse: () => const SizedBox(),
             ),
           ),
@@ -46,13 +52,20 @@ class _ParentTrackingScreenState extends ConsumerState<ParentTrackingScreen> {
       body: Stack(
         children: [
           FlutterMap(
-            options: const MapOptions(initialCenter: _defaultCenter, initialZoom: _defaultZoom),
+            options: const MapOptions(
+              initialCenter: _defaultCenter,
+              initialZoom: _defaultZoom,
+            ),
             children: [
               TileLayer(
                 urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                 userAgentPackageName: 'com.hinam.app',
               ),
-              MarkerLayer(markers: visibleBuses.map((b) => _buildMarker(context, b)).toList()),
+              MarkerLayer(
+                markers: visibleBuses
+                    .map((b) => _buildMarker(context, b))
+                    .toList(),
+              ),
             ],
           ),
 
@@ -75,7 +88,9 @@ class _ParentTrackingScreenState extends ConsumerState<ParentTrackingScreen> {
               }
               if (visibleBuses.isEmpty && _selectedSchool.isNotEmpty) {
                 return Center(
-                  child: SchoolBusEmptyState(message: 'No active buses for $_selectedSchool'),
+                  child: SchoolBusEmptyState(
+                    message: 'No active buses for $_selectedSchool',
+                  ),
                 );
               }
               return const SizedBox.shrink();
@@ -108,7 +123,11 @@ class _ParentTrackingScreenState extends ConsumerState<ParentTrackingScreen> {
               ),
             ],
           ),
-          child: const Icon(Icons.school_rounded, color: Colors.white, size: 22),
+          child: const Icon(
+            Icons.school_rounded,
+            color: Colors.white,
+            size: 22,
+          ),
         ),
       ),
     );

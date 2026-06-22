@@ -30,7 +30,10 @@ class LocationService {
       );
     }
 
-    return const LocationSettings(accuracy: _accuracy, distanceFilter: _distanceFilter);
+    return const LocationSettings(
+      accuracy: _accuracy,
+      distanceFilter: _distanceFilter,
+    );
   }
 
   Stream<Position> getLocationStream() {

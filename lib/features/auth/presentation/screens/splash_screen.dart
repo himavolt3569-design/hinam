@@ -62,7 +62,11 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                       color: AppColors.primary,
                       borderRadius: BorderRadius.circular(16),
                     ),
-                    child: const Icon(Icons.directions_bus_rounded, color: Colors.white, size: 32),
+                    child: const Icon(
+                      Icons.directions_bus_rounded,
+                      color: Colors.white,
+                      size: 32,
+                    ),
                   ),
                   const SizedBox(height: 20),
                   const Text(
@@ -93,7 +97,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                   child: SizedBox(
                     width: 20,
                     height: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.primary),
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: AppColors.primary,
+                    ),
                   ),
                 ),
 
@@ -112,20 +119,27 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                   icon: Icons.map_rounded,
                   label: 'View Nearby Buses',
                   filled: true,
-                  onTap: () => Navigator.pushReplacementNamed(context, AppRoutes.passengerMap),
+                  onTap: () => Navigator.pushReplacementNamed(
+                    context,
+                    AppRoutes.passengerMap,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 ChoiceButton(
                   icon: Icons.school_rounded,
                   label: 'Track School Bus',
                   color: AppColors.schoolGreen,
-                  onTap: () => Navigator.pushReplacementNamed(context, AppRoutes.parentTracking),
+                  onTap: () => Navigator.pushReplacementNamed(
+                    context,
+                    AppRoutes.parentTracking,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 ChoiceButton(
                   icon: Icons.directions_bus_filled_rounded,
                   label: "I'm a Driver",
-                  onTap: () => Navigator.pushReplacementNamed(context, AppRoutes.login),
+                  onTap: () =>
+                      Navigator.pushReplacementNamed(context, AppRoutes.login),
                 ),
               ],
 

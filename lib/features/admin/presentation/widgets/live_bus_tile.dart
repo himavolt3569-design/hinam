@@ -41,10 +41,17 @@ class LiveBusTile extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(bus.busNumber, style: text.titleSmall?.copyWith(fontWeight: FontWeight.w700)),
                 Text(
-                  bus.routeName ?? bus.schoolName ?? (isPublic ? 'Public Bus' : 'School Bus'),
-                  style: text.bodySmall?.copyWith(color: scheme.onSurface.withValues(alpha: 0.5)),
+                  bus.busNumber,
+                  style: text.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+                ),
+                Text(
+                  bus.routeName ??
+                      bus.schoolName ??
+                      (isPublic ? 'Public Bus' : 'School Bus'),
+                  style: text.bodySmall?.copyWith(
+                    color: scheme.onSurface.withValues(alpha: 0.5),
+                  ),
                 ),
               ],
             ),
@@ -64,12 +71,18 @@ class LiveBusTile extends StatelessWidget {
                     Container(
                       width: 6,
                       height: 6,
-                      decoration: const BoxDecoration(color: Colors.green, shape: BoxShape.circle),
+                      decoration: const BoxDecoration(
+                        color: Colors.green,
+                        shape: BoxShape.circle,
+                      ),
                     ),
                     const SizedBox(width: 4),
                     Text(
                       'Live',
-                      style: text.labelSmall?.copyWith(color: Colors.green[700], fontWeight: FontWeight.w600),
+                      style: text.labelSmall?.copyWith(
+                        color: Colors.green[700],
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ],
                 ),
@@ -77,7 +90,9 @@ class LiveBusTile extends StatelessWidget {
               const SizedBox(height: 4),
               Text(
                 '$speedKmh km/h',
-                style: text.bodySmall?.copyWith(color: scheme.onSurface.withValues(alpha: 0.45)),
+                style: text.bodySmall?.copyWith(
+                  color: scheme.onSurface.withValues(alpha: 0.45),
+                ),
               ),
             ],
           ),

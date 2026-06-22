@@ -14,10 +14,7 @@ class PendingDriversScreen extends ConsumerWidget {
     final text = Theme.of(context).textTheme;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Pending Approvals'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('Pending Approvals'), centerTitle: true),
       body: pendingAsync.when(
         data: (drivers) {
           if (drivers.isEmpty) {
@@ -39,11 +36,18 @@ class PendingDriversScreen extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  Text('All caught up!', style: text.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
+                  Text(
+                    'All caught up!',
+                    style: text.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
                   const SizedBox(height: 4),
                   Text(
                     'No drivers pending approval.',
-                    style: text.bodyMedium?.copyWith(color: scheme.onSurface.withValues(alpha: 0.5)),
+                    style: text.bodyMedium?.copyWith(
+                      color: scheme.onSurface.withValues(alpha: 0.5),
+                    ),
                   ),
                 ],
               ),

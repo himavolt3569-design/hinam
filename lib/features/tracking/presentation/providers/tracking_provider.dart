@@ -6,9 +6,13 @@ import 'package:hinam/features/tracking/data/repositories/tracking_repository.da
 import 'package:hinam/features/tracking/presentation/providers/tracking_state.dart';
 import 'package:hinam/features/tracking/presentation/services/location_service.dart';
 
-final locationServiceProvider = Provider<LocationService>((ref) => LocationService());
+final locationServiceProvider = Provider<LocationService>(
+  (ref) => LocationService(),
+);
 
-final trackingProvider = NotifierProvider<TrackingNotifier, TrackingState>(TrackingNotifier.new);
+final trackingProvider = NotifierProvider<TrackingNotifier, TrackingState>(
+  TrackingNotifier.new,
+);
 
 class TrackingNotifier extends Notifier<TrackingState> {
   StreamSubscription? _subscription;
@@ -24,15 +28,20 @@ class TrackingNotifier extends Notifier<TrackingState> {
 
     state = state.copyWith(isTracking: true, studentCount: 0);
 
-    _subscription = ref.read(locationServiceProvider).getLocationStream().listen((position) async {
-      state = state.copyWith(isTracking: true, position: position);
+    _subscription = ref
+        .read(locationServiceProvider)
+        .getLocationStream()
+        .listen((position) async {
+          state = state.copyWith(isTracking: true, position: position);
 
-      await ref.read(trackingRepositoryProvider).updateLocation(
-            driver: driver,
-            position: position,
-            studentCount: state.studentCount,
-          );
-    });
+          await ref
+              .read(trackingRepositoryProvider)
+              .updateLocation(
+                driver: driver,
+                position: position,
+                studentCount: state.studentCount,
+              );
+        });
   }
 
   Future<void> stopTracking() async {
@@ -61,6 +70,8 @@ class TrackingNotifier extends Notifier<TrackingState> {
   Future<void> _syncStudentCount() async {
     final driver = ref.read(driverProfileProvider).asData?.value;
     if (driver == null || !state.isTracking) return;
-    await ref.read(trackingRepositoryProvider).updateStudentCount(driver.uid, state.studentCount);
+    await ref
+        .read(trackingRepositoryProvider)
+        .updateStudentCount(driver.uid, state.studentCount);
   }
 }

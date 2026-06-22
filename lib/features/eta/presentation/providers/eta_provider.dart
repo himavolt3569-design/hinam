@@ -45,7 +45,11 @@ class EtaToStop {
   final double distanceMeters;
   final Duration eta;
 
-  const EtaToStop({required this.stop, required this.distanceMeters, required this.eta});
+  const EtaToStop({
+    required this.stop,
+    required this.distanceMeters,
+    required this.eta,
+  });
 
   String get formattedDistance {
     if (distanceMeters < 1000) return '${distanceMeters.round()} m';
@@ -95,14 +99,16 @@ final stopEtaProvider = Provider.family<List<EtaResult>, String>((ref, stopId) {
       distanceMeters: meters,
       eta: _eta(meters, bus.speed),
     );
-  }).toList()
-    ..sort((a, b) => a.eta.compareTo(b.eta));
+  }).toList()..sort((a, b) => a.eta.compareTo(b.eta));
 
   return results;
 });
 
 /// For a given bus: returns its nearest stop + ETA.
-final busNearestStopProvider = Provider.family<EtaToStop?, String>((ref, driverId) {
+final busNearestStopProvider = Provider.family<EtaToStop?, String>((
+  ref,
+  driverId,
+) {
   final stops = ref.watch(busStopsProvider).asData?.value ?? [];
   if (stops.isEmpty) return null;
 

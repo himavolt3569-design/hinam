@@ -21,7 +21,9 @@ final adminActiveBusesProvider = StreamProvider<List<BusLocationModel>>((ref) {
 });
 
 final driverApprovalControllerProvider =
-    AsyncNotifierProvider<DriverApprovalController, void>(DriverApprovalController.new);
+    AsyncNotifierProvider<DriverApprovalController, void>(
+      DriverApprovalController.new,
+    );
 
 class DriverApprovalController extends AsyncNotifier<void> {
   @override

@@ -33,10 +33,18 @@ class MapSearchBar extends StatelessWidget {
             fontSize: 14,
             fontWeight: FontWeight.w400,
           ),
-          prefixIcon: Icon(Icons.search_rounded, color: scheme.onSurface.withValues(alpha: 0.4), size: 20),
+          prefixIcon: Icon(
+            Icons.search_rounded,
+            color: scheme.onSurface.withValues(alpha: 0.4),
+            size: 20,
+          ),
           suffixIcon: hasQuery
               ? IconButton(
-                  icon: Icon(Icons.close_rounded, size: 18, color: scheme.onSurface.withValues(alpha: 0.5)),
+                  icon: Icon(
+                    Icons.close_rounded,
+                    size: 18,
+                    color: scheme.onSurface.withValues(alpha: 0.5),
+                  ),
                   onPressed: onClear,
                 )
               : null,
@@ -52,7 +60,10 @@ class MapSearchBar extends StatelessWidget {
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(16),
-            borderSide: BorderSide(color: scheme.primary.withValues(alpha: 0.4), width: 1.5),
+            borderSide: BorderSide(
+              color: scheme.primary.withValues(alpha: 0.4),
+              width: 1.5,
+            ),
           ),
           contentPadding: const EdgeInsets.symmetric(vertical: 14),
         ),

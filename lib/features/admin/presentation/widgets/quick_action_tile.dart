@@ -28,7 +28,9 @@ class QuickActionTile extends StatelessWidget {
         decoration: BoxDecoration(
           color: scheme.surface,
           borderRadius: BorderRadius.circular(18),
-          border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.5)),
+          border: Border.all(
+            color: scheme.outlineVariant.withValues(alpha: 0.5),
+          ),
         ),
         child: Row(
           children: [
@@ -46,30 +48,48 @@ class QuickActionTile extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(title, style: text.titleSmall?.copyWith(fontWeight: FontWeight.w700)),
+                  Text(
+                    title,
+                    style: text.titleSmall?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
                   const SizedBox(height: 2),
                   Text(
                     subtitle,
-                    style: text.bodySmall?.copyWith(color: scheme.onSurface.withValues(alpha: 0.5)),
+                    style: text.bodySmall?.copyWith(
+                      color: scheme.onSurface.withValues(alpha: 0.5),
+                    ),
                   ),
                 ],
               ),
             ),
             if (badge > 0) ...[
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
                 decoration: BoxDecoration(
                   color: Colors.orange.shade600,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
                   '$badge',
-                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: Colors.white),
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                  ),
                 ),
               ),
               const SizedBox(width: 8),
             ],
-            Icon(Icons.arrow_forward_ios_rounded, size: 14, color: scheme.onSurface.withValues(alpha: 0.3)),
+            Icon(
+              Icons.arrow_forward_ios_rounded,
+              size: 14,
+              color: scheme.onSurface.withValues(alpha: 0.3),
+            ),
           ],
         ),
       ),

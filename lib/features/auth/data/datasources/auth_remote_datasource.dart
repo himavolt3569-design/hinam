@@ -37,8 +37,7 @@ class AuthRemoteDatasource {
       smsCode: smsCode,
     );
 
-    final result =
-        await firebaseAuth.signInWithCredential(credential);
+    final result = await firebaseAuth.signInWithCredential(credential);
 
     return result.user;
   }

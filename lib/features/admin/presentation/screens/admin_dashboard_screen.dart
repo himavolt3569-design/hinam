@@ -28,7 +28,8 @@ class AdminDashboardScreen extends ConsumerWidget {
         title: const Text('Admin Panel'),
         actions: [
           IconButton(
-            onPressed: () => ref.read(authControllerProvider.notifier).signOut(),
+            onPressed: () =>
+                ref.read(authControllerProvider.notifier).signOut(),
             icon: const Icon(Icons.logout_rounded, size: 20),
             tooltip: 'Logout',
           ),
@@ -73,15 +74,21 @@ class AdminDashboardScreen extends ConsumerWidget {
 
             const SizedBox(height: 24),
 
-            Text('Quick Actions', style: text.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
+            Text(
+              'Quick Actions',
+              style: text.titleMedium?.copyWith(fontWeight: FontWeight.w700),
+            ),
             const SizedBox(height: 12),
 
             QuickActionTile(
               icon: Icons.how_to_reg_rounded,
               title: 'Pending Approvals',
-              subtitle: pendingCount > 0 ? '$pendingCount drivers waiting for review' : 'All drivers approved',
+              subtitle: pendingCount > 0
+                  ? '$pendingCount drivers waiting for review'
+                  : 'All drivers approved',
               badge: pendingCount,
-              onTap: () => Navigator.pushNamed(context, AppRoutes.pendingDrivers),
+              onTap: () =>
+                  Navigator.pushNamed(context, AppRoutes.pendingDrivers),
             ),
 
             const SizedBox(height: 24),
@@ -89,17 +96,29 @@ class AdminDashboardScreen extends ConsumerWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('Live Buses', style: text.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
+                Text(
+                  'Live Buses',
+                  style: text.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
                 if (activeCount > 0)
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 4,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.successBg,
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
                       '$activeCount online',
-                      style: const TextStyle(fontSize: 11, color: AppColors.success, fontWeight: FontWeight.w600),
+                      style: const TextStyle(
+                        fontSize: 11,
+                        color: AppColors.success,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
               ],
@@ -118,11 +137,18 @@ class AdminDashboardScreen extends ConsumerWidget {
                     ),
                     child: const Row(
                       children: [
-                        Icon(Icons.directions_bus_outlined, size: 18, color: AppColors.textTertiary),
+                        Icon(
+                          Icons.directions_bus_outlined,
+                          size: 18,
+                          color: AppColors.textTertiary,
+                        ),
                         SizedBox(width: 12),
                         Text(
                           'No buses currently active',
-                          style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: AppColors.textSecondary,
+                          ),
                         ),
                       ],
                     ),
@@ -130,10 +156,12 @@ class AdminDashboardScreen extends ConsumerWidget {
                 }
                 return Column(
                   children: buses
-                      .map((bus) => Padding(
-                            padding: const EdgeInsets.only(bottom: 8),
-                            child: LiveBusTile(bus: bus),
-                          ))
+                      .map(
+                        (bus) => Padding(
+                          padding: const EdgeInsets.only(bottom: 8),
+                          child: LiveBusTile(bus: bus),
+                        ),
+                      )
                       .toList(),
                 );
               },
@@ -169,7 +197,11 @@ class _StatCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: badge != null ? badge!.withValues(alpha: 0.3) : AppColors.border),
+        border: Border.all(
+          color: badge != null
+              ? badge!.withValues(alpha: 0.3)
+              : AppColors.border,
+        ),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -178,11 +210,19 @@ class _StatCard extends StatelessWidget {
           const SizedBox(height: 8),
           Text(
             value,
-            style: TextStyle(fontSize: 22, fontWeight: FontWeight.w800, color: effectiveColor),
+            style: TextStyle(
+              fontSize: 22,
+              fontWeight: FontWeight.w800,
+              color: effectiveColor,
+            ),
           ),
           Text(
             label,
-            style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500, color: AppColors.textSecondary),
+            style: const TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w500,
+              color: AppColors.textSecondary,
+            ),
           ),
         ],
       ),

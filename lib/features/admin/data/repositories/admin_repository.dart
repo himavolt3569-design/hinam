@@ -39,7 +39,9 @@ class AdminRepository {
         .collection('bus_locations')
         .where('isTracking', isEqualTo: true)
         .snapshots()
-        .map((s) => s.docs.map((d) => BusLocationModel.fromMap(d.data())).toList());
+        .map(
+          (s) => s.docs.map((d) => BusLocationModel.fromMap(d.data())).toList(),
+        );
   }
 
   Future<void> approveDriver(String uid) async {

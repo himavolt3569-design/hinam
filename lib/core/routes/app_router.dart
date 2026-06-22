@@ -21,14 +21,19 @@ class AppRouter {
       case AppRoutes.otp:
         final args = settings.arguments as OtpArguments;
         return MaterialPageRoute(
-          builder: (_) => OtpScreen(phoneNumber: args.phoneNumber, verificationId: args.verificationId),
+          builder: (_) => OtpScreen(
+            phoneNumber: args.phoneNumber,
+            verificationId: args.verificationId,
+          ),
         );
 
       case AppRoutes.dashboard:
         return MaterialPageRoute(builder: (_) => const DashboardScreen());
 
       case AppRoutes.driverRegistration:
-        return MaterialPageRoute(builder: (_) => const DriverRegistrationScreen());
+        return MaterialPageRoute(
+          builder: (_) => const DriverRegistrationScreen(),
+        );
 
       case AppRoutes.passengerMap:
         return MaterialPageRoute(builder: (_) => const PassengerMapScreen());

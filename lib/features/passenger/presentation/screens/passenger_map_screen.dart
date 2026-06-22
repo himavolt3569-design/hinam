@@ -45,7 +45,10 @@ class _PassengerMapScreenState extends ConsumerState<PassengerMapScreen> {
           Padding(
             padding: const EdgeInsets.only(right: 12),
             child: busesAsync.maybeWhen(
-              data: (buses) => BusCountBadge(count: buses.length, icon: Icons.directions_bus_rounded),
+              data: (buses) => BusCountBadge(
+                count: buses.length,
+                icon: Icons.directions_bus_rounded,
+              ),
               orElse: () => const SizedBox(),
             ),
           ),
@@ -64,7 +67,11 @@ class _PassengerMapScreenState extends ConsumerState<PassengerMapScreen> {
                 userAgentPackageName: 'com.hinam.app',
               ),
               busesAsync.when(
-                data: (buses) => MarkerLayer(markers: buses.map((b) => _buildBusMarker(context, b)).toList()),
+                data: (buses) => MarkerLayer(
+                  markers: buses
+                      .map((b) => _buildBusMarker(context, b))
+                      .toList(),
+                ),
                 loading: () => const MarkerLayer(markers: []),
                 error: (error, _) => const MarkerLayer(markers: []),
               ),
@@ -72,7 +79,11 @@ class _PassengerMapScreenState extends ConsumerState<PassengerMapScreen> {
                 builder: (context, ref, _) {
                   final stopsAsync = ref.watch(busStopsProvider);
                   return stopsAsync.when(
-                    data: (stops) => MarkerLayer(markers: stops.map((s) => _buildStopMarker(context, s)).toList()),
+                    data: (stops) => MarkerLayer(
+                      markers: stops
+                          .map((s) => _buildStopMarker(context, s))
+                          .toList(),
+                    ),
                     loading: () => const MarkerLayer(markers: []),
                     error: (error, _) => const MarkerLayer(markers: []),
                   );
@@ -88,7 +99,8 @@ class _PassengerMapScreenState extends ConsumerState<PassengerMapScreen> {
             child: MapSearchBar(
               controller: _searchController,
               hasQuery: hasQuery,
-              onChanged: (v) => ref.read(searchQueryProvider.notifier).update(v),
+              onChanged: (v) =>
+                  ref.read(searchQueryProvider.notifier).update(v),
               onClear: () {
                 _searchController.clear();
                 ref.read(searchQueryProvider.notifier).clear();
@@ -124,7 +136,11 @@ class _PassengerMapScreenState extends ConsumerState<PassengerMapScreen> {
             shape: BoxShape.circle,
             border: Border.all(color: Colors.white, width: 2.5),
             boxShadow: [
-              BoxShadow(color: AppColors.primary.withValues(alpha: 0.4), blurRadius: 8, offset: const Offset(0, 3)),
+              BoxShadow(
+                color: AppColors.primary.withValues(alpha: 0.4),
+                blurRadius: 8,
+                offset: const Offset(0, 3),
+              ),
             ],
           ),
           child: Icon(
@@ -150,10 +166,18 @@ class _PassengerMapScreenState extends ConsumerState<PassengerMapScreen> {
             shape: BoxShape.circle,
             border: Border.all(color: Colors.white, width: 2),
             boxShadow: [
-              BoxShadow(color: AppColors.stopOrange.withValues(alpha: 0.4), blurRadius: 6, offset: const Offset(0, 2)),
+              BoxShadow(
+                color: AppColors.stopOrange.withValues(alpha: 0.4),
+                blurRadius: 6,
+                offset: const Offset(0, 2),
+              ),
             ],
           ),
-          child: const Icon(Icons.signpost_rounded, color: Colors.white, size: 16),
+          child: const Icon(
+            Icons.signpost_rounded,
+            color: Colors.white,
+            size: 16,
+          ),
         ),
       ),
     );
@@ -176,10 +200,8 @@ class _PassengerMapScreenState extends ConsumerState<PassengerMapScreen> {
         initialChildSize: 0.5,
         minChildSize: 0.3,
         maxChildSize: 0.85,
-        builder: (context, scrollController) => StopDetailSheet(
-          stop: stop,
-          scrollController: scrollController,
-        ),
+        builder: (context, scrollController) =>
+            StopDetailSheet(stop: stop, scrollController: scrollController),
       ),
     );
   }

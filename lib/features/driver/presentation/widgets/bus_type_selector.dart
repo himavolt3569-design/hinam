@@ -4,7 +4,11 @@ class BusTypeSelector extends StatelessWidget {
   final String busType;
   final ValueChanged<String> onChanged;
 
-  const BusTypeSelector({super.key, required this.busType, required this.onChanged});
+  const BusTypeSelector({
+    super.key,
+    required this.busType,
+    required this.onChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -75,7 +79,9 @@ class _BusTypeCard extends StatelessWidget {
               : colorScheme.surfaceContainerHighest.withValues(alpha: 0.4),
           borderRadius: BorderRadius.circular(14),
           border: Border.all(
-            color: isSelected ? colorScheme.primary : colorScheme.outlineVariant.withValues(alpha: 0.5),
+            color: isSelected
+                ? colorScheme.primary
+                : colorScheme.outlineVariant.withValues(alpha: 0.5),
             width: isSelected ? 1.5 : 1,
           ),
         ),
@@ -84,13 +90,17 @@ class _BusTypeCard extends StatelessWidget {
             Icon(
               icon,
               size: 28,
-              color: isSelected ? colorScheme.primary : colorScheme.onSurface.withValues(alpha: 0.4),
+              color: isSelected
+                  ? colorScheme.primary
+                  : colorScheme.onSurface.withValues(alpha: 0.4),
             ),
             const SizedBox(height: 6),
             Text(
               label,
               style: textTheme.labelMedium?.copyWith(
-                color: isSelected ? colorScheme.primary : colorScheme.onSurface.withValues(alpha: 0.5),
+                color: isSelected
+                    ? colorScheme.primary
+                    : colorScheme.onSurface.withValues(alpha: 0.5),
                 fontWeight: isSelected ? FontWeight.w600 : FontWeight.w400,
               ),
             ),

@@ -32,7 +32,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final phoneNumber = '+977${_phoneController.text.trim()}';
 
     try {
-      await ref.read(authControllerProvider.notifier).sendOtp(
+      await ref
+          .read(authControllerProvider.notifier)
+          .sendOtp(
             phoneNumber: phoneNumber,
             onCodeSent: (verificationId) {
               Navigator.pushNamed(
@@ -47,7 +49,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
     }
   }
 
@@ -68,14 +72,22 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               color: AppColors.primary,
               borderRadius: BorderRadius.circular(14),
             ),
-            child: const Icon(Icons.directions_bus_rounded, color: Colors.white, size: 28),
+            child: const Icon(
+              Icons.directions_bus_rounded,
+              color: Colors.white,
+              size: 28,
+            ),
           ),
 
           const SizedBox(height: 20),
 
           const Text(
             'Sign in to Hinam',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.w700,
+              color: AppColors.textPrimary,
+            ),
           ),
 
           const SizedBox(height: 6),
@@ -94,7 +106,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               children: [
                 const Text(
                   'Phone Number',
-                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.textPrimary),
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w500,
+                    color: AppColors.textPrimary,
+                  ),
                 ),
                 const SizedBox(height: 6),
                 PhoneInputField(controller: _phoneController),
@@ -113,7 +129,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
           const Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(Icons.lock_outline_rounded, size: 13, color: AppColors.textTertiary),
+              Icon(
+                Icons.lock_outline_rounded,
+                size: 13,
+                color: AppColors.textTertiary,
+              ),
               SizedBox(width: 5),
               Text(
                 'Verified via OTP',

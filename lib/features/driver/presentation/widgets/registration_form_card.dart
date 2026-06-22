@@ -45,7 +45,8 @@ class RegistrationFormCard extends StatelessWidget {
               prefixIcon: Icon(Icons.person_outline),
             ),
             validator: (value) {
-              if (value == null || value.trim().isEmpty) return 'Please enter your name';
+              if (value == null || value.trim().isEmpty)
+                return 'Please enter your name';
               return null;
             },
           ),
@@ -60,7 +61,8 @@ class RegistrationFormCard extends StatelessWidget {
               prefixIcon: Icon(Icons.directions_bus_outlined),
             ),
             validator: (value) {
-              if (value == null || value.trim().isEmpty) return 'Please enter bus number';
+              if (value == null || value.trim().isEmpty)
+                return 'Please enter bus number';
               return null;
             },
           ),
@@ -83,7 +85,8 @@ class RegistrationFormCard extends StatelessWidget {
                 prefixIcon: Icon(Icons.route_outlined),
               ),
               validator: (value) {
-                if (busType == 'public' && (value == null || value.trim().isEmpty)) {
+                if (busType == 'public' &&
+                    (value == null || value.trim().isEmpty)) {
                   return 'Please enter route name';
                 }
                 return null;
@@ -99,7 +102,8 @@ class RegistrationFormCard extends StatelessWidget {
                 prefixIcon: Icon(Icons.school_outlined),
               ),
               validator: (value) {
-                if (busType == 'school' && (value == null || value.trim().isEmpty)) {
+                if (busType == 'school' &&
+                    (value == null || value.trim().isEmpty)) {
                   return 'Please enter school name';
                 }
                 return null;

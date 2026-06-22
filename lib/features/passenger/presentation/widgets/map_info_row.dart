@@ -43,7 +43,10 @@ class MapInfoRow extends StatelessWidget {
                   letterSpacing: 0.6,
                 ),
               ),
-              Text(value, style: text.bodyMedium?.copyWith(fontWeight: FontWeight.w600)),
+              Text(
+                value,
+                style: text.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+              ),
             ],
           ),
         ),

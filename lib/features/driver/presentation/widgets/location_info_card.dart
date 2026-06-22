@@ -30,7 +30,11 @@ class LocationInfoCard extends StatelessWidget {
                   color: Colors.green.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
-                child: const Icon(Icons.location_on_rounded, size: 16, color: Colors.green),
+                child: const Icon(
+                  Icons.location_on_rounded,
+                  size: 16,
+                  color: Colors.green,
+                ),
               ),
               const SizedBox(width: 10),
               Text(
@@ -41,12 +45,18 @@ class LocationInfoCard extends StatelessWidget {
               Container(
                 width: 8,
                 height: 8,
-                decoration: const BoxDecoration(color: Colors.green, shape: BoxShape.circle),
+                decoration: const BoxDecoration(
+                  color: Colors.green,
+                  shape: BoxShape.circle,
+                ),
               ),
               const SizedBox(width: 6),
               Text(
                 'Live',
-                style: text.labelSmall?.copyWith(color: Colors.green, fontWeight: FontWeight.w600),
+                style: text.labelSmall?.copyWith(
+                  color: Colors.green,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ],
           ),
@@ -55,7 +65,10 @@ class LocationInfoCard extends StatelessWidget {
           const SizedBox(height: 4),
           _CoordRow(label: 'Lng', value: position.longitude.toStringAsFixed(6)),
           const SizedBox(height: 4),
-          _CoordRow(label: 'Speed', value: '${(position.speed * 3.6).toStringAsFixed(1)} km/h'),
+          _CoordRow(
+            label: 'Speed',
+            value: '${(position.speed * 3.6).toStringAsFixed(1)} km/h',
+          ),
         ],
       ),
     );
@@ -78,10 +91,15 @@ class _CoordRow extends StatelessWidget {
           width: 50,
           child: Text(
             label,
-            style: text.bodySmall?.copyWith(color: scheme.onSurface.withValues(alpha: 0.45)),
+            style: text.bodySmall?.copyWith(
+              color: scheme.onSurface.withValues(alpha: 0.45),
+            ),
           ),
         ),
-        Text(value, style: text.bodySmall?.copyWith(fontWeight: FontWeight.w600)),
+        Text(
+          value,
+          style: text.bodySmall?.copyWith(fontWeight: FontWeight.w600),
+        ),
       ],
     );
   }

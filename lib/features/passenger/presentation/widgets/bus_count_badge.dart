@@ -16,7 +16,11 @@ class BusCountBadge extends StatelessWidget {
         color: scheme.surface,
         borderRadius: BorderRadius.circular(20),
         boxShadow: [
-          BoxShadow(color: Colors.black.withValues(alpha: 0.08), blurRadius: 8, offset: const Offset(0, 2)),
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.08),
+            blurRadius: 8,
+            offset: const Offset(0, 2),
+          ),
         ],
       ),
       child: Row(
@@ -26,7 +30,11 @@ class BusCountBadge extends StatelessWidget {
           const SizedBox(width: 5),
           Text(
             '$count active',
-            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: scheme.primary),
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: scheme.primary,
+            ),
           ),
         ],
       ),

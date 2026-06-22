@@ -17,10 +17,8 @@ class ManageBusStopsScreen extends ConsumerWidget {
     return Scaffold(
       appBar: AppBar(title: const Text('Bus Stops')),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => showDialog(
-          context: context,
-          builder: (_) => const AddStopDialog(),
-        ),
+        onPressed: () =>
+            showDialog(context: context, builder: (_) => const AddStopDialog()),
         icon: const Icon(Icons.add_location_alt_rounded),
         label: const Text('Add Stop'),
         backgroundColor: scheme.primary,
@@ -47,11 +45,18 @@ class ManageBusStopsScreen extends ConsumerWidget {
                     ),
                   ),
                   const SizedBox(height: 16),
-                  Text('No stops yet', style: text.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
+                  Text(
+                    'No stops yet',
+                    style: text.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
                   const SizedBox(height: 4),
                   Text(
                     'Tap "Add Stop" to add your first bus stop.',
-                    style: text.bodyMedium?.copyWith(color: scheme.onSurface.withValues(alpha: 0.5)),
+                    style: text.bodyMedium?.copyWith(
+                      color: scheme.onSurface.withValues(alpha: 0.5),
+                    ),
                   ),
                 ],
               ),

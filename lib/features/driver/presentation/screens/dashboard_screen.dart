@@ -115,21 +115,14 @@ class _DashboardBody extends ConsumerWidget {
                 ),
               ),
 
-            BusInfoCard(
-              busNumber: driver.busNumber,
-              isPublic: isPublic,
-              isApproved: driver.isApproved,
-            ),
+            BusInfoCard(busNumber: driver.busNumber, isPublic: isPublic, isApproved: driver.isApproved),
 
             if (routeOrSchool != null) ...[
               const SizedBox(height: 10),
               RouteSchoolTile(isPublic: isPublic, value: routeOrSchool),
             ],
 
-            if (isTracking) ...[
-              const SizedBox(height: 10),
-              TrackingStatusBar(isTracking: isTracking),
-            ],
+            if (isTracking) ...[const SizedBox(height: 10), TrackingStatusBar(isTracking: isTracking)],
 
             if (trackingState.position != null) ...[
               const SizedBox(height: 10),
@@ -165,9 +158,7 @@ class _DashboardBody extends ConsumerWidget {
                   : null,
               icon: Icon(isTracking ? Icons.stop_rounded : Icons.location_on_rounded, size: 20),
               label: Text(isTracking ? 'Stop Tracking' : 'Start Tracking'),
-              style: FilledButton.styleFrom(
-                backgroundColor: isTracking ? AppColors.error : null,
-              ),
+              style: FilledButton.styleFrom(backgroundColor: isTracking ? AppColors.error : null),
             ),
 
             const SizedBox(height: 20),

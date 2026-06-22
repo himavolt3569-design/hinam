@@ -8,8 +8,14 @@ class BusStopRemoteDatasource {
   BusStopRemoteDatasource(this.firestore);
 
   Stream<List<BusStopModel>> watchBusStops() {
-    return firestore.collection('bus_stops').orderBy('createdAt', descending: true).snapshots().map(
-          (snapshot) => snapshot.docs.map((doc) => BusStopModel.fromMap(doc.id, doc.data())).toList(),
+    return firestore
+        .collection('bus_stops')
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map(
+          (snapshot) => snapshot.docs
+              .map((doc) => BusStopModel.fromMap(doc.id, doc.data()))
+              .toList(),
         );
   }
 

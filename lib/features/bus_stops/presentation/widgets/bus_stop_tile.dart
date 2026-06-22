@@ -30,28 +30,43 @@ class BusStopTile extends ConsumerWidget {
               color: const Color(0xFFEA580C).withValues(alpha: 0.08),
               borderRadius: BorderRadius.circular(12),
             ),
-            child: const Icon(Icons.signpost_rounded, color: Color(0xFFEA580C), size: 20),
+            child: const Icon(
+              Icons.signpost_rounded,
+              color: Color(0xFFEA580C),
+              size: 20,
+            ),
           ),
           const SizedBox(width: 14),
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(stop.name, style: text.titleSmall?.copyWith(fontWeight: FontWeight.w600)),
+                Text(
+                  stop.name,
+                  style: text.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+                ),
                 const SizedBox(height: 2),
                 Text(
                   '${stop.latitude.toStringAsFixed(5)}, ${stop.longitude.toStringAsFixed(5)}',
-                  style: text.bodySmall?.copyWith(color: scheme.onSurface.withValues(alpha: 0.45)),
+                  style: text.bodySmall?.copyWith(
+                    color: scheme.onSurface.withValues(alpha: 0.45),
+                  ),
                 ),
               ],
             ),
           ),
           IconButton(
             onPressed: () => _confirmDelete(context, ref),
-            icon: Icon(Icons.delete_outline_rounded, size: 20, color: scheme.error.withValues(alpha: 0.7)),
+            icon: Icon(
+              Icons.delete_outline_rounded,
+              size: 20,
+              color: scheme.error.withValues(alpha: 0.7),
+            ),
             style: IconButton.styleFrom(
               backgroundColor: scheme.error.withValues(alpha: 0.05),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
             ),
           ),
         ],
@@ -66,7 +81,10 @@ class BusStopTile extends ConsumerWidget {
         title: const Text('Delete Stop?'),
         content: Text('Remove "${stop.name}" from bus stops?'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
           FilledButton(
             onPressed: () {
               Navigator.pop(context);

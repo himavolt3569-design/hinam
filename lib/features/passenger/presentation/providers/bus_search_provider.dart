@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hinam/features/passenger/presentation/providers/bus_locations_provider.dart';
 import 'package:hinam/features/tracking/data/models/bus_location_model.dart';
 
-final searchQueryProvider = NotifierProvider<SearchQueryNotifier, String>(SearchQueryNotifier.new);
+final searchQueryProvider = NotifierProvider<SearchQueryNotifier, String>(
+  SearchQueryNotifier.new,
+);
 
 class SearchQueryNotifier extends Notifier<String> {
   @override
@@ -14,7 +16,9 @@ class SearchQueryNotifier extends Notifier<String> {
   void clear() => state = '';
 }
 
-final filteredBusesProvider = Provider<AsyncValue<List<BusLocationModel>>>((ref) {
+final filteredBusesProvider = Provider<AsyncValue<List<BusLocationModel>>>((
+  ref,
+) {
   final query = ref.watch(searchQueryProvider).trim().toLowerCase();
   final busesAsync = ref.watch(busLocationsProvider);
 

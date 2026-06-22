@@ -1,5 +1,3 @@
-
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:hinam/features/auth/data/datasources/auth_remote_datasource.dart';
 
@@ -12,10 +10,7 @@ class AuthRepository {
     required String phoneNumber,
     required Function(String verificationId) onCodeSent,
   }) async {
-    await datasource.sendOtp(
-      phoneNumber: phoneNumber,
-      onCodeSent: onCodeSent,
-    );
+    await datasource.sendOtp(phoneNumber: phoneNumber, onCodeSent: onCodeSent);
   }
 
   Future<User?> verifyOtp({

@@ -47,23 +47,37 @@ class StopDetailSheet extends ConsumerWidget {
                   color: const Color(0xFFEA580C).withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(14),
                 ),
-                child: const Icon(Icons.signpost_rounded, color: Color(0xFFEA580C), size: 26),
+                child: const Icon(
+                  Icons.signpost_rounded,
+                  color: Color(0xFFEA580C),
+                  size: 26,
+                ),
               ),
               const SizedBox(width: 14),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(stop.name, style: text.titleLarge?.copyWith(fontWeight: FontWeight.w800)),
+                    Text(
+                      stop.name,
+                      style: text.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
                     Text(
                       'Bus Stop',
-                      style: text.bodySmall?.copyWith(color: scheme.onSurface.withValues(alpha: 0.45)),
+                      style: text.bodySmall?.copyWith(
+                        color: scheme.onSurface.withValues(alpha: 0.45),
+                      ),
                     ),
                   ],
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 5,
+                ),
                 decoration: BoxDecoration(
                   color: buses.isNotEmpty
                       ? Colors.green.withValues(alpha: 0.1)
@@ -73,7 +87,9 @@ class StopDetailSheet extends ConsumerWidget {
                 child: Text(
                   '${buses.length} approaching',
                   style: text.labelSmall?.copyWith(
-                    color: buses.isNotEmpty ? Colors.green[700] : scheme.onSurface.withValues(alpha: 0.4),
+                    color: buses.isNotEmpty
+                        ? Colors.green[700]
+                        : scheme.onSurface.withValues(alpha: 0.4),
                     fontWeight: FontWeight.w600,
                   ),
                 ),
@@ -99,11 +115,17 @@ class StopDetailSheet extends ConsumerWidget {
               padding: const EdgeInsets.symmetric(vertical: 16),
               child: Row(
                 children: [
-                  Icon(Icons.directions_bus_outlined, size: 20, color: scheme.onSurface.withValues(alpha: 0.3)),
+                  Icon(
+                    Icons.directions_bus_outlined,
+                    size: 20,
+                    color: scheme.onSurface.withValues(alpha: 0.3),
+                  ),
                   const SizedBox(width: 10),
                   Text(
                     'No active buses nearby',
-                    style: text.bodyMedium?.copyWith(color: scheme.onSurface.withValues(alpha: 0.4)),
+                    style: text.bodyMedium?.copyWith(
+                      color: scheme.onSurface.withValues(alpha: 0.4),
+                    ),
                   ),
                 ],
               ),
@@ -124,7 +146,9 @@ class StopDetailSheet extends ConsumerWidget {
                     decoration: BoxDecoration(
                       color: scheme.surface,
                       borderRadius: BorderRadius.circular(14),
-                      border: Border.all(color: scheme.outlineVariant.withValues(alpha: 0.5)),
+                      border: Border.all(
+                        color: scheme.outlineVariant.withValues(alpha: 0.5),
+                      ),
                     ),
                     child: Row(
                       children: [
@@ -136,7 +160,9 @@ class StopDetailSheet extends ConsumerWidget {
                             borderRadius: BorderRadius.circular(10),
                           ),
                           child: Icon(
-                            isPublic ? Icons.directions_bus_rounded : Icons.school_rounded,
+                            isPublic
+                                ? Icons.directions_bus_rounded
+                                : Icons.school_rounded,
                             color: scheme.primary,
                             size: 20,
                           ),
@@ -148,13 +174,17 @@ class StopDetailSheet extends ConsumerWidget {
                             children: [
                               Text(
                                 result.busNumber,
-                                style: text.bodyMedium?.copyWith(fontWeight: FontWeight.w700),
+                                style: text.bodyMedium?.copyWith(
+                                  fontWeight: FontWeight.w700,
+                                ),
                               ),
                               if (routeOrSchool != null)
                                 Text(
                                   routeOrSchool,
                                   style: text.bodySmall?.copyWith(
-                                    color: scheme.onSurface.withValues(alpha: 0.5),
+                                    color: scheme.onSurface.withValues(
+                                      alpha: 0.5,
+                                    ),
                                   ),
                                 ),
                             ],

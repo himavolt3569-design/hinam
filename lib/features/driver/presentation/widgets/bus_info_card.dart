@@ -54,7 +54,10 @@ class BusInfoCard extends StatelessWidget {
                 const SizedBox(height: 2),
                 Text(
                   isPublic ? 'Public Bus' : 'School Bus',
-                  style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
+                  style: const TextStyle(
+                    fontSize: 13,
+                    color: AppColors.textSecondary,
+                  ),
                 ),
               ],
             ),
@@ -92,7 +95,11 @@ class _ApprovalBadge extends StatelessWidget {
           const SizedBox(width: 4),
           Text(
             isApproved ? 'Approved' : 'Pending',
-            style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: color),
+            style: TextStyle(
+              fontSize: 11,
+              fontWeight: FontWeight.w600,
+              color: color,
+            ),
           ),
         ],
       ),

@@ -43,21 +43,33 @@ class SchoolBusDetailSheet extends ConsumerWidget {
                   color: Colors.green.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(14),
                 ),
-                child: Icon(Icons.school_rounded, color: Colors.green.shade700, size: 26),
+                child: Icon(
+                  Icons.school_rounded,
+                  color: Colors.green.shade700,
+                  size: 26,
+                ),
               ),
               const SizedBox(width: 14),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(bus.busNumber, style: text.titleLarge?.copyWith(fontWeight: FontWeight.w800)),
+                    Text(
+                      bus.busNumber,
+                      style: text.titleLarge?.copyWith(
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
                     const SizedBox(height: 2),
                     Row(
                       children: [
                         Container(
                           width: 7,
                           height: 7,
-                          decoration: BoxDecoration(color: Colors.green.shade600, shape: BoxShape.circle),
+                          decoration: BoxDecoration(
+                            color: Colors.green.shade600,
+                            shape: BoxShape.circle,
+                          ),
                         ),
                         const SizedBox(width: 5),
                         Text(
@@ -92,7 +104,8 @@ class SchoolBusDetailSheet extends ConsumerWidget {
           _InfoRow(
             icon: Icons.people_rounded,
             label: 'Students on board',
-            value: '${bus.studentCount} student${bus.studentCount != 1 ? 's' : ''}',
+            value:
+                '${bus.studentCount} student${bus.studentCount != 1 ? 's' : ''}',
             color: scheme.primary,
           ),
           const SizedBox(height: 12),
@@ -171,11 +184,16 @@ class _InfoRow extends StatelessWidget {
               Text(
                 label,
                 style: text.labelSmall?.copyWith(
-                  color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.45),
+                  color: Theme.of(
+                    context,
+                  ).colorScheme.onSurface.withValues(alpha: 0.45),
                   letterSpacing: 0.6,
                 ),
               ),
-              Text(value, style: text.bodyMedium?.copyWith(fontWeight: FontWeight.w600)),
+              Text(
+                value,
+                style: text.bodyMedium?.copyWith(fontWeight: FontWeight.w600),
+              ),
             ],
           ),
         ),

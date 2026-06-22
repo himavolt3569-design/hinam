@@ -27,14 +27,18 @@ class _AddStopDialogState extends ConsumerState<AddStopDialog> {
     setState(() => _isFetchingLocation = true);
 
     try {
-      final position = await ref.read(locationServiceProvider).getCurrentLocation();
+      final position = await ref
+          .read(locationServiceProvider)
+          .getCurrentLocation();
       setState(() {
         _latitude = position.latitude;
         _longitude = position.longitude;
       });
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(e.toString())));
       }
     } finally {
       if (mounted) setState(() => _isFetchingLocation = false);
@@ -45,11 +49,9 @@ class _AddStopDialogState extends ConsumerState<AddStopDialog> {
     final name = _nameController.text.trim();
     if (name.isEmpty || _latitude == null || _longitude == null) return;
 
-    await ref.read(busStopControllerProvider.notifier).addStop(
-          name: name,
-          latitude: _latitude!,
-          longitude: _longitude!,
-        );
+    await ref
+        .read(busStopControllerProvider.notifier)
+        .addStop(name: name, latitude: _latitude!, longitude: _longitude!);
 
     if (mounted) Navigator.pop(context);
   }
@@ -79,10 +81,19 @@ class _AddStopDialogState extends ConsumerState<AddStopDialog> {
                     color: const Color(0xFFEA580C).withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: const Icon(Icons.add_location_alt_rounded, color: Color(0xFFEA580C), size: 20),
+                  child: const Icon(
+                    Icons.add_location_alt_rounded,
+                    color: Color(0xFFEA580C),
+                    size: 20,
+                  ),
                 ),
                 const SizedBox(width: 12),
-                Text('Add Bus Stop', style: text.titleMedium?.copyWith(fontWeight: FontWeight.w700)),
+                Text(
+                  'Add Bus Stop',
+                  style: text.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
               ],
             ),
 
@@ -120,10 +131,15 @@ class _AddStopDialogState extends ConsumerState<AddStopDialog> {
                     ? SizedBox(
                         width: 20,
                         height: 20,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: scheme.primary),
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: scheme.primary,
+                        ),
                       )
                     : Icon(
-                        hasLocation ? Icons.check_circle_rounded : Icons.my_location_rounded,
+                        hasLocation
+                            ? Icons.check_circle_rounded
+                            : Icons.my_location_rounded,
                         color: hasLocation ? Colors.green : scheme.primary,
                         size: 20,
                       ),
@@ -137,11 +153,15 @@ class _AddStopDialogState extends ConsumerState<AddStopDialog> {
                 subtitle: hasLocation
                     ? Text(
                         '${_latitude!.toStringAsFixed(5)}, ${_longitude!.toStringAsFixed(5)}',
-                        style: text.bodySmall?.copyWith(color: scheme.onSurface.withValues(alpha: 0.5)),
+                        style: text.bodySmall?.copyWith(
+                          color: scheme.onSurface.withValues(alpha: 0.5),
+                        ),
                       )
                     : null,
                 contentPadding: const EdgeInsets.symmetric(horizontal: 12),
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(14),
+                ),
                 minLeadingWidth: 24,
               ),
             ),
@@ -153,7 +173,9 @@ class _AddStopDialogState extends ConsumerState<AddStopDialog> {
                 Expanded(
                   child: OutlinedButton(
                     onPressed: () => Navigator.pop(context),
-                    style: OutlinedButton.styleFrom(minimumSize: const Size(0, 46)),
+                    style: OutlinedButton.styleFrom(
+                      minimumSize: const Size(0, 46),
+                    ),
                     child: const Text('Cancel'),
                   ),
                 ),
@@ -161,7 +183,9 @@ class _AddStopDialogState extends ConsumerState<AddStopDialog> {
                 Expanded(
                   child: FilledButton(
                     onPressed: canSave ? _save : null,
-                    style: FilledButton.styleFrom(minimumSize: const Size(0, 46)),
+                    style: FilledButton.styleFrom(
+                      minimumSize: const Size(0, 46),
+                    ),
                     child: const Text('Save Stop'),
                   ),
                 ),

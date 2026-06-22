@@ -14,7 +14,11 @@ class OtpScreen extends ConsumerStatefulWidget {
   final String phoneNumber;
   final String verificationId;
 
-  const OtpScreen({super.key, required this.phoneNumber, required this.verificationId});
+  const OtpScreen({
+    super.key,
+    required this.phoneNumber,
+    required this.verificationId,
+  });
 
   @override
   ConsumerState<OtpScreen> createState() => _OtpScreenState();
@@ -52,7 +56,10 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
     try {
       final user = await ref
           .read(authControllerProvider.notifier)
-          .verifyOtp(verificationId: widget.verificationId, smsCode: _otpController.text.trim());
+          .verifyOtp(
+            verificationId: widget.verificationId,
+            smsCode: _otpController.text.trim(),
+          );
 
       if (user == null) return;
       if (!mounted) return;
@@ -71,7 +78,9 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
     } catch (e) {
       _isVerifying = false;
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
     }
   }
 
@@ -92,7 +101,9 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
               icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
               style: IconButton.styleFrom(
                 backgroundColor: AppColors.inputFill,
-                shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(10),
+                ),
               ),
             ),
           ),
@@ -106,26 +117,40 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
               color: AppColors.primary,
               borderRadius: BorderRadius.circular(14),
             ),
-            child: const Icon(Icons.lock_outline_rounded, color: Colors.white, size: 28),
+            child: const Icon(
+              Icons.lock_outline_rounded,
+              color: Colors.white,
+              size: 28,
+            ),
           ),
 
           const SizedBox(height: 20),
 
           const Text(
             'Verify your number',
-            style: TextStyle(fontSize: 24, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.w700,
+              color: AppColors.textPrimary,
+            ),
           ),
 
           const SizedBox(height: 6),
 
           RichText(
             text: TextSpan(
-              style: const TextStyle(fontSize: 14, color: AppColors.textSecondary),
+              style: const TextStyle(
+                fontSize: 14,
+                color: AppColors.textSecondary,
+              ),
               children: [
                 const TextSpan(text: 'Code sent to '),
                 TextSpan(
                   text: widget.phoneNumber,
-                  style: const TextStyle(fontWeight: FontWeight.w600, color: AppColors.textPrimary),
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.textPrimary,
+                  ),
                 ),
               ],
             ),
@@ -141,14 +166,21 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                 children: [
                   const Text(
                     '6-digit code',
-                    style: TextStyle(fontSize: 13, fontWeight: FontWeight.w500, color: AppColors.textPrimary),
+                    style: TextStyle(
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500,
+                      color: AppColors.textPrimary,
+                    ),
                   ),
                   const SizedBox(height: 6),
                   OtpInputField(controller: _otpController),
                   const SizedBox(height: 6),
                   const Text(
                     'Code expires in 10 minutes',
-                    style: TextStyle(fontSize: 12, color: AppColors.textTertiary),
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: AppColors.textTertiary,
+                    ),
                   ),
                   const SizedBox(height: 20),
                   AuthButton(

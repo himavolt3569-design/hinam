@@ -37,7 +37,9 @@ class DriverApprovalCard extends ConsumerWidget {
                     borderRadius: BorderRadius.circular(14),
                   ),
                   child: Icon(
-                    isPublic ? Icons.directions_bus_rounded : Icons.school_rounded,
+                    isPublic
+                        ? Icons.directions_bus_rounded
+                        : Icons.school_rounded,
                     color: scheme.primary,
                     size: 24,
                   ),
@@ -47,24 +49,39 @@ class DriverApprovalCard extends ConsumerWidget {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(driver.fullName, style: text.titleSmall?.copyWith(fontWeight: FontWeight.w700)),
+                      Text(
+                        driver.fullName,
+                        style: text.titleSmall?.copyWith(
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
                       Text(
                         driver.phoneNumber,
-                        style: text.bodySmall?.copyWith(color: scheme.onSurface.withValues(alpha: 0.5)),
+                        style: text.bodySmall?.copyWith(
+                          color: scheme.onSurface.withValues(alpha: 0.5),
+                        ),
                       ),
                     ],
                   ),
                 ),
                 Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 10,
+                    vertical: 5,
+                  ),
                   decoration: BoxDecoration(
                     color: Colors.orange.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: Colors.orange.withValues(alpha: 0.3)),
+                    border: Border.all(
+                      color: Colors.orange.withValues(alpha: 0.3),
+                    ),
                   ),
                   child: Text(
                     'Pending',
-                    style: text.labelSmall?.copyWith(color: Colors.orange[700], fontWeight: FontWeight.w600),
+                    style: text.labelSmall?.copyWith(
+                      color: Colors.orange[700],
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ],
@@ -84,7 +101,10 @@ class DriverApprovalCard extends ConsumerWidget {
                 children: [
                   _DetailRow(label: 'Bus Number', value: driver.busNumber),
                   const SizedBox(height: 4),
-                  _DetailRow(label: 'Type', value: isPublic ? 'Public Bus' : 'School Bus'),
+                  _DetailRow(
+                    label: 'Type',
+                    value: isPublic ? 'Public Bus' : 'School Bus',
+                  ),
                   if (driver.routeName != null) ...[
                     const SizedBox(height: 4),
                     _DetailRow(label: 'Route', value: driver.routeName!),
@@ -110,9 +130,13 @@ class DriverApprovalCard extends ConsumerWidget {
                     label: const Text('Reject'),
                     style: OutlinedButton.styleFrom(
                       foregroundColor: scheme.error,
-                      side: BorderSide(color: scheme.error.withValues(alpha: 0.4)),
+                      side: BorderSide(
+                        color: scheme.error.withValues(alpha: 0.4),
+                      ),
                       minimumSize: const Size(0, 44),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                   ),
                 ),
@@ -125,7 +149,9 @@ class DriverApprovalCard extends ConsumerWidget {
                     style: FilledButton.styleFrom(
                       backgroundColor: Colors.green.shade600,
                       minimumSize: const Size(0, 44),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
                     ),
                   ),
                 ),
@@ -137,20 +163,31 @@ class DriverApprovalCard extends ConsumerWidget {
     );
   }
 
-  void _confirmReject(BuildContext context, DriverApprovalController controller) {
+  void _confirmReject(
+    BuildContext context,
+    DriverApprovalController controller,
+  ) {
     showDialog(
       context: context,
       builder: (_) => AlertDialog(
         title: const Text('Reject Driver?'),
-        content: Text("This will permanently delete ${driver.fullName}'s registration."),
+        content: Text(
+          "This will permanently delete ${driver.fullName}'s registration.",
+        ),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('Cancel'),
+          ),
           FilledButton(
             onPressed: () {
               Navigator.pop(context);
               controller.reject(driver.uid);
             },
-            style: FilledButton.styleFrom(backgroundColor: Colors.red, minimumSize: const Size(0, 40)),
+            style: FilledButton.styleFrom(
+              backgroundColor: Colors.red,
+              minimumSize: const Size(0, 40),
+            ),
             child: const Text('Reject'),
           ),
         ],
@@ -175,11 +212,16 @@ class _DetailRow extends StatelessWidget {
           width: 80,
           child: Text(
             label,
-            style: text.bodySmall?.copyWith(color: scheme.onSurface.withValues(alpha: 0.45)),
+            style: text.bodySmall?.copyWith(
+              color: scheme.onSurface.withValues(alpha: 0.45),
+            ),
           ),
         ),
         Expanded(
-          child: Text(value, style: text.bodySmall?.copyWith(fontWeight: FontWeight.w600)),
+          child: Text(
+            value,
+            style: text.bodySmall?.copyWith(fontWeight: FontWeight.w600),
+          ),
         ),
       ],
     );

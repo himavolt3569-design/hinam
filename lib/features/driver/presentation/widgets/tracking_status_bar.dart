@@ -24,13 +24,20 @@ class TrackingStatusBar extends StatelessWidget {
             width: 8,
             height: 8,
             child: DecoratedBox(
-              decoration: BoxDecoration(color: AppColors.success, shape: BoxShape.circle),
+              decoration: BoxDecoration(
+                color: AppColors.success,
+                shape: BoxShape.circle,
+              ),
             ),
           ),
           SizedBox(width: 8),
           Text(
             'Tracking Active — Location is being shared',
-            style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.success),
+            style: TextStyle(
+              fontSize: 12,
+              fontWeight: FontWeight.w600,
+              color: AppColors.success,
+            ),
           ),
         ],
       ),
