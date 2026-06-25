@@ -15,16 +15,16 @@ class TrackingRemoteDatasource {
   }
 
   Future<void> clearBusLocation(String driverId) async {
-    await firestore.collection('bus_locations').doc(driverId).update({
-      'isTracking': false,
-      'updatedAt': Timestamp.now(),
-    });
+    await firestore.collection('bus_locations').doc(driverId).set(
+      {'isTracking': false, 'updatedAt': Timestamp.now()},
+      SetOptions(merge: true),
+    );
   }
 
   Future<void> updateStudentCount(String driverId, int count) async {
-    await firestore.collection('bus_locations').doc(driverId).update({
-      'studentCount': count,
-      'updatedAt': Timestamp.now(),
-    });
+    await firestore.collection('bus_locations').doc(driverId).set(
+      {'studentCount': count, 'updatedAt': Timestamp.now()},
+      SetOptions(merge: true),
+    );
   }
 }

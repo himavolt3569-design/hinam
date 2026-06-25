@@ -32,9 +32,12 @@ class FleetRemoteDatasource {
     return firestore
         .collection('assignments')
         .where('date', isEqualTo: date)
-        .orderBy('createdAt', descending: true)
         .snapshots()
-        .map((s) => s.docs.map((d) => AssignmentModel.fromMap(d.id, d.data())).toList());
+        .map((s) {
+          final list = s.docs.map((d) => AssignmentModel.fromMap(d.id, d.data())).toList();
+          list.sort((a, b) => b.createdAt.compareTo(a.createdAt));
+          return list;
+        });
   }
 
   Stream<AssignmentModel?> watchActiveAssignment({

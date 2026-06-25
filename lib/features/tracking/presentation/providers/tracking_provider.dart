@@ -27,6 +27,9 @@ class TrackingNotifier extends Notifier<TrackingState> {
     final driver = ref.read(driverProfileProvider).asData?.value;
     if (driver == null) return;
 
+    // Verify permission by getting a single position first — throws if denied
+    await ref.read(locationServiceProvider).getCurrentLocation();
+
     // Use active assignment data if available, else fall back to driver's own data
     final assignment = ref.read(activeAssignmentProvider).asData?.value;
     final busNumber = assignment?.busNumber ?? driver.busNumber;
@@ -39,20 +42,23 @@ class TrackingNotifier extends Notifier<TrackingState> {
     _subscription = ref
         .read(locationServiceProvider)
         .getLocationStream()
-        .listen((position) async {
-          state = state.copyWith(isTracking: true, position: position);
+        .listen(
+          (position) async {
+            state = state.copyWith(isTracking: true, position: position);
 
-          await ref.read(trackingRepositoryProvider).updateLocation(
-                driverId: driver.uid,
-                driverName: driver.fullName,
-                busNumber: busNumber,
-                busType: busType,
-                routeName: routeName,
-                schoolName: schoolName,
-                position: position,
-                studentCount: state.studentCount,
-              );
-        });
+            await ref.read(trackingRepositoryProvider).updateLocation(
+                  driverId: driver.uid,
+                  driverName: driver.fullName,
+                  busNumber: busNumber,
+                  busType: busType,
+                  routeName: routeName,
+                  schoolName: schoolName,
+                  position: position,
+                  studentCount: state.studentCount,
+                );
+          },
+          onError: (_) => stopTracking(),
+        );
   }
 
   Future<void> stopTracking() async {
