@@ -116,12 +116,12 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                 ),
                 const SizedBox(height: 12),
                 ChoiceButton(
-                  icon: Icons.map_rounded,
+                  icon: Icons.directions_bus_rounded,
                   label: 'View Nearby Buses',
                   filled: true,
                   onTap: () => Navigator.pushReplacementNamed(
                     context,
-                    AppRoutes.passengerMap,
+                    AppRoutes.publicBusList,
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -131,7 +131,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                   color: AppColors.schoolGreen,
                   onTap: () => Navigator.pushReplacementNamed(
                     context,
-                    AppRoutes.parentTracking,
+                    AppRoutes.schoolBusList,
                   ),
                 ),
                 const SizedBox(height: 8),

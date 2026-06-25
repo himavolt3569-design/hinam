@@ -3,10 +3,13 @@ class AppRoutes {
   static const login = '/login';
   static const otp = '/otp';
   static const dashboard = '/dashboard';
-  static const String driverRegistration = '/driver-registration';
-  static const String passengerMap = '/passenger-map';
-  static const String manageBusStops = '/manage-bus-stops';
-  static const String parentTracking = '/parent-tracking';
-  static const String adminDashboard = '/admin-dashboard';
-  static const String pendingDrivers = '/pending-drivers';
+  static const driverRegistration = '/driver-registration';
+  static const publicBusList = '/public-bus-list';
+  static const schoolBusList = '/school-bus-list';
+  static const singleBusMap = '/single-bus-map';
+  static const manageBusStops = '/manage-bus-stops';
+  static const adminDashboard = '/admin-dashboard';
+  static const pendingDrivers = '/pending-drivers';
+  static const manageBuses = '/manage-buses';
+  static const manageAssignments = '/manage-assignments';
 }

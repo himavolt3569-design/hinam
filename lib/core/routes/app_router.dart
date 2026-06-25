@@ -5,12 +5,15 @@ import 'package:hinam/features/admin/presentation/screens/pending_drivers_screen
 import 'package:hinam/features/auth/presentation/models/otp_arguments.dart';
 import 'package:hinam/features/auth/presentation/screens/login_screen.dart';
 import 'package:hinam/features/auth/presentation/screens/otp_screen.dart';
-import 'package:hinam/features/driver/presentation/screens/dashboard_screen.dart';
 import 'package:hinam/features/auth/presentation/screens/splash_screen.dart';
 import 'package:hinam/features/bus_stops/presentation/screens/manage_bus_stops_screen.dart';
+import 'package:hinam/features/driver/presentation/screens/dashboard_screen.dart';
 import 'package:hinam/features/driver/presentation/screens/driver_registration_screen.dart';
-import 'package:hinam/features/passenger/presentation/screens/passenger_map_screen.dart';
-import 'package:hinam/features/school_bus/presentation/screens/parent_tracking_screen.dart';
+import 'package:hinam/features/fleet/presentation/screens/manage_assignments_screen.dart';
+import 'package:hinam/features/fleet/presentation/screens/manage_buses_screen.dart';
+import 'package:hinam/features/passenger/presentation/screens/public_bus_list_screen.dart';
+import 'package:hinam/features/passenger/presentation/screens/single_bus_map_screen.dart';
+import 'package:hinam/features/school_bus/presentation/screens/school_bus_list_screen.dart';
 
 class AppRouter {
   static Route<dynamic> onGenerateRoute(RouteSettings settings) {
@@ -31,24 +34,34 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const DashboardScreen());
 
       case AppRoutes.driverRegistration:
-        return MaterialPageRoute(
-          builder: (_) => const DriverRegistrationScreen(),
-        );
+        return MaterialPageRoute(builder: (_) => const DriverRegistrationScreen());
 
-      case AppRoutes.passengerMap:
-        return MaterialPageRoute(builder: (_) => const PassengerMapScreen());
+      case AppRoutes.publicBusList:
+        return MaterialPageRoute(builder: (_) => const PublicBusListScreen());
+
+      case AppRoutes.schoolBusList:
+        return MaterialPageRoute(builder: (_) => const SchoolBusListScreen());
+
+      case AppRoutes.singleBusMap:
+        final driverId = settings.arguments as String;
+        return MaterialPageRoute(
+          builder: (_) => SingleBusMapScreen(driverId: driverId),
+        );
 
       case AppRoutes.manageBusStops:
         return MaterialPageRoute(builder: (_) => const ManageBusStopsScreen());
-
-      case AppRoutes.parentTracking:
-        return MaterialPageRoute(builder: (_) => const ParentTrackingScreen());
 
       case AppRoutes.adminDashboard:
         return MaterialPageRoute(builder: (_) => const AdminDashboardScreen());
 
       case AppRoutes.pendingDrivers:
         return MaterialPageRoute(builder: (_) => const PendingDriversScreen());
+
+      case AppRoutes.manageBuses:
+        return MaterialPageRoute(builder: (_) => const ManageBusesScreen());
+
+      case AppRoutes.manageAssignments:
+        return MaterialPageRoute(builder: (_) => const ManageAssignmentsScreen());
 
       default:
         return MaterialPageRoute(builder: (_) => const SplashScreen());

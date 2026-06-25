@@ -18,4 +18,8 @@ class PassengerRepository {
   Stream<List<BusLocationModel>> watchActiveBuses() {
     return datasource.watchActiveBuses();
   }
+
+  Stream<BusLocationModel?> watchSingleBus(String driverId) {
+    return datasource.watchSingleBus(driverId);
+  }
 }

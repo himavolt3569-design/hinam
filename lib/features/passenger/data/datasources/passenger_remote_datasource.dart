@@ -18,4 +18,12 @@ class PassengerRemoteDatasource {
               .toList(),
         );
   }
+
+  Stream<BusLocationModel?> watchSingleBus(String driverId) {
+    return firestore
+        .collection('bus_locations')
+        .doc(driverId)
+        .snapshots()
+        .map((doc) => doc.exists ? BusLocationModel.fromMap(doc.data()!) : null);
+  }
 }

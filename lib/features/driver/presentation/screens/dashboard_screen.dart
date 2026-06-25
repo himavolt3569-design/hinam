@@ -11,6 +11,7 @@ import 'package:hinam/features/driver/presentation/widgets/location_info_card.da
 import 'package:hinam/features/driver/presentation/widgets/route_school_tile.dart';
 import 'package:hinam/features/driver/presentation/widgets/student_counter_tile.dart';
 import 'package:hinam/features/driver/presentation/widgets/tracking_status_bar.dart';
+import 'package:hinam/features/fleet/presentation/providers/fleet_providers.dart';
 import 'package:hinam/features/tracking/presentation/providers/tracking_provider.dart';
 
 class DashboardScreen extends ConsumerStatefulWidget {
@@ -60,6 +61,7 @@ class _DashboardBody extends ConsumerWidget {
     final routeOrSchool = driver.routeName ?? driver.schoolName;
     final trackingState = ref.watch(trackingProvider);
     final isTracking = trackingState.isTracking;
+    final activeAssignment = ref.watch(activeAssignmentProvider).asData?.value;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -114,6 +116,48 @@ class _DashboardBody extends ConsumerWidget {
                   ],
                 ),
               ),
+
+            if (activeAssignment != null) ...[
+              Container(
+                margin: const EdgeInsets.only(bottom: 14),
+                padding: const EdgeInsets.all(14),
+                decoration: BoxDecoration(
+                  color: AppColors.primaryBg,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: AppColors.primary.withValues(alpha: 0.25)),
+                ),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: AppColors.primary,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      child: const Icon(Icons.assignment_rounded, color: Colors.white, size: 18),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            "Today's Assignment — ${activeAssignment.shiftLabel}",
+                            style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.primary),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            activeAssignment.busNumber + (activeAssignment.routeOrSchool.isNotEmpty ? ' · ${activeAssignment.routeOrSchool}' : ''),
+                            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
 
             BusInfoCard(busNumber: driver.busNumber, isPublic: isPublic, isApproved: driver.isApproved),
 

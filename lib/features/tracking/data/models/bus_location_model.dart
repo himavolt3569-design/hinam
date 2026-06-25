@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 
 class BusLocationModel {
   final String driverId;
+  final String driverName;
   final String busNumber;
   final String busType;
   final String? routeName;
@@ -15,6 +16,7 @@ class BusLocationModel {
 
   const BusLocationModel({
     required this.driverId,
+    this.driverName = '',
     required this.busNumber,
     required this.busType,
     this.routeName,
@@ -27,9 +29,12 @@ class BusLocationModel {
     required this.updatedAt,
   });
 
+  String get routeOrSchool => routeName ?? schoolName ?? '';
+
   Map<String, dynamic> toMap() {
     return {
       'driverId': driverId,
+      'driverName': driverName,
       'busNumber': busNumber,
       'busType': busType,
       'routeName': routeName,
@@ -46,6 +51,7 @@ class BusLocationModel {
   factory BusLocationModel.fromMap(Map<String, dynamic> map) {
     return BusLocationModel(
       driverId: map['driverId'] ?? '',
+      driverName: map['driverName'] ?? '',
       busNumber: map['busNumber'] ?? '',
       busType: map['busType'] ?? '',
       routeName: map['routeName'],

@@ -91,6 +91,17 @@ class AdminDashboardScreen extends ConsumerWidget {
                   Navigator.pushNamed(context, AppRoutes.pendingDrivers),
             ),
 
+            const SizedBox(height: 8),
+
+            QuickActionTile(
+              icon: Icons.directions_bus_rounded,
+              title: 'Fleet Management',
+              subtitle: 'Manage buses and driver assignments',
+              badge: 0,
+              onTap: () =>
+                  Navigator.pushNamed(context, AppRoutes.manageBuses),
+            ),
+
             const SizedBox(height: 24),
 
             Row(

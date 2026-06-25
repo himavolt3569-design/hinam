@@ -2,14 +2,11 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 
-import 'package:hinam/features/driver/data/models/driver_model.dart';
 import 'package:hinam/features/tracking/data/datasources/tracking_remote_datasource.dart';
 import 'package:hinam/features/tracking/data/models/bus_location_model.dart';
 
 final trackingRepositoryProvider = Provider<TrackingRepository>((ref) {
-  return TrackingRepository(
-    TrackingRemoteDatasource(FirebaseFirestore.instance),
-  );
+  return TrackingRepository(TrackingRemoteDatasource(FirebaseFirestore.instance));
 });
 
 class TrackingRepository {
@@ -18,16 +15,22 @@ class TrackingRepository {
   TrackingRepository(this.datasource);
 
   Future<void> updateLocation({
-    required DriverModel driver,
+    required String driverId,
+    required String driverName,
+    required String busNumber,
+    required String busType,
+    String? routeName,
+    String? schoolName,
     required Position position,
     required int studentCount,
   }) async {
     final model = BusLocationModel(
-      driverId: driver.uid,
-      busNumber: driver.busNumber,
-      busType: driver.busType,
-      routeName: driver.routeName,
-      schoolName: driver.schoolName,
+      driverId: driverId,
+      driverName: driverName,
+      busNumber: busNumber,
+      busType: busType,
+      routeName: routeName,
+      schoolName: schoolName,
       latitude: position.latitude,
       longitude: position.longitude,
       speed: position.speed,
@@ -35,7 +38,6 @@ class TrackingRepository {
       studentCount: studentCount,
       updatedAt: Timestamp.now(),
     );
-
     await datasource.updateBusLocation(model);
   }
 

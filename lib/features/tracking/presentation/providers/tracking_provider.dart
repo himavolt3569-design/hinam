@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hinam/features/driver/presentation/providers/driver_profile_provider.dart';
+import 'package:hinam/features/fleet/presentation/providers/fleet_providers.dart';
 import 'package:hinam/features/tracking/data/repositories/tracking_repository.dart';
 import 'package:hinam/features/tracking/presentation/providers/tracking_state.dart';
 import 'package:hinam/features/tracking/presentation/services/location_service.dart';
@@ -26,6 +27,13 @@ class TrackingNotifier extends Notifier<TrackingState> {
     final driver = ref.read(driverProfileProvider).asData?.value;
     if (driver == null) return;
 
+    // Use active assignment data if available, else fall back to driver's own data
+    final assignment = ref.read(activeAssignmentProvider).asData?.value;
+    final busNumber = assignment?.busNumber ?? driver.busNumber;
+    final busType = assignment?.busType ?? driver.busType;
+    final routeName = assignment?.routeName ?? driver.routeName;
+    final schoolName = assignment?.schoolName ?? driver.schoolName;
+
     state = state.copyWith(isTracking: true, studentCount: 0);
 
     _subscription = ref
@@ -34,10 +42,13 @@ class TrackingNotifier extends Notifier<TrackingState> {
         .listen((position) async {
           state = state.copyWith(isTracking: true, position: position);
 
-          await ref
-              .read(trackingRepositoryProvider)
-              .updateLocation(
-                driver: driver,
+          await ref.read(trackingRepositoryProvider).updateLocation(
+                driverId: driver.uid,
+                driverName: driver.fullName,
+                busNumber: busNumber,
+                busType: busType,
+                routeName: routeName,
+                schoolName: schoolName,
                 position: position,
                 studentCount: state.studentCount,
               );
