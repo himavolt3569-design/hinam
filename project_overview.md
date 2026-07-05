@@ -2,293 +2,262 @@
 
 # Hinam
 
-## 1. Introduction
-
-Hinam is a cross-platform Flutter application designed to provide real-time public transportation tracking within Nepal.
-
-The application connects drivers, passengers, and administrators through a unified platform that enables reliable vehicle tracking, route visibility, and transportation management.
-
-The project follows an MVP-first development strategy while maintaining an architecture that supports future expansion without requiring significant structural changes.
+> A modular mobility platform for Nepal that makes public transportation safer, smarter, and easier to use.
 
 ---
 
-# 2. Purpose
+# Vision
 
-The primary objective of Hinam is to improve the public transportation experience by providing accurate, real-time vehicle information.
+Hinam is a unified mobility platform designed to improve the way people travel. Instead of building a single-purpose application, Hinam provides multiple transportation services under one ecosystem while maintaining a clean, scalable architecture.
 
-The system allows drivers to securely share their live location while enabling passengers to locate buses, monitor routes, and make informed travel decisions.
+The goal is to make transportation more accessible, transparent, and secure through real-time technology and thoughtful user experiences.
 
-The project emphasizes simplicity, reliability, scalability, and maintainability over unnecessary complexity.
-
----
-
-# 3. Project Scope
-
-The application currently focuses on public transportation tracking through three primary user roles.
-
-### Driver
-
-Drivers authenticate using their phone number, register their vehicle, and share their live location.
-
-### Passenger
-
-Passengers can discover available buses, view their locations on a map, search routes, and monitor vehicle movement.
-
-### Administrator
-
-Administrators manage drivers, vehicle approvals, routes, and platform data to ensure information remains accurate and reliable.
+Every transportation service should operate independently while sharing a common infrastructure such as authentication, notifications, administration, and user management.
 
 ---
 
-# 4. Technology Stack
+# Core Principles
 
-## Frontend
-
-* Flutter
-* Dart
-
-## State Management
-
-* flutter_riverpod
-* AsyncNotifier
-
-## Backend
-
-Firebase
-
-Services used:
-
-* Firebase Authentication
-* Cloud Firestore
-
-## Maps
-
-* OpenStreetMap
-* flutter_map
-
-## Location Services
-
-* geolocator
-
-## Navigation
-
-* Flutter Named Routes
-
-## Development
-
-* Git
-* GitHub
-* Flutter Lints
-* Dart Formatter
+- One application, multiple transportation services.
+- Modular architecture over feature coupling.
+- Simplicity before complexity.
+- Security by default.
+- Production-ready code over quick solutions.
+- Consistent user experience across every service.
+- Scalable architecture that supports future expansion.
 
 ---
 
-# 5. Architectural Principles
+# Transportation Services
 
-The project follows a **Feature-First Architecture**.
+## Public Bus Tracking
 
-Each feature is responsible for its own presentation, state management, and business logic. This keeps features isolated, maintainable, and scalable.
+Allows passengers to track public buses in real time.
 
-Project structure:
+Primary capabilities:
 
-```text
-lib/
+- Live bus locations
+- Route information
+- Bus stop information
+- Estimated arrival information
+- Passenger count (future)
+- Driver tracking
 
-core/
-features/
-shared/
-```
+---
 
-Example feature structure:
+## School Bus Tracking
+
+Allows schools and parents to monitor school buses safely.
+
+Primary capabilities:
+
+- Live school bus tracking
+- Student count
+- Route assignment
+- Driver information
+- Parent visibility
+- Administrative monitoring
+
+---
+
+## Hinam Ride
+
+A women-focused ride-sharing service integrated into the Hinam platform.
+
+Primary capabilities:
+
+- Female driver registration
+- Female passenger matching
+- Live ride tracking
+- Negotiable ride pricing
+- Driver verification
+- Emergency safety features
+- Ride history
+- Ratings and reporting
+
+---
+
+# Platform Architecture
+
+Hinam follows a modular architecture.
+
+Each transportation service is implemented as an independent feature module.
+
+Business logic should never be tightly coupled between services.
+
+Example:
 
 ```text
 features/
 
 auth/
-driver/
-tracking/
-passenger/
 admin/
+
+bus/
+school_bus/
+tracking/
+
+hinam_ride/
+
+shared/
 ```
 
-Each feature generally follows:
+Only reusable components belong inside `shared/`.
 
-```text
-feature/
-
-data/
-presentation/
-```
-
-Presentation contains:
-
-```text
-screens/
-widgets/
-providers/
-services/
-```
-
-Additional layers should only be introduced when they provide clear architectural value.
+Transportation-specific logic must remain inside its own module.
 
 ---
 
-# 6. Core Module
+# Technology Stack
 
-The `core` directory contains application-wide resources that are shared across all features.
+## Mobile
 
-Typical contents include:
+- Flutter
+- Dart
 
-* Application routing
-* Theme configuration
-* Constants
-* Utility functions
-* Global services
-* Shared configuration
+## State Management
 
-Feature-specific business logic should never be placed inside the `core` module.
+- Riverpod (AsyncNotifier, Provider, StreamProvider)
 
----
+## Backend
 
-# 7. Shared Module
+- Firebase Authentication
+- Cloud Firestore
+- Firebase Storage
+- Firebase Cloud Messaging
 
-The `shared` directory contains reusable components that are not owned by a specific feature.
+## Maps & Location
 
-Examples include:
+- Google Maps
+- Geolocator
+- Geocoding
 
-* Buttons
-* Cards
-* Dialogs
-* Loading indicators
-* Common form components
-* Shared widgets
+## Architecture
 
-Reusable components should be extracted only when they are used by multiple features.
-
----
-
-# 8. Data Management
-
-The application uses Firebase as its backend service.
-
-Responsibilities are separated by concern:
-
-* Firebase Authentication manages user identity.
-* Cloud Firestore stores application data.
-* Live tracking data is stored independently from permanent profile information.
-
-This separation minimizes unnecessary reads and keeps frequently updated tracking data independent from relatively static user data.
+- Feature-First Architecture
+- Repository Pattern
+- Clean Feature Separation
+- Dependency Injection using Riverpod
 
 ---
 
-# 9. State Management Philosophy
+# Application Roles
 
-Riverpod is the single state management solution used throughout the project.
+## Passenger
 
-General guidelines:
+Can:
 
-* AsyncNotifier is preferred for asynchronous workflows.
-* Providers should have a single responsibility.
-* UI should react to provider state rather than contain business logic.
-* Business logic should remain outside widgets whenever possible.
-
----
-
-# 10. Design Principles
-
-The project follows the following engineering principles:
-
-* Simplicity over complexity
-* Readability over cleverness
-* Consistency over personal preference
-* Reusability over duplication
-* Scalability without over-engineering
-* Predictable project structure
-* Clear separation of responsibilities
-
-Every implementation should improve the maintainability of the codebase.
+- Track buses
+- View routes
+- Book rides
+- View ride history
+- Report issues
+- Rate drivers
 
 ---
 
-# 11. Development Guidelines
+## Bus Driver
 
-When implementing new functionality:
+Can:
 
-* Follow the existing project architecture.
-* Keep feature logic isolated.
-* Reuse existing components before creating new ones.
-* Avoid unnecessary dependencies.
-* Prefer small, focused widgets.
-* Write meaningful names for classes, methods, and variables.
-* Keep asynchronous operations inside providers or services.
-* Minimize duplicated code.
-
-Architecture changes should only be introduced when they provide measurable long-term benefits.
+- Register bus
+- Share live location
+- Manage tracking
+- Update passenger information
 
 ---
 
-# 12. Performance Philosophy
+## Ride Driver
 
-Performance considerations should be incorporated throughout development rather than treated as a final optimization step.
+Can:
 
-Key principles include:
-
-* Minimize unnecessary widget rebuilds.
-* Avoid redundant Firestore reads.
-* Keep providers lightweight.
-* Reuse widgets whenever appropriate.
-* Load data only when required.
-* Optimize location updates for battery efficiency.
+- Register vehicle
+- Submit verification documents
+- Go online/offline
+- Accept ride requests
+- Negotiate pricing
+- Complete rides
 
 ---
 
-# 13. Security Principles
+## Administrator
 
-The project follows secure development practices by default.
+Can:
 
-General guidelines:
-
-* Never trust client-side validation alone.
-* Protect Firestore using security rules.
-* Store only required user information.
-* Keep authentication separate from application data.
-* Avoid exposing sensitive configuration within source code.
-
----
-
-# 14. Scalability
-
-The architecture is intentionally modular.
-
-New transportation services or platform capabilities should be implemented as independent features while preserving the existing project structure.
-
-The addition of future functionality should require minimal changes to existing modules.
+- Approve drivers
+- Manage transportation services
+- View analytics
+- Moderate reports
+- Suspend accounts
+- Manage routes
+- Review ride activity
 
 ---
 
-# 15. Code Quality Standards
+# Shared Platform Services
 
-The project values long-term maintainability.
+Every transportation service uses common infrastructure.
 
-Every contribution should strive to be:
+Shared services include:
 
-* Simple
-* Readable
-* Consistent
-* Testable
-* Maintainable
-* Well-organized
-
-The objective is to build a codebase that remains understandable as the project grows.
+- Authentication
+- User management
+- Notifications
+- Image uploads
+- Permissions
+- Theme
+- Navigation
+- Error handling
+- Logging
 
 ---
 
-# 16. Guiding Principle
+# Design Philosophy
 
-Every architectural and implementation decision should answer one question:
+Every feature should answer one question:
 
-> Does this make the project easier to understand, maintain, and extend?
+> "Does this belong to the platform, or only to one transportation service?"
 
-If the answer is no, the solution should be reconsidered.
+If it belongs to only one transportation service, keep it inside that feature.
 
-The long-term success of Hinam depends not only on its features, but also on the quality and sustainability of its architecture.
+If multiple services require it, promote it to the shared layer.
+
+This philosophy keeps the project modular and prevents unnecessary coupling.
+
+---
+
+# Code Quality Standards
+
+The project prioritizes:
+
+- Readability
+- Maintainability
+- Predictability
+- Testability
+- Security
+- Consistency
+
+Code should always favor clear architecture over clever implementations.
+
+---
+
+# Future Growth
+
+The architecture intentionally supports adding new transportation services without modifying existing ones.
+
+Potential future services may include:
+
+- Emergency transportation
+- Corporate transport
+- Shuttle services
+- Accessibility transport
+
+These services should be introduced as independent feature modules while continuing to share the common platform infrastructure.
+
+---
+
+# Guiding Principle
+
+> Build a mobility platform, not a collection of unrelated features.
+
+Every architectural decision should support scalability, maintainability, and a consistent experience for users and contributors alike.

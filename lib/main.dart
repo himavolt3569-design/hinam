@@ -6,6 +6,7 @@ import 'core/routes/app_router.dart';
 import 'core/routes/app_routes.dart';
 import 'core/theme/app_theme.dart';
 import 'firebase_options.dart';
+import 'shared/providers/notification_providers.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -15,11 +16,13 @@ Future<void> main() async {
   runApp(const ProviderScope(child: HinamApp()));
 }
 
-class HinamApp extends StatelessWidget {
+class HinamApp extends ConsumerWidget {
   const HinamApp({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.watch(fcmTokenSyncProvider);
+
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Hinam',

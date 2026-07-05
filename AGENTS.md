@@ -1,31 +1,36 @@
 # AGENTS.md
 
-# AI Contributor Guidelines
+# Hinam Development Guidelines
 
-This document defines the expectations and contribution standards for any AI coding agent working within the Hinam repository.
+This document defines the engineering principles, architectural rules, and development standards for every contributor working on the Hinam project.
 
-These guidelines apply to all contributors, regardless of the AI model or development environment.
-
----
-
-# Mission
-
-Contribute code that improves the project while preserving its simplicity, consistency, and maintainability.
-
-Every implementation should integrate naturally with the existing architecture rather than introducing unnecessary complexity.
+These guidelines apply equally to human developers and AI coding agents.
 
 ---
 
-# Primary Responsibilities
+# Primary Objective
 
-AI agents should:
+The goal is not simply to write working code.
 
-* Understand the existing implementation before making changes.
-* Respect the established project architecture.
-* Keep changes focused on the requested task.
-* Preserve code readability.
-* Minimize unnecessary modifications.
-* Produce production-quality code.
+The goal is to build a maintainable, scalable, secure, and production-ready mobility platform.
+
+Every change should improve the long-term quality of the project.
+
+---
+
+# Core Principles
+
+Always prioritize:
+
+- Simplicity over cleverness.
+- Readability over brevity.
+- Consistency over personal preference.
+- Maintainability over quick fixes.
+- Security by default.
+- Reusability only when justified.
+- Composition over duplication.
+
+If multiple valid solutions exist, choose the one that makes the project easier to understand six months from now.
 
 ---
 
@@ -33,251 +38,272 @@ AI agents should:
 
 Before implementing any feature:
 
-1. Understand the relevant feature module.
-2. Review nearby files to maintain consistency.
-3. Reuse existing components whenever possible.
-4. Avoid introducing duplicate functionality.
-5. Consider how the new code affects the overall architecture.
+1. Understand the problem.
+2. Understand the existing architecture.
+3. Identify where the feature belongs.
+4. Reuse existing components when appropriate.
+5. Avoid introducing unnecessary abstractions.
 
-Never begin implementation without understanding the surrounding code.
+Never start coding before understanding the surrounding architecture.
+
+---
+
+# Feature Ownership
+
+Every transportation service owns its own business logic.
+
+Examples:
+
+- Public Bus
+- School Bus
+- Hinam Ride
+
+Business logic should remain inside its respective feature module.
+
+Do not move transportation-specific logic into shared components.
+
+---
+
+# Shared Layer Rules
+
+Only move code into `shared/` when it satisfies all of the following:
+
+- Used by multiple features.
+- Independent of transportation-specific logic.
+- Improves maintainability.
+- Reduces meaningful duplication.
+
+Do not create shared code prematurely.
 
 ---
 
 # Architecture Rules
 
-The project follows a Feature-First Architecture.
+Follow the established Feature-First architecture.
 
-Every feature owns its own:
+Each feature should remain self-contained.
 
-* Presentation
-* State management
-* Business logic
-* Data access
+Typical structure:
 
-Feature logic should remain inside the feature that owns it.
+```text
+feature/
 
-Do not move business logic into unrelated modules.
+data/
+domain/
+presentation/
+```
 
----
+Each layer has a clear responsibility.
 
-# Directory Responsibilities
+### Data
 
-## core/
+Responsible for:
 
-Contains application-wide resources.
+- Firebase
+- APIs
+- Models
+- Repositories
+- Data sources
 
-Examples:
+### Domain
 
-* Theme
-* Routing
-* Constants
-* Utilities
-* Global services
+Responsible for:
 
-Do not place feature-specific logic here.
+- Business entities
+- Enums
+- Core business logic
 
----
+### Presentation
 
-## shared/
+Responsible for:
 
-Contains reusable components shared across multiple features.
+- UI
+- State management
+- User interaction
+- Navigation
 
-Examples:
-
-* Buttons
-* Cards
-* Dialogs
-* Common widgets
-
-Only move code into `shared` when it is genuinely reusable.
-
----
-
-## features/
-
-Each feature should remain independent.
-
-Avoid creating dependencies between unrelated features unless absolutely necessary.
-
----
-
-# Coding Standards
-
-Code should be:
-
-* Readable
-* Predictable
-* Consistent
-* Maintainable
-
-Prefer clear implementations over clever solutions.
-
-Meaningful naming is preferred over abbreviations.
-
-Avoid deeply nested logic whenever possible.
-
----
-
-# Widget Guidelines
-
-Widgets should focus on presentation.
-
-Business logic should remain inside providers or services.
-
-Extract reusable widgets only when they are used in multiple places or clearly improve readability.
-
-Avoid creating unnecessary widget files.
+Never bypass architectural layers.
 
 ---
 
 # State Management
 
-Riverpod is the project's state management solution.
+Riverpod is the standard state management solution.
 
-General expectations:
+Preferred providers:
 
-* Prefer AsyncNotifier for asynchronous workflows.
-* Keep providers focused on a single responsibility.
-* Avoid storing unnecessary state.
-* UI should react to provider state instead of containing business logic.
+- Provider
+- FutureProvider
+- StreamProvider
+- AsyncNotifier
 
----
+Avoid unnecessary StateNotifier or ChangeNotifier implementations unless there is a clear architectural reason.
 
-# Data Management
+Business logic belongs inside providers—not inside widgets.
 
-Firebase is the primary backend.
-
-Responsibilities should remain separated.
-
-Authentication data, user profiles, and live tracking data should not be merged into a single data model unless there is a clear architectural reason.
+Widgets should remain declarative.
 
 ---
 
-# Dependencies
+# UI Development
 
-Before introducing a new package:
+Every screen should have a clear responsibility.
 
-* Verify that existing packages cannot solve the problem.
-* Consider maintenance implications.
-* Minimize dependency count.
-* Prefer official Flutter packages when appropriate.
+Prefer small reusable widgets over large monolithic screens.
 
-Do not introduce dependencies without clear justification.
+Avoid deeply nested widget trees.
+
+Extract reusable UI components when they improve clarity.
+
+Maintain consistent spacing, typography, and visual hierarchy across the application.
 
 ---
 
-# Refactoring
+# Firebase Guidelines
 
-Refactoring is encouraged only when it improves the codebase.
+Never access Firebase directly from the UI.
 
-Avoid refactoring unrelated code while implementing a feature.
+Always go through:
 
-Large architectural changes should not be introduced without explicit approval.
+Repository
+
+↓
+
+Datasource
+
+↓
+
+Firebase
+
+Firestore document structures should remain consistent.
+
+Security rules should always enforce critical business rules rather than relying solely on client-side validation.
+
+---
+
+# Navigation
+
+Routes should be centralized.
+
+Avoid hardcoded navigation strings.
+
+Navigation should remain predictable and easy to maintain.
 
 ---
 
 # Error Handling
 
-Handle failures gracefully.
+Never silently ignore errors.
 
-Avoid silent failures.
+Handle expected failures gracefully.
 
-Provide meaningful error messages where appropriate.
+Provide meaningful feedback to users.
 
-Never ignore exceptions without reason.
+Log unexpected failures when appropriate.
+
+---
+
+# Security
+
+Security decisions belong on the backend whenever possible.
+
+Do not rely solely on UI restrictions.
+
+Always assume client applications can be modified.
+
+Validate permissions using Firestore Security Rules.
 
 ---
 
 # Performance
 
-Consider performance during implementation.
+Avoid unnecessary rebuilds.
 
-Examples:
+Prefer lazy loading.
 
-* Avoid unnecessary widget rebuilds.
-* Minimize Firestore reads.
-* Reduce redundant computations.
-* Avoid excessive object creation.
-* Keep providers lightweight.
+Use streams only when real-time updates are required.
 
-Optimization should never sacrifice readability.
+Keep Firestore reads and writes efficient.
+
+Avoid duplicate queries.
 
 ---
 
 # Documentation
 
-Update documentation when architectural decisions change.
+Update documentation whenever architecture changes.
 
-Do not leave outdated comments.
+Keep documentation accurate.
 
-Keep documentation concise and accurate.
+Do not leave outdated implementation notes inside documentation.
 
----
-
-# Testing Mindset
-
-Even when automated tests are not being written, implement code as though it will be tested.
-
-Write deterministic, modular, and predictable code.
-
-Avoid tightly coupled implementations.
+Documentation should describe the current system—not its history.
 
 ---
 
-# Pull Request Philosophy
+# Refactoring
 
-Each contribution should:
+Refactor only when it improves:
 
-* Solve one problem.
-* Avoid unrelated modifications.
-* Preserve formatting.
-* Maintain existing naming conventions.
-* Keep commits logically organized.
+- readability
+- maintainability
+- architecture
+- consistency
 
----
+Do not refactor unrelated code while implementing a feature.
 
-# Things to Avoid
-
-Do not:
-
-* Rewrite working code without reason.
-* Introduce unnecessary abstractions.
-* Create duplicate utilities.
-* Add unused dependencies.
-* Ignore existing project conventions.
-* Modify unrelated files.
-* Sacrifice readability for brevity.
+Keep pull requests and commits focused.
 
 ---
 
-# Decision Making
+# Code Quality
 
-When multiple valid implementations exist, prefer the one that is:
+Every contribution should be:
 
-1. Easier to understand.
-2. Easier to maintain.
-3. Consistent with the existing codebase.
-4. Simpler to extend.
-5. Less likely to introduce bugs.
+- Easy to read.
+- Easy to modify.
+- Easy to test.
+- Easy to review.
+
+Avoid unnecessary complexity.
+
+If a solution requires extensive explanation, consider simplifying it.
 
 ---
 
-# Guiding Principles
+# AI Contributor Guidelines
 
-Every contribution should improve at least one of the following:
+When implementing a new feature:
 
-* Readability
-* Maintainability
-* Consistency
-* Reliability
-* Simplicity
+1. Read PROJECT_OVERVIEW.md.
+2. Read this document.
+3. Understand the existing architecture.
+4. Reuse existing patterns.
+5. Follow project conventions.
+6. Explain architectural decisions before major refactors.
 
-If a proposed change does not provide measurable value, it should not be introduced.
+Never generate large-scale changes without first understanding the current codebase.
 
-The objective is not only to build new features, but also to preserve a clean, scalable, and sustainable codebase throughout the lifetime of the project.
+Prefer incremental improvements over disruptive rewrites.
 
-Each transportation service
-must remain independent.
+---
 
-Do not mix business logic
-between services.
+# Decision Framework
+
+Before introducing new code, ask:
+
+- Does this belong in this feature?
+- Can this reuse an existing pattern?
+- Is this truly shared functionality?
+- Will this still make sense in one year?
+- Does this improve the project?
+
+If the answer to any question is "no", reconsider the implementation.
+
+---
+
+# Guiding Principle
+
+Write code that the next contributor can understand without needing additional explanation.
+
+A well-structured project should communicate its architecture through the code itself.

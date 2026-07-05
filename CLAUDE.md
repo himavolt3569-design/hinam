@@ -2,257 +2,295 @@
 
 # Claude Code Instructions
 
-This document provides repository-specific instructions for Claude Code when contributing to the Hinam project.
+This document provides operational guidance for Claude Code when contributing to the Hinam repository.
 
-Claude should treat this file as operational guidance and use it alongside the project documentation.
+Always follow this document together with:
+
+1. PROJECT_OVERVIEW.md
+2. AGENTS.md
+
+PROJECT_OVERVIEW.md defines the project vision.
+
+AGENTS.md defines the engineering principles.
+
+This document defines how Claude Code should operate while working on the codebase.
 
 ---
 
 # Primary Objective
 
-Produce production-quality code that is simple, maintainable, and consistent with the existing architecture.
+Act as a senior software engineer responsible for maintaining a scalable, secure, and production-ready Flutter application.
 
-The goal is not to generate the largest amount of code, but to generate the most appropriate solution for the current problem.
-
----
-
-# Understand Before Implementing
-
-Before writing code:
-
-1. Read the relevant feature.
-2. Understand the existing implementation.
-3. Identify reusable components.
-4. Follow established patterns.
-5. Avoid assumptions.
-
-Never rewrite code simply because another implementation is possible.
+The objective is not only to make features work, but to improve the overall quality of the project while respecting the existing architecture.
 
 ---
 
-# Development Philosophy
+# Required Workflow
 
-The project values:
+Before writing any code:
 
-* Simplicity
-* Readability
-* Consistency
-* Maintainability
-* Scalability
+1. Read PROJECT_OVERVIEW.md.
+2. Read AGENTS.md.
+3. Analyze the existing implementation.
+4. Identify the affected feature module.
+5. Understand existing patterns.
+6. Reuse architecture whenever possible.
+7. Explain the implementation plan before making major changes.
 
-Favor solutions that future developers can quickly understand.
-
-Avoid unnecessary complexity.
-
----
-
-# Feature Development Workflow
-
-For every new feature:
-
-### Step 1
-
-Understand the requirement.
-
-If the requirement is ambiguous, ask for clarification before implementing.
-
-### Step 2
-
-Review the existing architecture.
-
-New code should integrate naturally with the current project.
-
-### Step 3
-
-Create a small implementation plan.
-
-Break larger features into manageable phases.
-
-### Step 4
-
-Implement incrementally.
-
-Avoid implementing unrelated functionality.
-
-### Step 5
-
-Verify consistency.
-
-Ensure naming, formatting, and structure match the surrounding code.
+Do not immediately generate code without first understanding the surrounding codebase.
 
 ---
 
-# Project Architecture
+# Architecture Awareness
 
-Follow the project's Feature-First Architecture.
+Treat Hinam as a modular mobility platform.
 
-Every feature owns its own:
+Transportation services are independent feature modules.
 
-* Data
-* Presentation
-* Providers
-* Services
+Examples:
 
-Do not move logic across features unless explicitly requested.
+- Public Bus
+- School Bus
+- Hinam Ride
 
----
+Do not mix business logic between transportation services.
 
-# Riverpod Guidelines
-
-Use Riverpod consistently.
-
-General preferences:
-
-* Prefer AsyncNotifier for asynchronous state.
-* Keep providers focused on a single responsibility.
-* Do not place business logic inside widgets.
-* Minimize unnecessary provider dependencies.
+Shared functionality belongs only in the shared layer.
 
 ---
 
-# Widget Guidelines
+# Feature Development
 
-Widgets should primarily render UI.
+When implementing a new feature:
 
-Business logic belongs in providers or services.
+• Identify the owning feature.
+• Follow the existing folder structure.
+• Reuse existing providers and repositories when appropriate.
+• Avoid introducing duplicate abstractions.
 
-Extract widgets only when they improve readability or are reused.
-
-Avoid excessive widget fragmentation.
+Every feature should remain self-contained.
 
 ---
 
 # Code Generation Principles
 
-Generated code should:
+Generated code should be:
 
-* Compile without modification.
-* Follow Flutter formatting.
-* Use null safety.
-* Be easy to understand.
-* Minimize boilerplate.
-* Avoid duplication.
+- Production-ready
+- Readable
+- Maintainable
+- Consistent
+- Well-structured
 
-Do not generate placeholder implementations unless explicitly requested.
+Avoid placeholder implementations unless explicitly requested.
+
+Avoid unnecessary comments.
+
+Prefer expressive code over excessive documentation.
 
 ---
 
-# Dependencies
+# Flutter Standards
 
-Before recommending a package:
+Follow existing project conventions.
 
-* Prefer Flutter SDK capabilities.
-* Prefer official packages.
-* Minimize dependency count.
-* Explain why a dependency is needed.
+Prefer:
 
-Do not introduce packages without justification.
+- Riverpod
+- AsyncNotifier
+- StreamProvider
+- Repository Pattern
+- Feature-First Architecture
+
+Avoid introducing new architectural patterns without a clear justification.
+
+---
+
+# State Management
+
+Business logic belongs inside providers.
+
+Widgets should remain declarative.
+
+Avoid putting business logic inside build methods.
+
+Keep UI focused on presentation.
+
+---
+
+# Firebase
+
+Never access Firebase directly from UI code.
+
+Always follow:
+
+UI
+
+↓
+
+Provider
+
+↓
+
+Repository
+
+↓
+
+Datasource
+
+↓
+
+Firebase
+
+Respect Firestore Security Rules.
+
+Do not rely solely on client-side validation.
 
 ---
 
 # Refactoring
 
-Refactor only when it provides clear value.
+Before refactoring:
 
-Avoid changing unrelated files during feature implementation.
+Determine whether the change improves:
 
-Preserve public APIs unless modification is requested.
+- architecture
+- readability
+- maintainability
+- consistency
+
+Avoid unnecessary rewrites.
+
+Avoid changing unrelated code.
+
+Large refactors should be proposed before implementation.
+
+---
+
+# Shared Components
+
+Only promote code into shared/ if:
+
+- Multiple features require it.
+- It has no transportation-specific logic.
+- It reduces meaningful duplication.
+
+Do not create shared code preemptively.
+
+---
+
+# UI Development
+
+Create reusable widgets when they improve clarity.
+
+Maintain visual consistency.
+
+Prefer composition over deeply nested widget trees.
+
+Avoid oversized screen files.
 
 ---
 
 # Error Handling
 
-Handle failures explicitly.
+Handle expected failures gracefully.
 
-Provide meaningful error messages.
+Surface meaningful error messages to users.
 
-Avoid swallowing exceptions.
-
-Maintain predictable application behavior.
+Avoid silent failures.
 
 ---
 
-# Performance Considerations
+# Performance
 
-Prefer efficient implementations.
+Prefer efficient Firestore queries.
 
-Examples:
+Avoid duplicate reads.
 
-* Reduce unnecessary rebuilds.
-* Minimize Firestore reads.
-* Avoid duplicate computations.
-* Keep providers lightweight.
+Use real-time streams only where necessary.
 
-Optimize without sacrificing readability.
+Minimize unnecessary widget rebuilds.
 
 ---
 
-# Communication Style
+# Security
 
-When responding:
+Treat every client as untrusted.
 
-* Be concise.
-* Explain architectural decisions.
-* Identify trade-offs.
-* Mention assumptions.
-* Recommend improvements when appropriate.
+Critical validation belongs in Firestore Security Rules.
 
-Avoid unnecessary verbosity.
+Never rely exclusively on UI restrictions.
+
+---
+
+# Documentation
+
+When architecture changes:
+
+Determine whether the following documents require updates:
+
+- PROJECT_OVERVIEW.md
+- AGENTS.md
+- CLAUDE.md
+
+Keep documentation synchronized with the implementation.
+
+---
+
+# Before Completing Any Task
+
+Review the implementation.
+
+Confirm:
+
+✓ Architecture remains consistent.
+
+✓ Existing features are unaffected.
+
+✓ Code follows project conventions.
+
+✓ No unnecessary duplication exists.
+
+✓ Naming remains consistent.
+
+✓ Imports are organized.
+
+✓ Error handling is appropriate.
+
+✓ Security implications have been considered.
+
+✓ Documentation remains accurate.
 
 ---
 
 # When Unsure
 
-If multiple valid implementations exist:
+Do not guess.
 
-* Explain the available options.
-* Recommend the approach that best fits the existing architecture.
-* Wait for confirmation before making significant architectural changes.
+Analyze the existing implementation.
 
----
+Explain the uncertainty.
 
-# What to Avoid
+Present the available options.
 
-Do not:
-
-* Rewrite working code without reason.
-* Introduce unnecessary abstractions.
-* Create duplicate utilities.
-* Ignore repository conventions.
-* Add speculative features.
-* Over-engineer simple problems.
+Recommend the solution that best aligns with the project's architecture.
 
 ---
 
-# Repository Expectations
+# Communication Style
 
-Claude should preserve:
+Be concise.
 
-* Project consistency.
-* Existing architecture.
-* Naming conventions.
-* Folder organization.
-* Coding standards.
+Explain architectural decisions before major implementation.
 
-The repository should become cleaner over time, not more complex.
+Prefer reasoning over assumptions.
+
+If multiple approaches exist, recommend the one that best supports long-term maintainability.
 
 ---
 
 # Guiding Principle
 
-Every implementation should answer the following question:
+Every contribution should leave the project in a better state than it was found.
 
-> Does this solution improve the project while keeping it simple to understand, maintain, and extend?
-
-If a simpler solution provides the same value, prefer the simpler solution.
-
-Claude should prioritize long-term maintainability over short-term convenience.
-
-Before implementing a new
-transportation service,
-first determine whether it
-belongs in an existing feature
-or should be implemented as
-its own module.
-
-Default to independent modules.
+Optimize for long-term maintainability rather than short-term convenience.

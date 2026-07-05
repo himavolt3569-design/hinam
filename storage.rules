@@ -1,0 +1,29 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    // Helper: caller is authenticated
+    function isAuth() {
+      return request.auth != null;
+    }
+
+    // Helper: caller owns the top-level folder at uid
+    function isOwner(uid) {
+      return isAuth() && request.auth.uid == uid;
+    }
+
+    // Helper: caller is an admin (mirrors firestore.rules' isAdmin())
+    function isAdmin() {
+      return isAuth() &&
+        firestore.exists(/databases/(default)/documents/admins/$(request.auth.uid));
+    }
+
+    // Every file lives under a top-level folder named for its owner's uid.
+    // Owners may read and write their own files; admins may read for review workflows.
+    match /{uid}/{allPaths=**} {
+      allow read: if isOwner(uid) || isAdmin();
+      allow write: if isOwner(uid);
+    }
+  }
+}
