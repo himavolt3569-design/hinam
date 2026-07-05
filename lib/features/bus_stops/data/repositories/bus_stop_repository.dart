@@ -3,9 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:hinam/features/bus_stops/data/datasources/bus_stop_remote_datasource.dart';
 import 'package:hinam/features/bus_stops/data/models/bus_stop_model.dart';
+import 'package:hinam/shared/providers/firebase_providers.dart';
 
 final busStopRepositoryProvider = Provider<BusStopRepository>((ref) {
-  return BusStopRepository(BusStopRemoteDatasource(FirebaseFirestore.instance));
+  return BusStopRepository(BusStopRemoteDatasource(ref.read(firestoreProvider)));
 });
 
 class BusStopRepository {

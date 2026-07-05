@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:hinam/core/theme/app_colors.dart';
 import 'package:hinam/features/fleet/presentation/providers/fleet_providers.dart';
+import 'package:hinam/shared/widgets/loading_button.dart';
 
 class BusFormDialog extends ConsumerStatefulWidget {
   const BusFormDialog({super.key});
@@ -174,11 +175,10 @@ class _BusFormDialogState extends ConsumerState<BusFormDialog> {
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: FilledButton(
+                  child: LoadingButton(
+                    text: 'Add Bus',
+                    isLoading: _isSaving,
                     onPressed: canSave ? _save : null,
-                    child: _isSaving
-                        ? const SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
-                        : const Text('Add Bus'),
                   ),
                 ),
               ],

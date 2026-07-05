@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:hinam/core/theme/app_colors.dart';
-import 'package:hinam/features/tracking/data/models/bus_location_model.dart';
+import 'package:hinam/shared/models/bus_location_model.dart';
 
 class BusListCard extends StatelessWidget {
   final BusLocationModel bus;
@@ -69,7 +69,7 @@ class BusListCard extends StatelessWidget {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        '${bus.speed.toStringAsFixed(0)} km/h',
+                        '${bus.speedKmh.toStringAsFixed(0)} km/h',
                         style: const TextStyle(fontSize: 11, color: AppColors.textTertiary),
                       ),
                     ],

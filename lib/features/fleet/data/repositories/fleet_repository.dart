@@ -1,12 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:hinam/shared/providers/firebase_providers.dart';
+
 import '../datasources/fleet_remote_datasource.dart';
 import '../models/assignment_model.dart';
 import '../models/bus_model.dart';
 
 final fleetRepositoryProvider = Provider<FleetRepository>((ref) {
-  return FleetRepository(FleetRemoteDatasource(FirebaseFirestore.instance));
+  return FleetRepository(FleetRemoteDatasource(ref.read(firestoreProvider)));
 });
 
 class FleetRepository {

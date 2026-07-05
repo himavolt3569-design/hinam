@@ -1,11 +1,12 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:hinam/features/driver/data/models/driver_model.dart';
-import 'package:hinam/features/tracking/data/models/bus_location_model.dart';
+import 'package:hinam/shared/models/driver_model.dart';
+import 'package:hinam/shared/models/bus_location_model.dart';
+import 'package:hinam/shared/providers/firebase_providers.dart';
 
 final adminRepositoryProvider = Provider<AdminRepository>((ref) {
-  return AdminRepository(FirebaseFirestore.instance);
+  return AdminRepository(ref.read(firestoreProvider));
 });
 
 class AdminRepository {

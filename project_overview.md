@@ -1,49 +1,46 @@
-# Hinam - Project Overview
+# PROJECT_OVERVIEW.md
 
-## Project Name
+# Hinam
 
-Hinam
+## 1. Introduction
 
-## Project Description
+Hinam is a cross-platform Flutter application designed to provide real-time public transportation tracking within Nepal.
 
-Hinam is a smart transportation platform built for Nepal that enables users to track public buses and school buses in real time.
+The application connects drivers, passengers, and administrators through a unified platform that enables reliable vehicle tracking, route visibility, and transportation management.
 
-The long-term vision is to evolve Hinam into a complete mobility ecosystem by adding:
-
-* Public Bus Tracking
-* School Bus Tracking
-* Ambulance Tracking
-* Women-only Ride Sharing
-* Auto/Taxi Booking
-* Emergency Transport Services
-* Location-Based Mobility Services
-
-The initial MVP focuses only on Public Bus and School Bus Tracking.
+The project follows an MVP-first development strategy while maintaining an architecture that supports future expansion without requiring significant structural changes.
 
 ---
 
-# MVP Goals
+# 2. Purpose
 
-The first version of Hinam should allow:
+The primary objective of Hinam is to improve the public transportation experience by providing accurate, real-time vehicle information.
 
-### Drivers
+The system allows drivers to securely share their live location while enabling passengers to locate buses, monitor routes, and make informed travel decisions.
 
-* Register using phone number authentication
-* Create a driver profile
-* Register their bus
-* Share live location
-* Start and stop tracking
-
-### Passengers
-
-* View nearby buses
-* View bus locations on a map
-* Search buses
-* Track bus movement in real time
+The project emphasizes simplicity, reliability, scalability, and maintainability over unnecessary complexity.
 
 ---
 
-# Technology Stack
+# 3. Project Scope
+
+The application currently focuses on public transportation tracking through three primary user roles.
+
+### Driver
+
+Drivers authenticate using their phone number, register their vehicle, and share their live location.
+
+### Passenger
+
+Passengers can discover available buses, view their locations on a map, search routes, and monitor vehicle movement.
+
+### Administrator
+
+Administrators manage drivers, vehicle approvals, routes, and platform data to ensure information remains accurate and reliable.
+
+---
+
+# 4. Technology Stack
 
 ## Frontend
 
@@ -52,14 +49,14 @@ The first version of Hinam should allow:
 
 ## State Management
 
-* Riverpod
+* flutter_riverpod
 * AsyncNotifier
 
 ## Backend
 
-* Firebase
+Firebase
 
-### Firebase Services
+Services used:
 
 * Firebase Authentication
 * Cloud Firestore
@@ -67,333 +64,231 @@ The first version of Hinam should allow:
 ## Maps
 
 * OpenStreetMap
-
-Future:
-
 * flutter_map
 
-## Location Tracking
+## Location Services
 
-* Geolocator
+* geolocator
 
 ## Navigation
 
-* Named Routes
+* Flutter Named Routes
+
+## Development
+
+* Git
+* GitHub
+* Flutter Lints
+* Dart Formatter
 
 ---
 
-# Architecture
+# 5. Architectural Principles
 
-Feature First Architecture
+The project follows a **Feature-First Architecture**.
+
+Each feature is responsible for its own presentation, state management, and business logic. This keeps features isolated, maintainable, and scalable.
+
+Project structure:
 
 ```text
 lib/
 
 core/
+features/
+shared/
+```
 
+Example feature structure:
+
+```text
 features/
 
 auth/
 driver/
 tracking/
 passenger/
-
-shared/
+admin/
 ```
 
-Each feature contains its own:
+Each feature generally follows:
 
 ```text
+feature/
+
 data/
 presentation/
 ```
 
-Structure Example:
-
-features/auth/
-
-data/
-├── repositories/
-
-presentation/
-├── providers/
-├── screens/
-├── widgets/
-
-````
-
----
-
-# Current Features
-
-## Authentication
-
-Status: Completed
-
-Features:
-
-- Splash Screen
-- Login Screen
-- OTP Verification
-- Firebase Phone Authentication
-- Logout
-
----
-
-## Driver Registration
-
-Status: Completed
-
-Features:
-
-- Full Name
-- Bus Number
-- Bus Type
-- Route Name (Public Bus)
-- School Name (School Bus)
-
-Stored in Firestore.
-
----
-
-## Driver Dashboard
-
-Status: MVP Complete
-
-Features:
-
-- Driver Profile Display
-- Bus Information
-- Approval Status
-- Start Tracking Button
-- Logout
-
----
-
-## Location Tracking
-
-Status: In Progress
-
-### Phase 2A
-
-Completed
-
-Features:
-
-- Request Location Permission
-- Get Current Location
-- Show Coordinates
-
-### Phase 2B
-
-Current Development
-
-Features:
-
-- Live Location Stream
-- Tracking Status
-- Real-Time Coordinate Updates
-
-### Phase 2C
-
-Planned
-
-Features:
-
-- Firestore Location Updates
-- Bus Location Collection
-
-### Phase 2D
-
-Planned
-
-Features:
-
-- Background Tracking
-- Tracking Reliability Improvements
-
----
-
-# Firestore Structure
-
-## Drivers
-
-Collection:
+Presentation contains:
 
 ```text
-drivers
-````
-
-Document ID:
-
-```text
-driverUid
+screens/
+widgets/
+providers/
+services/
 ```
 
-Example:
-
-```json
-{
-  "uid": "123",
-  "fullName": "Ram Sharma",
-  "phoneNumber": "+97798XXXXXXX",
-  "busNumber": "Ba 3 Kha 1234",
-  "busType": "public",
-  "routeName": "Kalanki - Ratnapark",
-  "schoolName": null,
-  "isApproved": false,
-  "createdAt": "timestamp"
-}
-```
+Additional layers should only be introduced when they provide clear architectural value.
 
 ---
 
-## Bus Locations
+# 6. Core Module
 
-Collection:
+The `core` directory contains application-wide resources that are shared across all features.
 
-```text
-bus_locations
-```
+Typical contents include:
 
-Document ID:
+* Application routing
+* Theme configuration
+* Constants
+* Utility functions
+* Global services
+* Shared configuration
 
-```text
-driverUid
-```
-
-Example:
-
-```json
-{
-  "driverId": "123",
-  "busNumber": "Ba 3 Kha 1234",
-  "latitude": 27.7172,
-  "longitude": 85.3240,
-  "speed": 25.0,
-  "isTracking": true,
-  "updatedAt": "timestamp"
-}
-```
+Feature-specific business logic should never be placed inside the `core` module.
 
 ---
 
-# Development Roadmap
+# 7. Shared Module
 
-## Phase 1
+The `shared` directory contains reusable components that are not owned by a specific feature.
 
-Authentication & Driver Onboarding
+Examples include:
 
-Status: Completed
+* Buttons
+* Cards
+* Dialogs
+* Loading indicators
+* Common form components
+* Shared widgets
 
-* Splash
-* Login
-* OTP
-* Driver Registration
-* Dashboard
-
----
-
-## Phase 2
-
-Driver Tracking
-
-Status: In Progress
-
-* Location Permission
-* Current Location
-* Location Stream
-* Firestore Sync
+Reusable components should be extracted only when they are used by multiple features.
 
 ---
 
-## Phase 3
+# 8. Data Management
 
-Passenger Application
+The application uses Firebase as its backend service.
 
-* Passenger Dashboard
-* Map Screen
-* Nearby Buses
-* Live Bus Tracking
+Responsibilities are separated by concern:
 
----
+* Firebase Authentication manages user identity.
+* Cloud Firestore stores application data.
+* Live tracking data is stored independently from permanent profile information.
 
-## Phase 4
-
-Bus Search
-
-* Search by Bus Number
-* Search by Route
-* Search by School
+This separation minimizes unnecessary reads and keeps frequently updated tracking data independent from relatively static user data.
 
 ---
 
-## Phase 5
+# 9. State Management Philosophy
 
-Bus Stops
+Riverpod is the single state management solution used throughout the project.
 
-* Bus Stop Management
-* Bus Stop Markers
-* Stop Information
+General guidelines:
 
----
-
-## Phase 6
-
-ETA System
-
-* Estimated Arrival Time
-* Distance Calculation
-* Route Progress
+* AsyncNotifier is preferred for asynchronous workflows.
+* Providers should have a single responsibility.
+* UI should react to provider state rather than contain business logic.
+* Business logic should remain outside widgets whenever possible.
 
 ---
 
-## Phase 7
+# 10. Design Principles
 
-School Bus Features
+The project follows the following engineering principles:
 
-* School Dashboard
-* Student Tracking
-* Parent Monitoring
+* Simplicity over complexity
+* Readability over cleverness
+* Consistency over personal preference
+* Reusability over duplication
+* Scalability without over-engineering
+* Predictable project structure
+* Clear separation of responsibilities
 
----
-
-## Phase 8
-
-Admin Panel
-
-* Driver Approval
-* Bus Approval
-* Route Management
-* Monitoring Dashboard
+Every implementation should improve the maintainability of the codebase.
 
 ---
 
-# Development Rules
+# 11. Development Guidelines
 
-1. Use Riverpod for state management.
-2. Use AsyncNotifier for async operations.
-3. Keep business logic inside providers/services.
-4. UI should remain clean and reusable.
-5. Follow Feature First Architecture.
-6. Avoid unnecessary files and complexity.
-7. Build MVP first before adding advanced features.
-8. Prioritize scalability and maintainability.
+When implementing new functionality:
+
+* Follow the existing project architecture.
+* Keep feature logic isolated.
+* Reuse existing components before creating new ones.
+* Avoid unnecessary dependencies.
+* Prefer small, focused widgets.
+* Write meaningful names for classes, methods, and variables.
+* Keep asynchronous operations inside providers or services.
+* Minimize duplicated code.
+
+Architecture changes should only be introduced when they provide measurable long-term benefits.
 
 ---
 
-# Current Project Status
+# 12. Performance Philosophy
 
-Authentication: Complete
+Performance considerations should be incorporated throughout development rather than treated as a final optimization step.
 
-Driver Registration: Complete
+Key principles include:
 
-Dashboard: Complete
+* Minimize unnecessary widget rebuilds.
+* Avoid redundant Firestore reads.
+* Keep providers lightweight.
+* Reuse widgets whenever appropriate.
+* Load data only when required.
+* Optimize location updates for battery efficiency.
 
-Location Tracking: In Progress
+---
 
-Passenger Module: Not Started
+# 13. Security Principles
 
-Admin Panel: Not Started
+The project follows secure development practices by default.
 
-Overall Progress: Approximately 35%
+General guidelines:
+
+* Never trust client-side validation alone.
+* Protect Firestore using security rules.
+* Store only required user information.
+* Keep authentication separate from application data.
+* Avoid exposing sensitive configuration within source code.
+
+---
+
+# 14. Scalability
+
+The architecture is intentionally modular.
+
+New transportation services or platform capabilities should be implemented as independent features while preserving the existing project structure.
+
+The addition of future functionality should require minimal changes to existing modules.
+
+---
+
+# 15. Code Quality Standards
+
+The project values long-term maintainability.
+
+Every contribution should strive to be:
+
+* Simple
+* Readable
+* Consistent
+* Testable
+* Maintainable
+* Well-organized
+
+The objective is to build a codebase that remains understandable as the project grows.
+
+---
+
+# 16. Guiding Principle
+
+Every architectural and implementation decision should answer one question:
+
+> Does this make the project easier to understand, maintain, and extend?
+
+If the answer is no, the solution should be reconsidered.
+
+The long-term success of Hinam depends not only on its features, but also on the quality and sustainability of its architecture.

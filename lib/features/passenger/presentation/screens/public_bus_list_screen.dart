@@ -6,7 +6,7 @@ import 'package:hinam/core/theme/app_colors.dart';
 import 'package:hinam/features/passenger/presentation/providers/bus_locations_provider.dart';
 import 'package:hinam/features/passenger/presentation/providers/bus_search_provider.dart';
 import 'package:hinam/features/passenger/presentation/widgets/bus_list_card.dart';
-import 'package:hinam/features/tracking/data/models/bus_location_model.dart';
+import 'package:hinam/shared/models/bus_location_model.dart';
 
 class PublicBusListScreen extends ConsumerStatefulWidget {
   const PublicBusListScreen({super.key});

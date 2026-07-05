@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:hinam/core/theme/app_colors.dart';
 import 'package:hinam/features/admin/presentation/providers/admin_providers.dart';
-import 'package:hinam/features/driver/data/models/driver_model.dart';
+import 'package:hinam/shared/models/driver_model.dart';
 import 'package:hinam/features/fleet/data/models/bus_model.dart';
 import 'package:hinam/features/fleet/presentation/providers/fleet_providers.dart';
 

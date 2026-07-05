@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:hinam/features/tracking/data/models/bus_location_model.dart';
+import 'package:hinam/shared/models/bus_location_model.dart';
 
 class LiveBusTile extends StatelessWidget {
   final BusLocationModel bus;
@@ -12,7 +12,7 @@ class LiveBusTile extends StatelessWidget {
     final scheme = Theme.of(context).colorScheme;
     final text = Theme.of(context).textTheme;
     final isPublic = bus.busType == 'public';
-    final speedKmh = (bus.speed * 3.6).toStringAsFixed(1);
+    final speedKmh = bus.speedKmh.toStringAsFixed(1);
 
     return Container(
       padding: const EdgeInsets.all(14),

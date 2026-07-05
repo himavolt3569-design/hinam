@@ -1,9 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:hinam/features/fleet/data/models/assignment_model.dart';
 import 'package:hinam/features/fleet/data/models/bus_model.dart';
 import 'package:hinam/features/fleet/data/repositories/fleet_repository.dart';
+import 'package:hinam/shared/providers/firebase_providers.dart';
 
 final allBusesProvider = StreamProvider<List<BusModel>>((ref) {
   return ref.watch(fleetRepositoryProvider).watchBuses();
@@ -15,7 +15,7 @@ final todayAssignmentsProvider = StreamProvider<List<AssignmentModel>>((ref) {
 });
 
 final activeAssignmentProvider = StreamProvider<AssignmentModel?>((ref) {
-  final uid = FirebaseAuth.instance.currentUser?.uid;
+  final uid = ref.watch(firebaseAuthProvider).currentUser?.uid;
   if (uid == null) return Stream.value(null);
   final today = DateTime.now().toIso8601String().substring(0, 10);
   return ref.watch(fleetRepositoryProvider).watchActiveAssignment(

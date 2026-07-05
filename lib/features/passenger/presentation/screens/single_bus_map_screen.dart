@@ -6,7 +6,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:hinam/core/theme/app_colors.dart';
 import 'package:hinam/features/bus_stops/presentation/providers/bus_stops_provider.dart';
 import 'package:hinam/features/passenger/presentation/providers/bus_locations_provider.dart';
-import 'package:hinam/features/tracking/data/models/bus_location_model.dart';
+import 'package:hinam/shared/models/bus_location_model.dart';
 
 const _defaultCenter = LatLng(27.7172, 85.3240);
 
@@ -244,7 +244,7 @@ class _BusInfoPanel extends StatelessWidget {
             children: [
               _InfoChip(icon: Icons.person_rounded, label: bus!.driverName.isEmpty ? 'Driver' : bus!.driverName),
               const SizedBox(width: 12),
-              _InfoChip(icon: Icons.speed_rounded, label: '${bus!.speed.toStringAsFixed(0)} km/h'),
+              _InfoChip(icon: Icons.speed_rounded, label: '${bus!.speedKmh.toStringAsFixed(0)} km/h'),
               if (!bus!.isTracking && bus!.busType == 'school' && bus!.studentCount > 0) ...[
                 const SizedBox(width: 12),
                 _InfoChip(icon: Icons.people_rounded, label: '${bus!.studentCount} students'),

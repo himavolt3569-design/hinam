@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'package:hinam/features/driver/data/models/driver_model.dart';
+import 'package:hinam/shared/models/driver_model.dart';
 import 'driver_provider.dart';
 
 final driverProfileProvider =

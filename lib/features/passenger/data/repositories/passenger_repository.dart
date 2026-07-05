@@ -1,12 +1,12 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:hinam/features/passenger/data/datasources/passenger_remote_datasource.dart';
-import 'package:hinam/features/tracking/data/models/bus_location_model.dart';
+import 'package:hinam/shared/models/bus_location_model.dart';
+import 'package:hinam/shared/providers/firebase_providers.dart';
 
 final passengerRepositoryProvider = Provider<PassengerRepository>((ref) {
   return PassengerRepository(
-    PassengerRemoteDatasource(FirebaseFirestore.instance),
+    PassengerRemoteDatasource(ref.read(firestoreProvider)),
   );
 });
 

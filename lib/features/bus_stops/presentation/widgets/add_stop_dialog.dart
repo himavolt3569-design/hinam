@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hinam/core/theme/app_colors.dart';
 import 'package:hinam/features/bus_stops/presentation/providers/bus_stop_controller.dart';
 import 'package:hinam/features/tracking/presentation/providers/tracking_provider.dart';
+import 'package:hinam/shared/widgets/loading_button.dart';
 
 class AddStopDialog extends ConsumerStatefulWidget {
   const AddStopDialog({super.key});
@@ -178,15 +179,10 @@ class _AddStopDialogState extends ConsumerState<AddStopDialog> {
                 ),
                 const SizedBox(width: 12),
                 Expanded(
-                  child: FilledButton(
+                  child: LoadingButton(
+                    text: 'Save Stop',
+                    isLoading: _isSaving,
                     onPressed: canSave ? _save : null,
-                    child: _isSaving
-                        ? const SizedBox(
-                            width: 16,
-                            height: 16,
-                            child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
-                          )
-                        : const Text('Save Stop'),
                   ),
                 ),
               ],

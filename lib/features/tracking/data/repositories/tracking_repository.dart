@@ -3,10 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:geolocator/geolocator.dart';
 
 import 'package:hinam/features/tracking/data/datasources/tracking_remote_datasource.dart';
-import 'package:hinam/features/tracking/data/models/bus_location_model.dart';
+import 'package:hinam/shared/models/bus_location_model.dart';
+import 'package:hinam/shared/providers/firebase_providers.dart';
 
 final trackingRepositoryProvider = Provider<TrackingRepository>((ref) {
-  return TrackingRepository(TrackingRemoteDatasource(FirebaseFirestore.instance));
+  return TrackingRepository(TrackingRemoteDatasource(ref.read(firestoreProvider)));
 });
 
 class TrackingRepository {

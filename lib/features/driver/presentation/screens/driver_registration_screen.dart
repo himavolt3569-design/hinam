@@ -6,8 +6,9 @@ import 'package:hinam/features/driver/presentation/widgets/registration_form_car
 import 'package:hinam/core/routes/app_routes.dart';
 import 'package:hinam/core/theme/app_colors.dart';
 import 'package:hinam/features/auth/presentation/providers/auth_controller.dart';
-import 'package:hinam/features/driver/data/models/driver_model.dart';
 import 'package:hinam/features/driver/presentation/providers/driver_provider.dart';
+import 'package:hinam/shared/models/driver_model.dart';
+import 'package:hinam/shared/widgets/loading_button.dart';
 
 class DriverRegistrationScreen extends ConsumerStatefulWidget {
   const DriverRegistrationScreen({super.key});
@@ -140,21 +141,10 @@ class _DriverRegistrationScreenState
 
               const SizedBox(height: 20),
 
-              SizedBox(
-                height: 48,
-                child: FilledButton(
-                  onPressed: _isSaving ? null : _completeRegistration,
-                  child: _isSaving
-                      ? const SizedBox(
-                          width: 18,
-                          height: 18,
-                          child: CircularProgressIndicator(
-                            strokeWidth: 2,
-                            color: Colors.white,
-                          ),
-                        )
-                      : const Text('Complete Registration'),
-                ),
+              LoadingButton(
+                text: 'Complete Registration',
+                isLoading: _isSaving,
+                onPressed: _completeRegistration,
               ),
 
               const SizedBox(height: 12),

@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hinam/core/routes/app_routes.dart';
 import 'package:hinam/core/theme/app_colors.dart';
 import 'package:hinam/features/auth/presentation/providers/auth_controller.dart';
-import 'package:hinam/features/driver/data/models/driver_model.dart';
+import 'package:hinam/shared/models/driver_model.dart';
 import 'package:hinam/features/driver/presentation/providers/driver_profile_provider.dart';
 import 'package:hinam/features/driver/presentation/widgets/bus_info_card.dart';
 import 'package:hinam/features/driver/presentation/widgets/location_info_card.dart';

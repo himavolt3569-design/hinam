@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-class AuthButton extends StatelessWidget {
+class LoadingButton extends StatelessWidget {
   final String text;
   final VoidCallback? onPressed;
   final bool isLoading;
 
-  const AuthButton({
+  const LoadingButton({
     super.key,
     required this.text,
     required this.onPressed,

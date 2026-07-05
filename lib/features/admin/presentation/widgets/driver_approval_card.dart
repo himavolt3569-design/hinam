@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:hinam/features/admin/presentation/providers/admin_providers.dart';
-import 'package:hinam/features/driver/data/models/driver_model.dart';
+import 'package:hinam/shared/models/driver_model.dart';
 
 class DriverApprovalCard extends ConsumerWidget {
   final DriverModel driver;

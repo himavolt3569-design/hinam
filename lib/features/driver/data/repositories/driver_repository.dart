@@ -1,5 +1,5 @@
 import 'package:hinam/features/driver/data/datasources/driver_remote_datasource.dart';
-import 'package:hinam/features/driver/data/models/driver_model.dart';
+import 'package:hinam/shared/models/driver_model.dart';
 
 class DriverRepository {
   final DriverRemoteDatasource datasource;

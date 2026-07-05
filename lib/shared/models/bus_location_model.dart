@@ -31,6 +31,9 @@ class BusLocationModel {
 
   String get routeOrSchool => routeName ?? schoolName ?? '';
 
+  /// [speed] is in meters/second (as reported by geolocator); convert for display.
+  double get speedKmh => speed * 3.6;
+
   Map<String, dynamic> toMap() {
     return {
       'driverId': driverId,

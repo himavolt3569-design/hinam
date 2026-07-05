@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 
 class AuthRemoteDatasource {
@@ -9,23 +11,31 @@ class AuthRemoteDatasource {
     required String phoneNumber,
     required Function(String verificationId) onCodeSent,
   }) async {
+    final completer = Completer<void>();
+
     await firebaseAuth.verifyPhoneNumber(
       phoneNumber: phoneNumber,
 
       verificationCompleted: (PhoneAuthCredential credential) async {
         await firebaseAuth.signInWithCredential(credential);
+        if (!completer.isCompleted) completer.complete();
       },
 
       verificationFailed: (FirebaseAuthException e) {
-        throw Exception(e.message);
+        if (!completer.isCompleted) {
+          completer.completeError(Exception(e.message ?? 'Verification failed.'));
+        }
       },
 
       codeSent: (String verificationId, int? resendToken) {
         onCodeSent(verificationId);
+        if (!completer.isCompleted) completer.complete();
       },
 
       codeAutoRetrievalTimeout: (String verificationId) {},
     );
+
+    return completer.future;
   }
 
   Future<User?> verifyOtp({

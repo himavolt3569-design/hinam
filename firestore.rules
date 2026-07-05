@@ -12,17 +12,28 @@ service cloud.firestore {
       return request.auth != null;
     }
 
-    // bus_locations — drivers write their own doc; anyone (even unauthenticated) can read
-    match /bus_locations/{driverId} {
-      allow read: if true;
-      allow write: if isAuth() && request.auth.uid == driverId;
+    // Helper: caller owns the driver document at driverId
+    function isOwner(driverId) {
+      return isAuth() && request.auth.uid == driverId;
     }
 
-    // drivers — each driver owns their own document
+    // Helper: driverId's driver profile has been approved by an admin
+    function isApprovedDriver(driverId) {
+      return get(/databases/$(database)/documents/drivers/$(driverId)).data.isApproved == true;
+    }
+
+    // bus_locations — drivers write their own doc once approved; anyone (even unauthenticated) can read
+    match /bus_locations/{driverId} {
+      allow read: if true;
+      allow write: if isOwner(driverId) && isApprovedDriver(driverId);
+    }
+
+    // drivers — each driver owns their own document, but only an admin may change isApproved
     match /drivers/{driverId} {
       allow read: if isAuth();
-      allow create: if isAuth() && request.auth.uid == driverId;
-      allow update: if isAuth() && (request.auth.uid == driverId || isAdmin());
+      allow create: if isOwner(driverId) && request.resource.data.isApproved == false;
+      allow update: if isAdmin()
+        || (isOwner(driverId) && request.resource.data.isApproved == resource.data.isApproved);
       allow delete: if isAdmin();
     }
 

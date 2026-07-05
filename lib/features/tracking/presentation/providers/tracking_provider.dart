@@ -19,7 +19,10 @@ class TrackingNotifier extends Notifier<TrackingState> {
   StreamSubscription? _subscription;
 
   @override
-  TrackingState build() => const TrackingState(isTracking: false);
+  TrackingState build() {
+    ref.onDispose(() => _subscription?.cancel());
+    return const TrackingState(isTracking: false);
+  }
 
   Future<void> startTracking() async {
     if (state.isTracking) return;
@@ -30,7 +33,8 @@ class TrackingNotifier extends Notifier<TrackingState> {
     // Verify permission by getting a single position first — throws if denied
     await ref.read(locationServiceProvider).getCurrentLocation();
 
-    // Use active assignment data if available, else fall back to driver's own data
+    // Two-tier by design: a driver's self-registered bus/route is their default;
+    // an admin's fleet assignment for today overrides it when present.
     final assignment = ref.read(activeAssignmentProvider).asData?.value;
     final busNumber = assignment?.busNumber ?? driver.busNumber;
     final busType = assignment?.busType ?? driver.busType;

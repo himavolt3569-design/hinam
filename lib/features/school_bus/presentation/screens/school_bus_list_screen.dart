@@ -5,7 +5,7 @@ import 'package:hinam/core/routes/app_routes.dart';
 import 'package:hinam/core/theme/app_colors.dart';
 import 'package:hinam/features/school_bus/presentation/providers/school_bus_providers.dart';
 import 'package:hinam/features/school_bus/presentation/widgets/school_bus_list_card.dart';
-import 'package:hinam/features/tracking/data/models/bus_location_model.dart';
+import 'package:hinam/shared/models/bus_location_model.dart';
 
 class SchoolBusListScreen extends ConsumerStatefulWidget {
   const SchoolBusListScreen({super.key});

@@ -6,7 +6,7 @@ import 'package:hinam/features/driver/presentation/providers/driver_provider.dar
 import '../../../../core/routes/app_routes.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../providers/auth_controller.dart';
-import '../widgets/auth_button.dart';
+import 'package:hinam/shared/widgets/loading_button.dart';
 import '../widgets/auth_scaffold.dart';
 import '../widgets/otp_input_field.dart';
 
@@ -183,7 +183,7 @@ class _OtpScreenState extends ConsumerState<OtpScreen> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  AuthButton(
+                  LoadingButton(
                     text: 'Verify',
                     isLoading: authState.isLoading,
                     onPressed: _verifyOtp,

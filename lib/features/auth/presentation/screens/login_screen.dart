@@ -5,7 +5,7 @@ import '../../../../core/routes/app_routes.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../models/otp_arguments.dart';
 import '../providers/auth_controller.dart';
-import '../widgets/auth_button.dart';
+import 'package:hinam/shared/widgets/loading_button.dart';
 import '../widgets/auth_scaffold.dart';
 import '../widgets/phone_input_field.dart';
 
@@ -115,7 +115,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
                 const SizedBox(height: 6),
                 PhoneInputField(controller: _phoneController),
                 const SizedBox(height: 16),
-                AuthButton(
+                LoadingButton(
                   text: 'Continue',
                   isLoading: authState.isLoading,
                   onPressed: _sendOtp,
