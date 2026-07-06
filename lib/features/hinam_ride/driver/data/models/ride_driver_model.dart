@@ -1,17 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-enum VerificationStatus {
-  pending,
-  approved,
-  rejected;
-
-  static VerificationStatus fromValue(String value) {
-    return VerificationStatus.values.firstWhere(
-      (status) => status.name == value,
-      orElse: () => VerificationStatus.pending,
-    );
-  }
-}
+import 'package:hinam/features/hinam_ride/verification/data/models/verification_request_model.dart'
+    show VerificationStatus;
 
 class RideDriverModel {
   final String uid;

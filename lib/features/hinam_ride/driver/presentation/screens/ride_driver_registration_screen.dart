@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -5,8 +7,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hinam/core/theme/app_colors.dart';
 import 'package:hinam/features/auth/presentation/providers/auth_controller.dart';
 import 'package:hinam/features/hinam_ride/driver/data/models/ride_driver_model.dart';
+import 'package:hinam/features/hinam_ride/driver/presentation/providers/ride_driver_profile_provider.dart';
 import 'package:hinam/features/hinam_ride/driver/presentation/providers/ride_driver_provider.dart';
 import 'package:hinam/features/hinam_ride/driver/presentation/widgets/ride_driver_registration_form.dart';
+import 'package:hinam/features/hinam_ride/verification/data/models/verification_request_model.dart';
+import 'package:hinam/features/hinam_ride/verification/presentation/providers/ride_verification_provider.dart';
+import 'package:hinam/features/hinam_ride/verification/presentation/widgets/document_upload_tile.dart';
+import 'package:hinam/features/hinam_ride/verification/presentation/widgets/verification_status_banner.dart';
 import 'package:hinam/shared/widgets/loading_button.dart';
 
 class RideDriverRegistrationScreen extends ConsumerStatefulWidget {
@@ -19,6 +26,11 @@ class RideDriverRegistrationScreen extends ConsumerStatefulWidget {
 
 class _RideDriverRegistrationScreenState
     extends ConsumerState<RideDriverRegistrationScreen> {
+  static const _requiredDocuments = {
+    'licensePhoto': 'Driving License Photo',
+    'vehicleRegistration': 'Vehicle Registration Photo',
+  };
+
   final _formKey = GlobalKey<FormState>();
 
   final _fullNameController = TextEditingController();
@@ -28,9 +40,21 @@ class _RideDriverRegistrationScreenState
   String _gender = '';
   String _vehicleType = '';
   DateTime? _dateOfBirth;
+  final Map<String, File> _documents = {};
 
   bool _isSaving = false;
   bool _isSubmitted = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Future.microtask(() {
+      final user = ref.read(authControllerProvider.notifier).currentUser();
+      if (user != null) {
+        ref.read(rideDriverProfileProvider.notifier).loadDriver(user.uid);
+      }
+    });
+  }
 
   @override
   void dispose() {
@@ -54,6 +78,15 @@ class _RideDriverRegistrationScreenState
     if (age < 18) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('You must be at least 18 years old.')),
+      );
+      return;
+    }
+
+    if (!_requiredDocuments.keys.every(_documents.containsKey)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please upload all required documents.'),
+        ),
       );
       return;
     }
@@ -82,6 +115,14 @@ class _RideDriverRegistrationScreenState
 
       await ref.read(rideDriverRepositoryProvider).createDriver(driver);
 
+      await ref
+          .read(submitVerificationControllerProvider.notifier)
+          .submit(
+            subjectType: VerificationSubjectType.driver,
+            subjectId: user.uid,
+            documents: _documents,
+          );
+
       if (!mounted) return;
       setState(() => _isSubmitted = true);
     } catch (e) {
@@ -96,6 +137,8 @@ class _RideDriverRegistrationScreenState
 
   @override
   Widget build(BuildContext context) {
+    final profileState = ref.watch(rideDriverProfileProvider);
+
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -107,7 +150,23 @@ class _RideDriverRegistrationScreenState
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
-        child: _isSubmitted ? _buildSubmittedState() : _buildForm(),
+        child: profileState.when(
+          loading: () => const SizedBox(
+            height: 300,
+            child: Center(child: CircularProgressIndicator()),
+          ),
+          error: (error, stackTrace) =>
+              SizedBox(height: 300, child: Center(child: Text('$error'))),
+          data: (driver) {
+            if (_isSubmitted) {
+              return _buildSubmittedState(VerificationStatus.pending);
+            }
+            if (driver != null) {
+              return _buildSubmittedState(driver.verificationStatus);
+            }
+            return _buildForm();
+          },
+        ),
       ),
     );
   }
@@ -168,6 +227,24 @@ class _RideDriverRegistrationScreenState
 
           const SizedBox(height: 20),
 
+          Text(
+            'Verification Documents',
+            style: Theme.of(
+              context,
+            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
+          ),
+
+          const SizedBox(height: 10),
+
+          for (final entry in _requiredDocuments.entries)
+            DocumentUploadTile(
+              label: entry.value,
+              file: _documents[entry.key],
+              onPicked: (file) => setState(() => _documents[entry.key] = file),
+            ),
+
+          const SizedBox(height: 10),
+
           LoadingButton(
             text: 'Submit for Review',
             isLoading: _isSaving,
@@ -188,7 +265,7 @@ class _RideDriverRegistrationScreenState
     );
   }
 
-  Widget _buildSubmittedState() {
+  Widget _buildSubmittedState(VerificationStatus status) {
     return Column(
       children: [
         const SizedBox(height: 80),
@@ -200,14 +277,14 @@ class _RideDriverRegistrationScreenState
             borderRadius: BorderRadius.circular(16),
           ),
           child: const Icon(
-            Icons.check_circle_outline_rounded,
+            Icons.assignment_turned_in_outlined,
             color: AppColors.success,
             size: 32,
           ),
         ),
         const SizedBox(height: 20),
         const Text(
-          'Registration Submitted',
+          'Your Ride Driver Application',
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w700,
@@ -216,10 +293,12 @@ class _RideDriverRegistrationScreenState
         ),
         const SizedBox(height: 8),
         const Text(
-          'Your profile is now pending review. We will notify you once it has been verified.',
+          'We will notify you once your documents have been reviewed.',
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
         ),
+        const SizedBox(height: 20),
+        VerificationStatusBanner(status: status),
       ],
     );
   }

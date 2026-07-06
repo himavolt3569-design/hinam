@@ -12,4 +12,6 @@ class AppRoutes {
   static const pendingDrivers = '/pending-drivers';
   static const manageBuses = '/manage-buses';
   static const manageAssignments = '/manage-assignments';
+  static const rideDriverRegistration = '/ride-driver-registration';
+  static const ridePassengerRegistration = '/ride-passenger-registration';
 }

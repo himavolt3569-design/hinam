@@ -22,6 +22,11 @@ service cloud.firestore {
       return get(/databases/$(database)/documents/drivers/$(driverId)).data.isApproved == true;
     }
 
+    // Helper: driverId's ride driver profile has been approved by an admin
+    function isApprovedRideDriver(driverId) {
+      return get(/databases/$(database)/documents/ride_drivers/$(driverId)).data.verificationStatus == 'approved';
+    }
+
     // bus_locations — drivers write their own doc once approved; anyone (even unauthenticated) can read
     match /bus_locations/{driverId} {
       allow read: if true;
@@ -74,6 +79,62 @@ service cloud.firestore {
       allow update: if isAdmin()
         || (isOwner(driverId) && request.resource.data.verificationStatus == resource.data.verificationStatus);
       allow delete: if isAdmin();
+    }
+
+    // ride_passengers — unlike ride_drivers, readable only by the owner and admins: this document
+    // carries emergency-contact phone numbers with no legitimate broad-read use case.
+    // emergencyContacts is capped at 3 entries (mirrors RidePassengerModel.maxEmergencyContacts).
+    match /ride_passengers/{passengerId} {
+      allow read: if isOwner(passengerId) || isAdmin();
+      allow create: if isOwner(passengerId)
+        && request.resource.data.verificationStatus == 'pending'
+        && request.resource.data.emergencyContacts.size() <= 3;
+      allow update: if isAdmin()
+        || (isOwner(passengerId)
+            && request.resource.data.verificationStatus == resource.data.verificationStatus
+            && request.resource.data.emergencyContacts.size() <= 3);
+      allow delete: if isAdmin();
+    }
+
+    // ride_verifications — a subject (driver or passenger) submits their own requests.
+    // History is immutable once created: resubmission creates a new document rather than
+    // editing an old one. Only an admin may review (change status); nobody may delete.
+    match /ride_verifications/{requestId} {
+      allow read: if isOwner(resource.data.subjectId) || isAdmin();
+      allow create: if isOwner(request.resource.data.subjectId)
+        && request.resource.data.status == 'pending';
+      allow update: if isAdmin();
+      allow delete: if false;
+    }
+
+    // ride_locations — an approved ride driver broadcasts their own location.
+    // Unlike bus_locations, this is NOT publicly readable: there is no passenger-matching
+    // concept yet, so only the driver themselves and admins have any legitimate reason to read it.
+    match /ride_locations/{driverId} {
+      allow read: if isOwner(driverId) || isAdmin();
+      allow write: if isOwner(driverId) && isApprovedRideDriver(driverId);
+    }
+
+    // rides — the Trip aggregate. A passenger creates their own request; driverId must be
+    // null at creation since no matching exists yet. Before a driver is assigned, the owning
+    // passenger may only cancel it — no other field may change during that transition.
+    // Not broadly readable: pickup/dropoff reveal where a passenger is going.
+    match /rides/{rideId} {
+      allow read: if isOwner(resource.data.passengerId) || isAdmin();
+      allow create: if isOwner(request.resource.data.passengerId)
+        && request.resource.data.driverId == null
+        && request.resource.data.status == 'requested'
+        && request.resource.data.agreedFare == null
+        && request.resource.data.suggestedFare > 0;
+      allow update: if isOwner(resource.data.passengerId)
+        && resource.data.status == 'requested'
+        && request.resource.data.status == 'cancelled'
+        && request.resource.data.passengerId == resource.data.passengerId
+        && request.resource.data.driverId == resource.data.driverId
+        && request.resource.data.pickup == resource.data.pickup
+        && request.resource.data.dropoff == resource.data.dropoff
+        && request.resource.data.suggestedFare == resource.data.suggestedFare;
+      allow delete: if false;
     }
   }
 }

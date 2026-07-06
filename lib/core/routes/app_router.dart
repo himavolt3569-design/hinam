@@ -11,6 +11,8 @@ import 'package:hinam/features/driver/presentation/screens/dashboard_screen.dart
 import 'package:hinam/features/driver/presentation/screens/driver_registration_screen.dart';
 import 'package:hinam/features/fleet/presentation/screens/manage_assignments_screen.dart';
 import 'package:hinam/features/fleet/presentation/screens/manage_buses_screen.dart';
+import 'package:hinam/features/hinam_ride/driver/presentation/screens/ride_driver_registration_screen.dart';
+import 'package:hinam/features/hinam_ride/passenger/presentation/screens/ride_passenger_registration_screen.dart';
 import 'package:hinam/features/passenger/presentation/screens/public_bus_list_screen.dart';
 import 'package:hinam/features/passenger/presentation/screens/single_bus_map_screen.dart';
 import 'package:hinam/features/school_bus/presentation/screens/school_bus_list_screen.dart';
@@ -62,6 +64,16 @@ class AppRouter {
 
       case AppRoutes.manageAssignments:
         return MaterialPageRoute(builder: (_) => const ManageAssignmentsScreen());
+
+      case AppRoutes.rideDriverRegistration:
+        return MaterialPageRoute(
+          builder: (_) => const RideDriverRegistrationScreen(),
+        );
+
+      case AppRoutes.ridePassengerRegistration:
+        return MaterialPageRoute(
+          builder: (_) => const RidePassengerRegistrationScreen(),
+        );
 
       default:
         return MaterialPageRoute(builder: (_) => const SplashScreen());

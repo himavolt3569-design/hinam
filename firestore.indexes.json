@@ -8,6 +8,23 @@
         { "fieldPath": "date",     "order": "ASCENDING" },
         { "fieldPath": "status",   "order": "ASCENDING" }
       ]
+    },
+    {
+      "collectionGroup": "ride_verifications",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "subjectId",  "order": "ASCENDING" },
+        { "fieldPath": "createdAt",  "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "rides",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "passengerId", "order": "ASCENDING" },
+        { "fieldPath": "status",      "order": "ASCENDING" },
+        { "fieldPath": "createdAt",   "order": "DESCENDING" }
+      ]
     }
   ],
   "fieldOverrides": []

@@ -6,6 +6,9 @@ import 'package:hinam/core/theme/app_colors.dart';
 import 'package:hinam/features/admin/data/repositories/admin_repository.dart';
 import 'package:hinam/features/auth/presentation/providers/auth_controller.dart';
 import 'package:hinam/features/auth/presentation/widgets/choice_button.dart';
+import 'package:hinam/features/driver/presentation/providers/driver_provider.dart';
+import 'package:hinam/features/hinam_ride/driver/presentation/providers/ride_driver_provider.dart';
+import 'package:hinam/features/hinam_ride/passenger/presentation/providers/ride_passenger_provider.dart';
 
 class SplashScreen extends ConsumerStatefulWidget {
   const SplashScreen({super.key});
@@ -23,21 +26,62 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
     WidgetsBinding.instance.addPostFrameCallback((_) => _initialize());
   }
 
+  /// Resolves a returning authenticated user's role in a single, explicit
+  /// priority order — admin, then bus driver, then ride driver, then ride
+  /// passenger — rather than scattering role checks across screens. A
+  /// brand-new user (or a lookup finding none of the above) falls through
+  /// to the manual choice screen.
   Future<void> _initialize() async {
     await Future.delayed(const Duration(milliseconds: 800));
     final user = ref.read(authControllerProvider.notifier).currentUser();
     if (!mounted) return;
 
-    if (user != null) {
-      final isAdmin = await ref.read(adminRepositoryProvider).isAdmin(user.uid);
-      if (!mounted) return;
+    if (user == null) {
+      setState(() => _showChoice = true);
+      return;
+    }
+
+    final isAdmin = await ref.read(adminRepositoryProvider).isAdmin(user.uid);
+    if (!mounted) return;
+    if (isAdmin) {
+      Navigator.pushReplacementNamed(context, AppRoutes.adminDashboard);
+      return;
+    }
+
+    final isBusDriver = await ref
+        .read(driverRepositoryProvider)
+        .driverExists(user.uid);
+    if (!mounted) return;
+    if (isBusDriver) {
+      Navigator.pushReplacementNamed(context, AppRoutes.dashboard);
+      return;
+    }
+
+    final isRideDriver = await ref
+        .read(rideDriverRepositoryProvider)
+        .driverExists(user.uid);
+    if (!mounted) return;
+    if (isRideDriver) {
       Navigator.pushReplacementNamed(
         context,
-        isAdmin ? AppRoutes.adminDashboard : AppRoutes.dashboard,
+        AppRoutes.rideDriverRegistration,
       );
-    } else {
-      setState(() => _showChoice = true);
+      return;
     }
+
+    final isRidePassenger = await ref
+        .read(ridePassengerRepositoryProvider)
+        .passengerExists(user.uid);
+    if (!mounted) return;
+    if (isRidePassenger) {
+      Navigator.pushReplacementNamed(
+        context,
+        AppRoutes.ridePassengerRegistration,
+      );
+      return;
+    }
+
+    setState(() => _showChoice = true);
   }
 
   @override
@@ -140,6 +184,24 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                   label: "I'm a Driver",
                   onTap: () =>
                       Navigator.pushReplacementNamed(context, AppRoutes.login),
+                ),
+                const SizedBox(height: 8),
+                ChoiceButton(
+                  icon: Icons.two_wheeler_rounded,
+                  label: 'Drive with Hinam Ride',
+                  onTap: () => Navigator.pushReplacementNamed(
+                    context,
+                    AppRoutes.rideDriverRegistration,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                ChoiceButton(
+                  icon: Icons.favorite_rounded,
+                  label: 'Book a Hinam Ride',
+                  onTap: () => Navigator.pushReplacementNamed(
+                    context,
+                    AppRoutes.ridePassengerRegistration,
+                  ),
                 ),
               ],
 
