@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:hinam/features/hinam_ride/trip/data/models/ride_model.dart';
+import 'package:hinam/features/hinam_ride/trip/data/models/ride_offer_model.dart';
 
 class RideTripRemoteDatasource {
   final FirebaseFirestore firestore;
@@ -31,5 +32,36 @@ class RideTripRemoteDatasource {
     await firestore.collection('rides').doc(rideId).update({
       'status': 'cancelled',
     });
+  }
+
+  Future<void> createOffer(String rideId, RideOfferModel offer) async {
+    await firestore
+        .collection('rides')
+        .doc(rideId)
+        .collection('offers')
+        .add(offer.toMap());
+  }
+
+  Stream<List<RideOfferModel>> watchOffersForRide(String rideId) {
+    return firestore
+        .collection('rides')
+        .doc(rideId)
+        .collection('offers')
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map(
+          (snapshot) => snapshot.docs
+              .map((doc) => RideOfferModel.fromMap(doc.id, doc.data()))
+              .toList(),
+        );
+  }
+
+  Future<void> expireOffer(String rideId, String offerId) async {
+    await firestore
+        .collection('rides')
+        .doc(rideId)
+        .collection('offers')
+        .doc(offerId)
+        .update({'status': 'expired'});
   }
 }

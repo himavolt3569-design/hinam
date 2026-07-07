@@ -6,6 +6,7 @@ import 'package:hinam/features/auth/presentation/providers/auth_controller.dart'
 import 'package:hinam/features/hinam_ride/pricing/presentation/providers/suggested_fare_provider.dart';
 import 'package:hinam/features/hinam_ride/trip/data/models/ride_model.dart';
 import 'package:hinam/features/hinam_ride/trip/presentation/providers/active_ride_provider.dart';
+import 'package:hinam/features/hinam_ride/trip/presentation/providers/matching_service_provider.dart';
 import 'package:hinam/features/hinam_ride/trip/presentation/providers/ride_request_controller.dart';
 import 'package:hinam/features/hinam_ride/trip/presentation/widgets/pickup_dropoff_picker.dart';
 import 'package:hinam/shared/widgets/loading_button.dart';
@@ -62,6 +63,10 @@ class _RideRequestScreenState extends ConsumerState<RideRequestScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Kept alive for as long as this screen is mounted, so the matching
+    // service's offer-escalation timer isn't disposed prematurely.
+    ref.watch(matchingServiceProvider);
+
     final user = ref.read(authControllerProvider.notifier).currentUser();
     final requestState = ref.watch(rideRequestControllerProvider);
 

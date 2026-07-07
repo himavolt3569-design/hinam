@@ -135,6 +135,23 @@ service cloud.firestore {
         && request.resource.data.dropoff == resource.data.dropoff
         && request.resource.data.suggestedFare == resource.data.suggestedFare;
       allow delete: if false;
+
+      // rides/{rideId}/offers — the app's first subcollection. Only the ride's owning
+      // passenger writes here in this phase (matching runs client-side on their device;
+      // there is no driver-facing offer screen or Cloud Function yet — see Phase 11).
+      // An offer can only be created, or moved from pending to expired; nothing else.
+      match /offers/{offerId} {
+        allow read: if isOwner(get(/databases/$(database)/documents/rides/$(rideId)).data.passengerId)
+          || isAdmin();
+        allow create: if isOwner(get(/databases/$(database)/documents/rides/$(rideId)).data.passengerId)
+          && request.resource.data.status == 'pending';
+        allow update: if isOwner(get(/databases/$(database)/documents/rides/$(rideId)).data.passengerId)
+          && resource.data.status == 'pending'
+          && request.resource.data.status == 'expired'
+          && request.resource.data.driverId == resource.data.driverId
+          && request.resource.data.offerAmount == resource.data.offerAmount;
+        allow delete: if false;
+      }
     }
   }
 }
