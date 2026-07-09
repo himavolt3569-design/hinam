@@ -28,3 +28,10 @@ final rideOffersProvider = StreamProvider.family<List<RideOfferModel>, String>(
     return ref.watch(rideTripRepositoryProvider).watchOffersForRide(rideId);
   },
 );
+
+final pendingOffersForDriverProvider =
+    StreamProvider.family<List<RideOfferModel>, String>((ref, driverId) {
+      return ref
+          .watch(rideTripRepositoryProvider)
+          .watchPendingOffersForDriver(driverId);
+    });

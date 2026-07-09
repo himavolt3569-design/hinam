@@ -30,4 +30,32 @@ class RideTripRepository {
   Future<void> expireOffer(String rideId, String offerId) {
     return datasource.expireOffer(rideId, offerId);
   }
+
+  Stream<List<RideOfferModel>> watchPendingOffersForDriver(String driverId) {
+    return datasource.watchPendingOffersForDriver(driverId);
+  }
+
+  Future<void> declineOffer(String rideId, String offerId) {
+    return datasource.declineOffer(rideId, offerId);
+  }
+
+  Future<void> counterOffer({
+    required String rideId,
+    required String offerId,
+    required double amount,
+  }) {
+    return datasource.counterOffer(rideId: rideId, offerId: offerId, amount: amount);
+  }
+
+  Future<void> acceptOffer({
+    required String rideId,
+    required String offerId,
+    required String driverId,
+  }) {
+    return datasource.acceptOffer(
+      rideId: rideId,
+      offerId: offerId,
+      driverId: driverId,
+    );
+  }
 }

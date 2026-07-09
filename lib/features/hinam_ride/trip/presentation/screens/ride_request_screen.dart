@@ -189,9 +189,11 @@ class _RideRequestScreenState extends ConsumerState<RideRequestScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Looking for a driver…',
-                  style: TextStyle(
+                Text(
+                  ride.status == RideStatus.matched
+                      ? 'Driver Assigned!'
+                      : 'Looking for a driver…',
+                  style: const TextStyle(
                     fontSize: 16,
                     fontWeight: FontWeight.w700,
                     color: AppColors.textPrimary,
@@ -211,7 +213,9 @@ class _RideRequestScreenState extends ConsumerState<RideRequestScreen> {
                 ),
                 const SizedBox(height: 12),
                 Text(
-                  'Suggested Fare: Rs. ${ride.suggestedFare.toStringAsFixed(0)}',
+                  ride.status == RideStatus.matched
+                      ? 'Agreed Fare: Rs. ${(ride.agreedFare ?? ride.suggestedFare).toStringAsFixed(0)}'
+                      : 'Suggested Fare: Rs. ${ride.suggestedFare.toStringAsFixed(0)}',
                   style: const TextStyle(
                     fontSize: 13,
                     color: AppColors.textSecondary,
@@ -223,12 +227,15 @@ class _RideRequestScreenState extends ConsumerState<RideRequestScreen> {
 
           const SizedBox(height: 20),
 
-          OutlinedButton.icon(
-            onPressed: isCancelling ? null : () => _cancelRide(ride.id),
-            icon: const Icon(Icons.close_rounded, size: 18),
-            label: Text(isCancelling ? 'Cancelling…' : 'Cancel Request'),
-            style: OutlinedButton.styleFrom(foregroundColor: AppColors.error),
-          ),
+          if (ride.status == RideStatus.requested)
+            OutlinedButton.icon(
+              onPressed: isCancelling ? null : () => _cancelRide(ride.id),
+              icon: const Icon(Icons.close_rounded, size: 18),
+              label: Text(isCancelling ? 'Cancelling…' : 'Cancel Request'),
+              style: OutlinedButton.styleFrom(
+                foregroundColor: AppColors.error,
+              ),
+            ),
         ],
       ),
     );

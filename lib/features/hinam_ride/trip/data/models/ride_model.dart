@@ -26,6 +26,7 @@ class RideLocation {
 
 enum RideStatus {
   requested,
+  matched,
   cancelled;
 
   static RideStatus fromValue(String value) {
@@ -45,7 +46,9 @@ class RideModel {
   final RideStatus status;
   final double suggestedFare;
   final double? agreedFare;
+  final String? acceptedOfferId;
   final Timestamp createdAt;
+  final Timestamp? matchedAt;
 
   const RideModel({
     required this.id,
@@ -56,7 +59,9 @@ class RideModel {
     required this.status,
     required this.suggestedFare,
     this.agreedFare,
+    this.acceptedOfferId,
     required this.createdAt,
+    this.matchedAt,
   });
 
   Map<String, dynamic> toMap() {
@@ -68,7 +73,9 @@ class RideModel {
       'status': status.name,
       'suggestedFare': suggestedFare,
       'agreedFare': agreedFare,
+      'acceptedOfferId': acceptedOfferId,
       'createdAt': createdAt,
+      'matchedAt': matchedAt,
     };
   }
 
@@ -86,7 +93,9 @@ class RideModel {
       status: RideStatus.fromValue(map['status'] ?? 'requested'),
       suggestedFare: (map['suggestedFare'] ?? 0.0).toDouble(),
       agreedFare: (map['agreedFare'] as num?)?.toDouble(),
+      acceptedOfferId: map['acceptedOfferId'],
       createdAt: map['createdAt'] ?? Timestamp.now(),
+      matchedAt: map['matchedAt'],
     );
   }
 }

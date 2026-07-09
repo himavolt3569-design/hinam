@@ -43,6 +43,7 @@ class RideRequestController extends AsyncNotifier<void> {
             rideId: rideId,
             passengerId: passengerId,
             pickup: pickup,
+            dropoff: dropoff,
             suggestedFare: suggestedFare,
           );
     });

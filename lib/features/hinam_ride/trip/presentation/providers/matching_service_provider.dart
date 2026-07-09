@@ -32,13 +32,17 @@ class MatchingServiceNotifier extends Notifier<void> {
   }
 
   /// Offers the ride to the nearest online driver, then watches the offer:
-  /// if it's still pending once [offerTimeout] elapses, it's marked expired
-  /// and the next-nearest driver (excluding everyone already offered, and
-  /// the requesting passenger themselves) is offered instead.
+  /// - if it's declined, the next-nearest driver is offered immediately.
+  /// - if it's still pending once [offerTimeout] elapses, it's marked
+  ///   expired and the next-nearest driver is offered instead.
+  /// - if it's accepted (the ride is matched), matching stops.
+  /// - if it's countered, matching pauses: the passenger must respond
+  ///   before escalation resumes (no such response flow exists yet).
   Future<void> startMatching({
     required String rideId,
     required String passengerId,
     required RideLocation pickup,
+    required RideLocation dropoff,
     required double suggestedFare,
     Duration offerTimeout = defaultOfferTimeout,
   }) async {
@@ -50,6 +54,7 @@ class MatchingServiceNotifier extends Notifier<void> {
     await _offerNextDriver(
       rideId: rideId,
       pickup: pickup,
+      dropoff: dropoff,
       suggestedFare: suggestedFare,
     );
 
@@ -59,9 +64,28 @@ class MatchingServiceNotifier extends Notifier<void> {
         .watchOffersForRide(rideId)
         .listen((offers) {
           _timeoutTimer?.cancel();
-
           if (offers.isEmpty) return;
+
           final latest = offers.first;
+
+          if (latest.status == RideOfferStatus.accepted) {
+            unawaited(stopMatching());
+            return;
+          }
+
+          if (latest.status == RideOfferStatus.declined) {
+            _excludedDriverIds.add(latest.driverId);
+            unawaited(
+              _offerNextDriver(
+                rideId: rideId,
+                pickup: pickup,
+                dropoff: dropoff,
+                suggestedFare: suggestedFare,
+              ),
+            );
+            return;
+          }
+
           if (latest.status != RideOfferStatus.pending) return;
 
           _timeoutTimer = Timer(offerTimeout, () async {
@@ -77,6 +101,7 @@ class MatchingServiceNotifier extends Notifier<void> {
               await _offerNextDriver(
                 rideId: rideId,
                 pickup: pickup,
+                dropoff: dropoff,
                 suggestedFare: suggestedFare,
               );
             } catch (_) {
@@ -101,6 +126,7 @@ class MatchingServiceNotifier extends Notifier<void> {
   Future<bool> _offerNextDriver({
     required String rideId,
     required RideLocation pickup,
+    required RideLocation dropoff,
     required double suggestedFare,
   }) async {
     final nearestDriverId = await _findNearestAvailableDriver(pickup);
@@ -108,7 +134,10 @@ class MatchingServiceNotifier extends Notifier<void> {
 
     final offer = RideOfferModel(
       id: '',
+      rideId: rideId,
       driverId: nearestDriverId,
+      pickup: pickup,
+      dropoff: dropoff,
       offerAmount: suggestedFare,
       status: RideOfferStatus.pending,
       createdAt: Timestamp.now(),

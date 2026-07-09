@@ -116,40 +116,98 @@ service cloud.firestore {
     }
 
     // rides — the Trip aggregate. A passenger creates their own request; driverId must be
-    // null at creation since no matching exists yet. Before a driver is assigned, the owning
-    // passenger may only cancel it — no other field may change during that transition.
-    // Not broadly readable: pickup/dropoff reveal where a passenger is going.
+    // null at creation since no matching exists yet. Not broadly readable: pickup/dropoff
+    // reveal where a passenger is going — only the owning passenger, the matched driver
+    // (once assigned), and admins may read.
     match /rides/{rideId} {
-      allow read: if isOwner(resource.data.passengerId) || isAdmin();
+      allow read: if isOwner(resource.data.passengerId)
+        || isOwner(resource.data.driverId)
+        || isAdmin();
+
       allow create: if isOwner(request.resource.data.passengerId)
         && request.resource.data.driverId == null
         && request.resource.data.status == 'requested'
         && request.resource.data.agreedFare == null
         && request.resource.data.suggestedFare > 0;
-      allow update: if isOwner(resource.data.passengerId)
-        && resource.data.status == 'requested'
-        && request.resource.data.status == 'cancelled'
-        && request.resource.data.passengerId == resource.data.passengerId
-        && request.resource.data.driverId == resource.data.driverId
-        && request.resource.data.pickup == resource.data.pickup
-        && request.resource.data.dropoff == resource.data.dropoff
-        && request.resource.data.suggestedFare == resource.data.suggestedFare;
+
+      allow update: if
+        // The owning passenger cancels their still-unmatched request.
+        (isOwner(resource.data.passengerId)
+          && resource.data.status == 'requested'
+          && request.resource.data.status == 'cancelled'
+          && request.resource.data.passengerId == resource.data.passengerId
+          && request.resource.data.driverId == resource.data.driverId
+          && request.resource.data.pickup == resource.data.pickup
+          && request.resource.data.dropoff == resource.data.dropoff
+          && request.resource.data.suggestedFare == resource.data.suggestedFare)
+        ||
+        // The driver named on a still-pending offer accepts it, matching the ride.
+        // request.resource.data.acceptedOfferId names which offer; the referenced offer
+        // document is independently checked for status == 'pending' and driverId ==
+        // caller, and the agreedFare being set must equal that offer's own amount — a
+        // driver cannot match themselves to a fare they were never actually offered.
+        // This write must land before the paired offers/{offerId} update below, whose
+        // rule cross-checks that this ride update already committed.
+        (resource.data.status == 'requested'
+          && resource.data.driverId == null
+          && request.resource.data.status == 'matched'
+          && isOwner(request.resource.data.driverId)
+          && request.resource.data.passengerId == resource.data.passengerId
+          && request.resource.data.pickup == resource.data.pickup
+          && request.resource.data.dropoff == resource.data.dropoff
+          && request.resource.data.agreedFare ==
+            get(/databases/$(database)/documents/rides/$(rideId)/offers/$(request.resource.data.acceptedOfferId)).data.offerAmount
+          && get(/databases/$(database)/documents/rides/$(rideId)/offers/$(request.resource.data.acceptedOfferId)).data.driverId == request.auth.uid
+          && get(/databases/$(database)/documents/rides/$(rideId)/offers/$(request.resource.data.acceptedOfferId)).data.status == 'pending');
+
       allow delete: if false;
 
-      // rides/{rideId}/offers — the app's first subcollection. Only the ride's owning
-      // passenger writes here in this phase (matching runs client-side on their device;
-      // there is no driver-facing offer screen or Cloud Function yet — see Phase 11).
-      // An offer can only be created, or moved from pending to expired; nothing else.
+      // rides/{rideId}/offers — the app's first subcollection.
       match /offers/{offerId} {
         allow read: if isOwner(get(/databases/$(database)/documents/rides/$(rideId)).data.passengerId)
+          || isOwner(resource.data.driverId)
           || isAdmin();
+
         allow create: if isOwner(get(/databases/$(database)/documents/rides/$(rideId)).data.passengerId)
           && request.resource.data.status == 'pending';
-        allow update: if isOwner(get(/databases/$(database)/documents/rides/$(rideId)).data.passengerId)
-          && resource.data.status == 'pending'
-          && request.resource.data.status == 'expired'
-          && request.resource.data.driverId == resource.data.driverId
-          && request.resource.data.offerAmount == resource.data.offerAmount;
+
+        allow update: if
+          // The passenger's matching service expires a stale pending offer.
+          (isOwner(get(/databases/$(database)/documents/rides/$(rideId)).data.passengerId)
+            && resource.data.status == 'pending'
+            && request.resource.data.status == 'expired'
+            && request.resource.data.driverId == resource.data.driverId
+            && request.resource.data.offerAmount == resource.data.offerAmount)
+          ||
+          // The offered driver declines.
+          (isOwner(resource.data.driverId)
+            && resource.data.status == 'pending'
+            && request.resource.data.status == 'declined'
+            && request.resource.data.driverId == resource.data.driverId
+            && request.resource.data.offerAmount == resource.data.offerAmount)
+          ||
+          // The offered driver counters with a different fare, bounded to +/-20% of the
+          // amount they were offered — never accepted directly here; see below.
+          (isOwner(resource.data.driverId)
+            && resource.data.status == 'pending'
+            && request.resource.data.status == 'countered'
+            && request.resource.data.driverId == resource.data.driverId
+            && request.resource.data.offerAmount >= resource.data.offerAmount * 0.8
+            && request.resource.data.offerAmount <= resource.data.offerAmount * 1.2)
+          ||
+          // The offered driver accepts. This must follow — never precede or stand
+          // alone from — the matching rides/{rideId} update above: it cross-checks
+          // the ride's already-committed state so an offer cannot be flipped to
+          // accepted on its own, leaving a ride stranded with no driver assigned.
+          (isOwner(resource.data.driverId)
+            && resource.data.status == 'pending'
+            && request.resource.data.status == 'accepted'
+            && request.resource.data.driverId == resource.data.driverId
+            && request.resource.data.offerAmount == resource.data.offerAmount
+            && get(/databases/$(database)/documents/rides/$(rideId)).data.driverId == resource.data.driverId
+            && get(/databases/$(database)/documents/rides/$(rideId)).data.acceptedOfferId == offerId
+            && get(/databases/$(database)/documents/rides/$(rideId)).data.status == 'matched');
+
         allow delete: if false;
       }
     }
