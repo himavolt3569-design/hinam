@@ -26,11 +26,8 @@ class HinamApp extends ConsumerWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Hinam',
-
       theme: AppTheme.lightTheme,
-
       initialRoute: AppRoutes.splash,
-
       onGenerateRoute: AppRouter.onGenerateRoute,
     );
   }

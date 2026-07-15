@@ -1,0 +1,765 @@
+# Hinam Ride — Implementation Roadmap
+
+24 phases (0–23), each independently implementable and reviewable. No code — file paths, data shapes, and responsibilities only. Ordered so that every phase only depends on infrastructure that already exists by the time it starts; Cloud Functions are introduced exactly when a real race condition first appears (Phase 11), not deferred to the end and not built speculatively before there's a schema for them to operate on.
+
+### Dependency graph (high level)
+
+```
+Phase 0 (infra) ─┬─> Phase 1 (storage) ──> Phase 5 (verification) ──> Phase 6 (admin review)
+                 └─> Phase 2 (notif. client) ───────────────────────┐
+Phase 3 (driver profile) ──┬─> Phase 5 ──> Phase 7 (routing) ──> Phase 8 (online/tracking)
+Phase 4 (passenger profile)┘                                          │
+                                                                       v
+                                            Phase 9 (trip request) ──> Phase 10 (matching)
+                                                                       ──> Phase 11 (accept + Cloud Function)
+                                                                       ──> Phase 12 (notification triggers, needs Phase 2)
+                                                                       ──> Phase 13 (trip lifecycle screens)
+                                                                       ──> Phase 14 (cancellation) ──> Phase 15 (ratings/history)
+                                                                       ──> Phase 16 (payments)
+                                                                       ──> Phase 17 (reports) ──> Phase 18 (SOS, needs Phase 12)
+                                                                       ──> Phase 19 (admin consolidation)
+Phase 20 (theme) / Phase 21 (rules audit) / Phase 22 (regression) / Phase 23 (docs) close the roadmap.
+```
+
+---
+
+## Phase 0 — Platform & Infrastructure Prerequisites
+
+**Objective:** Resolve every project-level gap identified in the architecture review before any Ride feature code exists.
+
+**Scope:** Enable Firebase Storage on the project; scaffold a Cloud Functions project and deploy one trivial function to prove the deploy pipeline; confirm/upgrade Firebase billing to Blaze; register the iOS app in Firebase if iOS is a real target; add required Flutter dependencies.
+
+**Dependencies:** None — this is the root of the roadmap.
+
+**Files involved:** `pubspec.yaml` (add `firebase_storage`, `firebase_messaging`, `cloud_functions` if callable functions are used), `firebase.json` (add `"functions"` and `"storage"` keys), new `functions/` directory (Functions project scaffold), new `storage.rules`, `.firebaserc`, possibly a new iOS Firebase app registration affecting `ios/Runner/GoogleService-Info.plist` and `lib/firebase_options.dart`.
+
+**Firestore collections:** None yet.
+
+**Providers / Repositories / Models / Screens / Widgets:** None — this phase is infrastructure only, no Dart feature code.
+
+**Tests:** Manual verification that `firebase deploy --only functions` succeeds with a placeholder function; manual verification that a test file can be uploaded to Storage from a throwaway script.
+
+**Review checklist:**
+- [ ] Confirmed with project owner: Blaze plan active
+- [ ] Confirmed with project owner: iOS in/out of scope for launch
+- [ ] `firebase.json` validates and deploys cleanly
+- [ ] No existing feature's build or deploy broke
+
+**Completion criteria:** `firebase deploy` succeeds for firestore, storage, and functions targets; app still builds and runs unchanged on all currently-supported platforms.
+
+---
+
+## Phase 1 — Shared Storage Capability
+
+**Objective:** A generic, reusable file-upload capability in `shared/`, usable by Ride now and any future feature later.
+
+**Scope:** Wrap Firebase Storage upload/download behind a small provider-based API; no Ride-specific logic here.
+
+**Dependencies:** Phase 0.
+
+**Files involved:** `lib/shared/providers/storage_providers.dart` (new `firebaseStorageProvider`), `lib/shared/services/storage_service.dart` (upload/get-url operations), `storage.rules` (owner-writes-own-path pattern, mirroring `firestore.rules`' `isOwner` convention).
+
+**Firestore collections:** None.
+
+**Providers:** `firebaseStorageProvider`, `storageServiceProvider`.
+
+**Repositories:** None at this layer — this is infra, not a domain repository.
+
+**Models:** None.
+
+**Screens / Widgets:** None.
+
+**Tests:** Unit test for path-building logic (e.g., `verification/{uid}/{filename}`); no widget tests needed (no UI yet).
+
+**Review checklist:**
+- [ ] No Ride-specific logic leaked into this shared file
+- [ ] `storage.rules` reviewed for the same owner-only-write discipline as `firestore.rules`
+
+**Completion criteria:** A throwaway test upload from an authenticated test account succeeds and is rejected for a non-owner path.
+
+---
+
+## Phase 2 — Shared Notification Capability (client-side only)
+
+**Objective:** Generic FCM token registration and local notification display, usable by any current or future service — no Ride-specific triggers yet.
+
+**Scope:** Token capture on login, token storage against the user's `uid`, permission request flow, foreground notification display.
+
+**Dependencies:** Phase 0.
+
+**Files involved:** `lib/shared/providers/notification_providers.dart`, `lib/shared/services/notification_service.dart`, a new top-level collection `fcm_tokens/{uid}` (or a `fcmToken` field merged onto whatever profile doc exists — decide during implementation, not here).
+
+**Firestore collections:** `fcm_tokens/{uid}` (token, platform, updatedAt) — platform-level, not Ride-owned.
+
+**Providers:** `notificationServiceProvider`, `fcmTokenSyncProvider` (wires token refresh to auth state changes).
+
+**Repositories:** `NotificationTokenRepository` (shared, not under `hinam_ride/`).
+
+**Models:** None Ride-specific.
+
+**Screens / Widgets:** A permission-request prompt reusing existing dialog/snackbar conventions — no new screen.
+
+**Tests:** Unit test for token-write-on-login logic (mocked FirebaseMessaging/Firestore).
+
+**Review checklist:**
+- [ ] Confirmed this lives in `shared/`, not inside `hinam_ride/`
+- [ ] Token registration doesn't run for unauthenticated sessions
+
+**Completion criteria:** Logging in on a test device produces a token document; logging out does not leave a stale, unrevoked token.
+
+---
+
+## Phase 3 — Ride Driver Profile
+
+**Objective:** A ride driver can register a profile, independent of the bus-driver `drivers` collection.
+
+**Scope:** Registration form, model, repository, datasource, provider — no verification gating, no online status, no location yet.
+
+**Dependencies:** Phase 0 (for the pubspec/project state), none of Phases 1–2 strictly required yet.
+
+**Files involved:** `lib/features/hinam_ride/driver/data/{models/ride_driver_model.dart, datasources/ride_driver_remote_datasource.dart, repositories/ride_driver_repository.dart}`, `lib/features/hinam_ride/driver/presentation/{providers/ride_driver_provider.dart, providers/ride_driver_profile_provider.dart, screens/ride_driver_registration_screen.dart, widgets/ride_driver_registration_form.dart}`.
+
+**Firestore collections:** `ride_drivers/{uid}` — fullName, phoneNumber, gender, dateOfBirth, vehicleType, vehiclePlate, licenseNumber, verificationStatus (`pending`), isOnline (`false`), ratingAvg, totalRides, createdAt. Add a matching `firestore.rules` block: owner-create with `verificationStatus == 'pending'` enforced, mirroring the existing `drivers` rule exactly.
+
+**Providers:** `rideDriverDatasourceProvider`, `rideDriverRepositoryProvider`, `rideDriverProfileProvider` (AsyncNotifier, mirrors `driverProfileProvider`).
+
+**Repositories:** `RideDriverRepository` (create, get, update non-sensitive fields).
+
+**Models:** `RideDriverModel` with a real `VerificationStatus` enum (per the approved deviation).
+
+**Screens:** `RideDriverRegistrationScreen`.
+
+**Widgets:** `RideDriverRegistrationForm` (or split into smaller field-group widgets, matching the existing `RegistrationFormCard` precedent).
+
+**Tests:** Repository unit tests (create/get against a fake Firestore instance), rule test for `ride_drivers` create/update boundaries (using the Firestore emulator).
+
+**Review checklist:**
+- [ ] Confirmed no reuse of `shared/models/driver_model.dart`
+- [ ] `verificationStatus` cannot be set to anything but `pending` on create, client-side or rule-side
+- [ ] Naming matches existing convention exactly (`xRepositoryProvider`, etc.)
+
+**Completion criteria:** A test user can create a `ride_drivers` doc, cannot self-approve, and the doc is retrievable via `rideDriverProfileProvider`.
+
+---
+
+## Phase 4 — Ride Passenger Profile
+
+**Objective:** Mirror of Phase 3 for the passenger side.
+
+**Scope:** Registration, model, repository, datasource, provider — including emergency-contact fields from day one (structurally needed for Phase 18, cheap to add now).
+
+**Dependencies:** Phase 0.
+
+**Files involved:** `lib/features/hinam_ride/passenger/data/{models/ride_passenger_model.dart, datasources/ride_passenger_remote_datasource.dart, repositories/ride_passenger_repository.dart}`, `lib/features/hinam_ride/passenger/presentation/{providers/ride_passenger_provider.dart, providers/ride_passenger_profile_provider.dart, screens/ride_passenger_registration_screen.dart, widgets/ride_passenger_registration_form.dart, widgets/emergency_contact_tile.dart}`.
+
+**Firestore collections:** `ride_passengers/{uid}` — fullName, phoneNumber, gender, verificationStatus (`pending`), emergencyContacts (array of `{name, phone}`), ratingAvg, totalRides, createdAt. Matching rule block, same shape as `ride_drivers`.
+
+**Providers:** `ridePassengerDatasourceProvider`, `ridePassengerRepositoryProvider`, `ridePassengerProfileProvider`.
+
+**Repositories:** `RidePassengerRepository`.
+
+**Models:** `RidePassengerModel`.
+
+**Screens:** `RidePassengerRegistrationScreen`.
+
+**Widgets:** `RidePassengerRegistrationForm`, `EmergencyContactTile` (add/remove a contact).
+
+**Tests:** Repository unit tests; rule tests for the `ride_passengers` boundaries; widget test for adding/removing an emergency contact.
+
+**Review checklist:**
+- [ ] Same isolation check as Phase 3 (no shared-model reuse)
+- [ ] Emergency contacts capped at a sane max (e.g. 3) client- and rule-side
+
+**Completion criteria:** A test user can create a passenger profile with at least one emergency contact and retrieve it via the profile provider.
+
+---
+
+## Phase 5 — Shared Verification Submodule
+
+**Objective:** One verification workflow, consumed by both Driver and Passenger — not duplicated.
+
+**Scope:** Document submission (using Phase 1's storage service), verification-request model, repository, and the submission UI embedded into both driver and passenger onboarding.
+
+**Dependencies:** Phase 1 (storage), Phase 3 and 4 (profiles to attach verification status to).
+
+**Files involved:** `lib/features/hinam_ride/verification/data/{models/verification_request_model.dart, datasources/ride_verification_remote_datasource.dart, repositories/ride_verification_repository.dart}`, `lib/features/hinam_ride/verification/presentation/{providers/ride_verification_provider.dart, widgets/document_upload_tile.dart, widgets/verification_status_banner.dart}`.
+
+**Firestore collections:** `ride_verifications/{requestId}` — subjectType (`driver`/`passenger` enum), subjectId, documentUrls (map), status (`pending`/`approved`/`rejected` enum), reviewedBy, reviewedAt, rejectionReason, createdAt. Rule block: create restricted to `subjectId == request.auth.uid`; status mutation restricted to `isAdmin()`.
+
+**Providers:** `rideVerificationRepositoryProvider`, `submitVerificationControllerProvider` (AsyncNotifier).
+
+**Repositories:** `RideVerificationRepository` (submit, watch-by-subject).
+
+**Models:** `VerificationRequestModel`.
+
+**Screens:** None new — this is embedded as a step inside the existing registration screens from Phases 3/4.
+
+**Widgets:** `DocumentUploadTile`, `VerificationStatusBanner` (shown on driver/passenger dashboards while pending/rejected).
+
+**Tests:** Repository test for submit + resubmission-preserves-history behavior; rule test confirming a non-admin cannot flip `status`.
+
+**Review checklist:**
+- [ ] Resubmission creates a new document, does not overwrite the rejected one
+- [ ] Denormalization write (verification result → profile's `verificationStatus`) is a single batched write, not two separate writes that could drift
+
+**Completion criteria:** A driver and a passenger can each submit documents through the same underlying repository, and a manually-approved verification (via emulator/console) correctly denormalizes onto the corresponding profile doc.
+
+---
+
+## Phase 6 — Admin Verification Review
+
+**Objective:** Admins can review and act on pending verification requests — the first slice of the Ride-specific admin submodule.
+
+**Scope:** A pending-verification queue and approve/reject actions, deliberately kept out of the existing global `AdminRepository`.
+
+**Dependencies:** Phase 5.
+
+**Files involved:** `lib/features/hinam_ride/administration/data/repositories/ride_admin_repository.dart`, `lib/features/hinam_ride/administration/presentation/{providers/ride_admin_providers.dart, screens/ride_verification_queue_screen.dart, widgets/verification_review_card.dart}`.
+
+**Firestore collections:** Reads `ride_verifications` (status == pending), writes approve/reject as designed in Phase 5.
+
+**Providers:** `rideAdminRepositoryProvider`, `pendingRideVerificationsProvider` (StreamProvider).
+
+**Repositories:** `RideAdminRepository` (gated by the existing `adminRepositoryProvider.isAdmin()` check — reused, not reimplemented).
+
+**Models:** Reuses `VerificationRequestModel`.
+
+**Screens:** `RideVerificationQueueScreen`.
+
+**Widgets:** `VerificationReviewCard` (mirrors `DriverApprovalCard`'s confirm-reject dialog pattern).
+
+**Tests:** Repository test for approve/reject; rule test confirming a non-admin uid cannot call these paths even if they guess the client method.
+
+**Review checklist:**
+- [ ] Confirmed zero new methods added to the existing `AdminRepository`
+- [ ] Reuses the existing `isAdmin()` gate rather than reimplementing an admin check
+
+**Completion criteria:** An admin test account can approve/reject a submitted verification from this screen, and a non-admin account is rejected by rules if it attempts the same write directly.
+
+---
+
+## Phase 7 — Splash & Routing Integration
+
+**Objective:** Wire Ride into app entry points, executing the decision made in the architecture review (Conflict D).
+
+**Scope:** Extend `splash_screen.dart`'s role resolution per the chosen option (explicit priority check, or defer-to-choice-screen — whichever was decided), add new route constants, add new `ChoiceButton` entries.
+
+**Dependencies:** Phases 3–4 (profiles must exist to check against).
+
+**Files involved:** `lib/features/auth/presentation/screens/splash_screen.dart` (modified — flagged explicitly since this is shared code), `lib/core/routes/app_routes.dart`, `lib/core/routes/app_router.dart` (both modified, additive).
+
+**Firestore collections:** Reads `ride_drivers/{uid}` and `ride_passengers/{uid}` existence during splash resolution.
+
+**Providers:** None new — reuses `authControllerProvider`, `rideDriverProfileProvider`, `ridePassengerProfileProvider`.
+
+**Repositories:** None new.
+
+**Models:** None new.
+
+**Screens:** No new screens; modifies `SplashScreen`'s behavior only.
+
+**Widgets:** Two new `ChoiceButton` entries ("Drive with Hinam Ride," "Book a Hinam Ride") on the existing choice list.
+
+**Tests:** Widget/integration test covering every existing role-resolution path (admin, bus driver, no profile) to confirm none regressed, plus the two new Ride paths.
+
+**Review checklist:**
+- [ ] Every existing splash-screen path re-tested, not just the new one
+- [ ] Priority order is explicit and centralized in one place, not scattered
+
+**Completion criteria:** All five entry paths (admin, bus driver, ride driver, ride passenger, brand-new user) resolve to the correct destination on relaunch, verified manually and by test.
+
+---
+
+## Phase 8 — Driver Online/Offline & Location Tracking
+
+**Objective:** An approved ride driver can go online and broadcast location, reusing the existing `LocationService`.
+
+**Scope:** Online/offline toggle gated on `verificationStatus == approved`; location streaming into a new collection, isolated from `bus_locations`.
+
+**Dependencies:** Phase 5 (verification must be approvable), Phase 3.
+
+**Files involved:** `lib/features/hinam_ride/driver/data/{models/ride_location_model.dart, datasources/ride_location_remote_datasource.dart, repositories/ride_tracking_repository.dart}`, `lib/features/hinam_ride/driver/presentation/{providers/ride_online_status_provider.dart, providers/ride_tracking_provider.dart, widgets/ride_online_toggle.dart}`.
+
+**Firestore collections:** `ride_locations/{driverId}` — latitude, longitude, speed, isOnline, updatedAt. Rule block: owner-write gated on `ride_drivers/{uid}.verificationStatus == 'approved'`, read restricted (not public, per the deliberate departure from `bus_locations`' public-read pattern).
+
+**Providers:** `rideTrackingRepositoryProvider`, `rideOnlineStatusProvider` (Notifier, gates on approval), `rideTrackingProvider` (Notifier wrapping a stream subscription — same shape as `TrackingNotifier`).
+
+**Repositories:** `RideTrackingRepository`.
+
+**Models:** `RideLocationModel`.
+
+**Screens:** None new — toggle embedded in the driver dashboard (built out further in Phase 13).
+
+**Widgets:** `RideOnlineToggle`.
+
+**Tests:** Rule test confirming an unapproved driver cannot write to `ride_locations`; repository test for start/stop tracking.
+
+**Review checklist:**
+- [ ] Confirmed `ride_locations` read rule is NOT `allow read: if true` (unlike `bus_locations`)
+- [ ] Confirmed reuse of `LocationService` with zero modification
+
+**Completion criteria:** An approved driver can go online and see their location document update in real time; an unapproved driver's write attempt is rejected server-side.
+
+---
+
+## Phase 9 — Trip Request Creation
+
+**Objective:** A passenger can create a ride request; no matching yet.
+
+**Scope:** Pickup/drop-off selection, suggested-fare display (static calculation, no negotiation), request creation, and cancel-before-match.
+
+**Dependencies:** Phase 4 (passenger must be verified — decide whether verification is required before requesting or only before boarding; document the decision here during implementation).
+
+**Files involved:** `lib/features/hinam_ride/trip/data/{models/ride_model.dart, datasources/ride_trip_remote_datasource.dart, repositories/ride_trip_repository.dart}`, `lib/features/hinam_ride/trip/presentation/{providers/active_ride_provider.dart, providers/ride_request_controller.dart, screens/ride_request_screen.dart, widgets/pickup_dropoff_picker.dart}`, `lib/features/hinam_ride/pricing/presentation/{providers/suggested_fare_provider.dart}` (pure calculation, no Firestore access, per the repository-boundary decision).
+
+**Firestore collections:** `rides/{rideId}` — passengerId, driverId (null), pickup, dropoff, status (`requested` enum), suggestedFare, agreedFare (null), timestamps. Rule block: passenger-owned create, `driverId` must be null on create.
+
+**Providers:** `rideTripRepositoryProvider`, `activeRideProvider` (StreamProvider, passenger's current in-flight ride), `rideRequestController` (AsyncNotifier for the create action), `suggestedFareProvider` (pure function, Pricing submodule).
+
+**Repositories:** `RideTripRepository` (create, cancel-before-match, watch).
+
+**Models:** `RideModel` with `RideStatus` enum.
+
+**Screens:** `RideRequestScreen`.
+
+**Widgets:** `PickupDropoffPicker` (map-based, reusing `flutter_map` the same way `single_bus_map_screen.dart` does).
+
+**Tests:** Repository test for create/cancel; rule test confirming `driverId` can't be set on create.
+
+**Review checklist:**
+- [ ] Confirmed "one active request per passenger" is enforced (client check now; rule-level enforcement considered but may require a Function — note as a known gap if deferred)
+- [ ] Suggested-fare calculation has zero Firestore/network dependency
+
+**Completion criteria:** A passenger can create and cancel a request before any driver is involved; the request is visible via `activeRideProvider`.
+
+---
+
+## Phase 10 — Matching Service & Sequential Offer Creation
+
+**Objective:** The nearest available, verified, online driver receives an offer for a requested ride.
+
+**Scope:** Query `ride_locations`/`ride_drivers` for eligible candidates, create the first offer, implement the escalate-to-next-driver-on-timeout logic client-side for now (server-side enforcement of the timeout arrives in Phase 11/12 alongside the Function work).
+
+**Dependencies:** Phase 8 (driver location/online status), Phase 9 (ride requests).
+
+**Files involved:** `lib/features/hinam_ride/trip/presentation/providers/matching_service_provider.dart` (the "matching" logic — lives inside `trip/`, not its own top-level folder, per the approved design), `lib/features/hinam_ride/trip/data/models/ride_offer_model.dart`, extends `ride_trip_remote_datasource.dart` to read/write the `offers` subcollection.
+
+**Firestore collections:** `rides/{rideId}/offers/{offerId}` — the app's first subcollection — driverId, offerAmount, status (`pending`/`accepted`/`declined`/`expired` enum), createdAt. New rule block nested under the `rides/{rideId}` match — written and tested in isolation per the architecture review's sequencing note.
+
+**Providers:** `matchingServiceProvider`, `rideOffersProvider` (StreamProvider.family<rideId>).
+
+**Repositories:** Extends `RideTripRepository` (no new repository — offers are part of the ride aggregate, per the approved boundary decision).
+
+**Models:** `RideOfferModel`.
+
+**Screens:** None new yet — surfaced in Phase 11's driver-facing offer screen.
+
+**Widgets:** None yet.
+
+**Tests:** Unit test for nearest-candidate selection logic (mocked location data); rule test for the new subcollection's isolated `match` block.
+
+**Review checklist:**
+- [ ] Confirmed no `collectionGroup` index was speculatively added (none needed per the approved design)
+- [ ] Confirmed the subcollection rule block was tested independently before touching the parent `rides` rules
+
+**Completion criteria:** Creating a ride request produces exactly one offer to the nearest eligible driver; if that driver doesn't respond within the timeout, the next-nearest receives one (verified manually with two test driver accounts).
+
+---
+
+## Phase 11 — Offer Accept/Decline/Counter + Negotiation Cloud Function
+
+**Objective:** Make the accept path race-safe — the first Cloud Function with real business logic.
+
+**Scope:** Driver-facing accept/decline/counter UI; passenger-facing accept/decline-counter UI; a Cloud Function that atomically arbitrates offer acceptance and fare-bound enforcement, replacing any client-only accept logic from Phase 10.
+
+**Dependencies:** Phase 0 (Functions pipeline proven), Phase 10.
+
+**Files involved:** `functions/` (new `onOfferAccept` or equivalent trigger/callable), `lib/features/hinam_ride/pricing/presentation/{providers/negotiation_controller.dart, widgets/offer_card.dart, widgets/counter_offer_dialog.dart}`, `lib/features/hinam_ride/trip/presentation/screens/incoming_request_screen.dart` (driver side).
+
+**Firestore collections:** Writes to `rides` (status → `matched`, `agreedFare` set) and `offers` (status transitions) — now performed via the Function rather than a direct client write for the accept step specifically; declines/counters can remain direct client writes with rule-level bound checks.
+
+**Providers:** `negotiationController` (AsyncNotifier calling the callable Function or watching the Function's Firestore write).
+
+**Repositories:** No new repository — `RideTripRepository` gains methods that call the Function instead of writing directly for the accept path.
+
+**Models:** No changes.
+
+**Screens:** `IncomingRequestScreen` (driver).
+
+**Widgets:** `OfferCard`, `CounterOfferDialog` (numeric-only input, no free text, per the approved negotiation design).
+
+**Tests:** Cloud Functions unit test simulating two concurrent accepts, confirming only one wins; widget test for the counter-offer numeric bound.
+
+**Review checklist:**
+- [ ] Confirmed counter-offers are numeric-only, no free-text field exists anywhere in this UI
+- [ ] Confirmed the double-accept race was actually tested (emulator, concurrent calls), not just assumed fixed
+
+**Completion criteria:** Two test driver accounts attempting to accept the same offer simultaneously result in exactly one `matched` ride and one rejected attempt with a clear error, verified against the Functions emulator.
+
+> **Implementation note (as actually built):** During implementation, the plan to use a Cloud Function was reconsidered and replaced with a pure Flutter/Dart solution: a race-safe `acceptOffer` implemented as two sequential, rule-gated Firestore writes from `RideTripRemoteDatasource` (ride update first, then the offer update, with the offer's security rule cross-checking the ride's already-committed state). This preserves the same atomicity/race-safety guarantee without introducing Cloud Functions, TypeScript, or any backend outside the existing Flutter/Firebase-client architecture. See the Phase 11 implementation report for the full reasoning.
+
+---
+
+## Phase 12 — Notification Delivery Triggers
+
+**Objective:** Real push delivery for the events that actually need it, using Phase 2's client registration and Phase 0's Functions pipeline.
+
+**Scope:** Firestore-triggered Functions: new offer → notify driver; ride status change → notify the counterpart; keep the trigger list minimal — only the events already defined in the product spec.
+
+**Dependencies:** Phase 2, Phase 11 (proven Functions deploy + a real event source).
+
+**Files involved:** `functions/` (new `onOfferCreated`, `onRideStatusChanged` triggers), no new Flutter files beyond consuming the existing `notification_service.dart` from Phase 2.
+
+**Firestore collections:** No schema changes — reads `offers`/`rides` writes, uses `fcm_tokens`.
+
+**Providers:** None new on the client beyond what Phase 2 already built.
+
+**Repositories:** None new.
+
+**Models:** None new.
+
+**Screens / Widgets:** None new.
+
+**Tests:** Functions test asserting the correct token is targeted for a given ride's driver/passenger.
+
+**Review checklist:**
+- [ ] Confirmed the trigger list matches exactly what the product spec defined — no speculative extra notifications added
+- [ ] Confirmed a backgrounded test device actually receives the push (not just a foreground in-app banner)
+
+**Completion criteria:** Creating an offer on one test device produces a real push notification on a second, backgrounded test device.
+
+> **Implementation note:** The open question above was resolved in favor of building the Cloud Functions scaffold: this phase's completion criteria (a backgrounded device receiving a real push) has no client-only equivalent, and the project's Technology Lock was explicitly carved out for this exact case. `functions/` did not previously exist (it was removed during the Phase 11 correction), so this was a fresh scaffold rather than a reuse of prior work. The **Dependencies** line above is therefore slightly inaccurate as originally written — Phase 11 ended up implemented without Cloud Functions (see its own implementation note), so Phase 12 is actually the first phase with a proven Functions deploy, not a consumer of one from Phase 11.
+
+---
+
+## Phase 13 — Trip Lifecycle Screens
+
+**Objective:** Full driver and passenger UI for `matched → arrived → in_progress → completed`.
+
+**Scope:** Live map tracking during the trip (reusing `flutter_map`/`LocationService`), status-transition buttons, driver/passenger identity display before boarding.
+
+**Dependencies:** Phase 11.
+
+**Files involved:** `lib/features/hinam_ride/trip/presentation/{screens/ride_tracking_screen.dart, screens/ride_driver_trip_screen.dart, widgets/trip_status_bar.dart, widgets/driver_identity_card.dart, widgets/passenger_identity_card.dart}`.
+
+**Firestore collections:** Writes to `rides.status` per the forward-only transition rule already scoped in the architecture (§15 of the design).
+
+**Providers:** `rideTripStatusController` (AsyncNotifier for status transitions).
+
+**Repositories:** Extends `RideTripRepository` with `markArrived`/`startTrip`/`completeTrip`.
+
+**Models:** No changes.
+
+**Screens:** `RideTrackingScreen` (passenger), `RideDriverTripScreen` (driver).
+
+**Widgets:** `TripStatusBar`, `DriverIdentityCard`, `PassengerIdentityCard`.
+
+**Tests:** Rule test confirming status can't skip states or be written by a non-participant; widget test for the identity cards rendering correctly.
+
+**Review checklist:**
+- [ ] Confirmed forward-only transition is enforced server-side, not just in UI
+- [ ] Confirmed only the assigned `driverId`/`passengerId` can write to their respective allowed transitions
+
+**Completion criteria:** A full trip can be driven end-to-end between two test accounts from `matched` to `completed`, with an illegal transition (e.g. skipping `arrived`) rejected by rules.
+
+---
+
+## Phase 14 — Cancellation & No-Show Handling
+
+**Objective:** Implement the cancellation rules from the product spec as first-class ride outcomes.
+
+**Scope:** Passenger/driver cancel actions at each stage, the arrival grace-period timer, `no_show` as a distinct outcome from `cancelled`.
+
+**Dependencies:** Phase 13.
+
+**Files involved:** `lib/features/hinam_ride/trip/presentation/{providers/cancellation_controller.dart, widgets/cancel_ride_dialog.dart, widgets/no_show_banner.dart}`.
+
+**Firestore collections:** `rides.status → cancelled` (with `cancelledBy`, `cancelReason`) or `→ no_show`; no new collections.
+
+**Providers:** `cancellationController` (AsyncNotifier).
+
+**Repositories:** Extends `RideTripRepository` with `cancel`/`markNoShow`.
+
+**Models:** No changes.
+
+**Screens:** None new.
+
+**Widgets:** `CancelRideDialog` (mandatory reason field for mid-trip cancels, per the product spec), `NoShowBanner`.
+
+**Tests:** Repository test distinguishing `cancelled` vs `no_show` outcomes; rule test confirming a mid-trip cancel requires a reason.
+
+**Review checklist:**
+- [ ] Confirmed mid-trip cancellation surfaces to the admin incidents/reports pipeline as flagged in the product spec, not treated as routine
+- [ ] Confirmed no monetary cancellation fee logic was added (product spec explicitly rejected this at launch — trust-score only)
+
+**Completion criteria:** Each cancellation scenario from the product spec (pre-match, post-match, post-arrival grace period, mid-trip) produces the correct distinct outcome and metadata.
+
+---
+
+## Phase 15 — Ratings & Ride History
+
+**Objective:** Post-trip rating capture and historical trip listing.
+
+**Scope:** Rating UI on completion, fields written directly to the `rides` document (no separate collection, per the approved design), history screens for both roles.
+
+**Dependencies:** Phase 13.
+
+**Files involved:** `lib/features/hinam_ride/trip/presentation/{screens/ride_history_screen.dart, widgets/rating_prompt.dart, widgets/ride_history_tile.dart, providers/ride_history_provider.dart}`.
+
+**Firestore collections:** Adds `passengerRating`, `passengerRatingComment`, `driverRating`, `driverRatingComment` fields to `rides` — no new collection. New composite index: `rides` by `passengerId + createdAt` and `driverId + createdAt`.
+
+**Providers:** `rideHistoryProvider` (StreamProvider.family<uid>).
+
+**Repositories:** Extends `RideTripRepository` with `submitRating`.
+
+**Models:** No changes (fields added to `RideModel`).
+
+**Screens:** `RideHistoryScreen`.
+
+**Widgets:** `RatingPrompt`, `RideHistoryTile`.
+
+**Tests:** Rule test confirming only the actual participant can submit their side of the rating, and only once.
+
+**Review checklist:**
+- [ ] Confirmed a rating can't be resubmitted/overwritten after the first submission
+- [ ] Confirmed the two new composite indexes are added to `firestore.indexes.json` before this phase's queries ship
+
+**Completion criteria:** Both parties can rate a completed trip exactly once, and each can see their own ride history sorted by date.
+
+---
+
+## Phase 16 — Payments (Cash)
+
+**Objective:** Record how a completed ride was settled, structured for a future payment-gateway addition without a schema migration.
+
+**Scope:** Mark-as-paid flow at trip completion, `method` field always present (only `cash` valid at launch).
+
+**Dependencies:** Phase 13.
+
+**Files involved:** `lib/features/hinam_ride/payments/data/{models/ride_transaction_model.dart, datasources/ride_payment_remote_datasource.dart, repositories/ride_payment_repository.dart}`, `lib/features/hinam_ride/payments/presentation/{providers/ride_payment_provider.dart, widgets/mark_paid_button.dart}`.
+
+**Firestore collections:** `ride_transactions/{transactionId}` — rideId, payerId, payeeId, amount, method (`cash` enum with room for future values), status, createdAt. Rule block: writable only by the ride's two participants, referencing the ride's `agreedFare`.
+
+**Providers:** `ridePaymentRepositoryProvider`, `ridePaymentController`.
+
+**Repositories:** `RidePaymentRepository`.
+
+**Models:** `RideTransactionModel`.
+
+**Screens:** None new — embedded in the trip-completion flow.
+
+**Widgets:** `MarkPaidButton`.
+
+**Tests:** Rule test confirming the transaction amount can't diverge from the ride's `agreedFare`.
+
+**Review checklist:**
+- [ ] Confirmed no payment-gateway SDK was added speculatively — `method` is just a field, not an integration
+- [ ] Confirmed this repository is genuinely isolated (no cross-import from `payments/` into other submodules beyond a `rideId` reference)
+
+**Completion criteria:** Every completed trip in the test set has exactly one corresponding `ride_transactions` document with `method: cash`.
+
+---
+
+## Phase 17 — Reports
+
+**Objective:** Either party can report an issue tied to a specific ride; admins can review it.
+
+**Scope:** Report-filing UI (during and after a trip, per the product spec), an admin reports queue.
+
+**Dependencies:** Phase 13, Phase 6 (extends the Ride admin shell).
+
+**Files involved:** `lib/features/hinam_ride/administration/data/{models/ride_report_model.dart, datasources/ride_report_remote_datasource.dart, repositories/ride_report_repository.dart}`, `lib/features/hinam_ride/administration/presentation/{screens/ride_reports_queue_screen.dart, widgets/report_form_dialog.dart, widgets/report_review_card.dart}`.
+
+**Firestore collections:** `ride_reports/{reportId}` — rideId, reportedBy, reportedUserId, reason, details, status (`open`/`reviewed`/`resolved` enum), createdAt, reviewedBy. Rule block: creatable by either ride participant, readable by the reporter, the reported party (their own report about them — decide read scope carefully), and admins only.
+
+**Providers:** `rideReportRepositoryProvider`, `openReportsProvider` (StreamProvider, kept separate from the incidents provider per the approved design).
+
+**Repositories:** `RideReportRepository`.
+
+**Models:** `RideReportModel`.
+
+**Screens:** `RideReportsQueueScreen` (admin).
+
+**Widgets:** `ReportFormDialog`, `ReportReviewCard`.
+
+**Tests:** Rule test confirming a report is not publicly readable.
+
+**Review checklist:**
+- [ ] Confirmed reports are reachable mid-trip, not just post-completion, per the product spec
+- [ ] Confirmed this provider is structurally separate from `openIncidentsProvider` (Phase 18), not merged
+
+**Completion criteria:** A test account can file a report during an active trip; an admin account can see and resolve it; a third-party test account cannot read it.
+
+---
+
+## Phase 18 — SOS / Emergency Incidents
+
+**Objective:** The concrete, mechanism-level safety feature defined in the product spec — not a slogan.
+
+**Scope:** SOS button on every active-trip screen, trip-details + location sharing to emergency contacts, urgent admin incidents queue with real push delivery, offline SMS fallback.
+
+**Dependencies:** Phase 12 (push infra), Phase 4 (emergency contacts), Phase 13 (active-trip screens to attach the button to).
+
+**Files involved:** `lib/features/hinam_ride/trip/presentation/widgets/sos_button.dart`, `lib/features/hinam_ride/administration/data/{models/ride_incident_model.dart, datasources/ride_incident_remote_datasource.dart, repositories/ride_incident_repository.dart}`, `lib/features/hinam_ride/administration/presentation/{screens/ride_incidents_queue_screen.dart, widgets/incident_card.dart}`, `functions/` (new `onIncidentCreated` — urgent push, structurally distinct channel from Phase 12's routine triggers), plus device-native SMS-intent integration for the offline fallback.
+
+**Firestore collections:** `ride_incidents/{incidentId}` — triggeredBy, rideId, location, status (`open`/`acknowledged`/`resolved` enum), createdAt, acknowledgedBy. Rule block: creatable by the ride's participants, readable only by the triggering user and admins.
+
+**Providers:** `rideIncidentRepositoryProvider`, `openIncidentsProvider` (StreamProvider, distinct priority/UI treatment from `pendingRideVerificationsProvider` and `openReportsProvider`).
+
+**Repositories:** `RideIncidentRepository`.
+
+**Models:** `RideIncidentModel`.
+
+**Screens:** `RideIncidentsQueueScreen` (admin, visually distinct urgency treatment).
+
+**Widgets:** `SosButton`, `IncidentCard`.
+
+**Tests:** Functions test confirming an incident push is sent through a distinct, higher-priority channel than a routine notification; manual test of the offline SMS fallback with device networking disabled.
+
+**Review checklist:**
+- [ ] Confirmed the admin incidents queue is visually and functionally distinct from the routine verification-badge pattern — this was an explicit, non-negotiable product requirement
+- [ ] Confirmed the offline SMS fallback was actually tested with the device offline, not just assumed to work
+
+**Completion criteria:** Triggering SOS on a test device with networking disabled still results in an SMS reaching a test emergency contact; with networking enabled, an admin test account receives a push distinctly flagged as urgent.
+
+---
+
+## Phase 19 — Ride Administration Dashboard Consolidation
+
+**Objective:** Bring the verification, reports, and incidents queues (Phases 6, 17, 18) together into one Ride admin entry point, linked from the existing `AdminDashboardScreen` without merging into it.
+
+**Scope:** A `RideAdminHomeScreen` linking to the three queues, plus a summary tile added to the existing admin dashboard.
+
+**Dependencies:** Phases 6, 17, 18.
+
+**Files involved:** `lib/features/hinam_ride/administration/presentation/screens/ride_admin_home_screen.dart`, `lib/features/admin/presentation/screens/admin_dashboard_screen.dart` (one additive link added — the only touch to existing admin code in the whole roadmap), `lib/core/routes/app_routes.dart` / `app_router.dart` (additive).
+
+**Firestore collections:** No new collections — this phase is purely UI composition over Phases 6/17/18's data.
+
+**Providers:** No new providers — composes the existing three queue providers.
+
+**Repositories:** No new repositories.
+
+**Models:** No changes.
+
+**Screens:** `RideAdminHomeScreen`.
+
+**Widgets:** A summary/link tile on the existing admin dashboard, styled consistently with `QuickActionTile`.
+
+**Tests:** Widget test confirming the incidents count/badge is visually distinct from the verification/report counts.
+
+**Review checklist:**
+- [ ] Confirmed the one touch to `admin_dashboard_screen.dart` is additive only (a new tile), not a restructuring of the existing screen
+- [ ] Confirmed incident urgency is visually obvious from the main admin dashboard, not buried a click away
+
+**Completion criteria:** An admin can reach all three Ride queues from the existing dashboard, and an open incident is visually unmistakable from the dashboard's first screen.
+
+---
+
+## Phase 20 — Theme & Design Consistency Pass
+
+**Objective:** Ride's UI reads as part of Hinam, not a bolted-on module.
+
+**Scope:** Add Ride-specific `AppColors` tokens following the exact existing naming convention (e.g., a ride accent color, mirroring how `schoolGreen`/`stopOrange` were added); audit every screen/widget built in Phases 3–19 against the existing `AppTheme`.
+
+**Dependencies:** All prior UI phases (3–19) should exist to audit against.
+
+**Files involved:** `lib/core/theme/app_colors.dart` (additive tokens only), no other theme file changes; a review pass across every `hinam_ride/` screen/widget file.
+
+**Firestore collections:** None.
+
+**Providers / Repositories / Models:** None.
+
+**Screens / Widgets:** No new ones — this phase reviews and adjusts existing ones for consistency (spacing, color usage, typography).
+
+**Tests:** Golden/widget tests for the new tokens' contrast/accessibility if the project has a golden-test convention; otherwise manual visual QA.
+
+**Review checklist:**
+- [ ] No Ride screen uses a raw `Color(0xFF...)` value outside `AppColors`
+- [ ] No new theme file was created — extended the existing one only
+
+**Completion criteria:** Every Ride screen passes a visual side-by-side comparison against existing bus/school-bus screens for consistency of spacing, color, and type.
+
+---
+
+## Phase 21 — Firestore Rules & Indexes Consolidation Audit
+
+**Objective:** A single, deliberate security review of every rule block added across Phases 3–18, together, rather than trusting each phase's isolated review alone.
+
+**Scope:** Full read-through of `firestore.rules` and `firestore.indexes.json` as they now stand; emulator-based penetration-style testing (attempt every write as a non-owner, non-admin, non-participant).
+
+**Dependencies:** All data-bearing phases (3–18).
+
+**Files involved:** `firestore.rules`, `firestore.indexes.json` (both fully reviewed, not just diffed phase-by-phase).
+
+**Firestore collections:** All Ride collections, reviewed together.
+
+**Providers / Repositories / Models / Screens / Widgets:** None — this is a security-only phase.
+
+**Tests:** A comprehensive Firestore emulator rules-test suite covering every collection's allowed/denied cases in one place (may consolidate individual phase rule tests into one suite here).
+
+**Review checklist:**
+- [ ] Confirmed no collection uses `bus_locations`' public-read pattern where it shouldn't
+- [ ] Confirmed every status-transition rule enforces forward-only movement, not just documented intent
+- [ ] Confirmed the subcollection rule block behaves correctly alongside its parent's rules under emulator testing
+
+**Completion criteria:** The consolidated rules test suite passes, and a manual attempt to read/write any Ride collection as an unrelated authenticated user fails everywhere it should.
+
+---
+
+## Phase 22 — Regression & Integration Testing
+
+**Objective:** Confirm Ride's additions — especially the splash-screen change — did not degrade any existing feature.
+
+**Scope:** Full regression pass on auth, bus driver, school bus, fleet, admin, and bus-stop flows.
+
+**Dependencies:** Phase 7 in particular; effectively all prior phases.
+
+**Files involved:** None modified — this is a testing/verification phase.
+
+**Firestore collections:** None new.
+
+**Providers / Repositories / Models / Screens / Widgets:** None new.
+
+**Tests:** Re-run (or write, if absent) integration tests for: bus driver login → dashboard, admin login → dashboard, school bus passenger flow, bus stop management — confirmed unaffected by the splash-screen and routing changes.
+
+**Review checklist:**
+- [ ] Every pre-existing role's login path manually walked through end-to-end
+- [ ] `flutter analyze` clean across the whole project, not just `hinam_ride/`
+
+**Completion criteria:** No regression in any existing feature; `flutter analyze` reports no issues project-wide.
+
+---
+
+## Phase 23 — Documentation Sync & Rollout Readiness
+
+**Objective:** Close the loop per CLAUDE.md/AGENTS.md's own rule that documentation must reflect the current architecture, not its history.
+
+**Scope:** Update `PROJECT_OVERVIEW.md` (fold in the real Ride feature set as shipped, reconcile the Google Maps vs. `flutter_map` and Storage/FCM-now-present discrepancies flagged in the earlier architecture review), confirm `AGENTS.md`/`CLAUDE.md` still apply without contradiction, and run a final production-readiness checklist.
+
+**Dependencies:** All prior phases.
+
+**Files involved:** `PROJECT_OVERVIEW.md`, `AGENTS.md` (only if a genuinely new durable rule emerged during implementation), `CLAUDE.md` (same).
+
+**Firestore collections:** None.
+
+**Providers / Repositories / Models / Screens / Widgets:** None.
+
+**Tests:** None — documentation phase.
+
+**Review checklist:**
+- [ ] `PROJECT_OVERVIEW.md`'s tech-stack section matches what was actually built (no aspirational entries left unreconciled)
+- [ ] Every deliberate deviation made along the way (enums, subcollection, private ride-location reads) is documented somewhere discoverable, not just in this conversation's history
+
+**Completion criteria:** Documentation accurately describes the shipped system; a new contributor reading only the docs would not be misled about what exists.
+
+---
+
+This is the complete roadmap — 24 phases, each independently implementable and reviewable, none skipped.
+
+## Implementation Status (as of last update)
+
+- **Phases 0–10:** Implemented.
+- **Phase 11:** Implemented, with one deliberate deviation from this document's original text — see the implementation note under Phase 11 above. The race-safe accept path was built as sequential, rule-gated Firestore writes from the existing Flutter/Dart repository layer instead of a Cloud Function, to avoid introducing a second language/runtime into the project.
+- **Phase 12:** Implemented. Unlike Phase 11, this phase's own explicit scope required Cloud Functions with no client-only alternative, and the Technology Lock's carve-out for this exact case authorized it — see the implementation note under Phase 12 above. `functions/` was scaffolded fresh with exactly the two named triggers (`onOfferCreated`, `onRideStatusChanged`); no Flutter files were changed.
+- **Phases 13–23:** Not yet implemented.
