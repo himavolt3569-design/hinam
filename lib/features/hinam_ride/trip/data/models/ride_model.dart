@@ -27,7 +27,11 @@ class RideLocation {
 enum RideStatus {
   requested,
   matched,
-  cancelled;
+  arrived,
+  inProgress,
+  completed,
+  cancelled,
+  noShow;
 
   static RideStatus fromValue(String value) {
     return RideStatus.values.firstWhere(
@@ -36,6 +40,12 @@ enum RideStatus {
     );
   }
 }
+
+/// How long a driver must wait after marking `arrived` before the passenger
+/// can be marked a no-show. Mirrored in `firestore.rules`' `arrived ->
+/// noShow` clause — the rule is the real enforcement boundary; this constant
+/// only gates when the client's "Mark No-Show" action becomes visible.
+const noShowGracePeriod = Duration(minutes: 5);
 
 class RideModel {
   final String id;
@@ -49,6 +59,13 @@ class RideModel {
   final String? acceptedOfferId;
   final Timestamp createdAt;
   final Timestamp? matchedAt;
+  final Timestamp? arrivedAt;
+  final String? cancelledBy;
+  final String? cancelReason;
+  final double? driverRating;
+  final String? driverRatingComment;
+  final double? passengerRating;
+  final String? passengerRatingComment;
 
   const RideModel({
     required this.id,
@@ -62,6 +79,13 @@ class RideModel {
     this.acceptedOfferId,
     required this.createdAt,
     this.matchedAt,
+    this.arrivedAt,
+    this.cancelledBy,
+    this.cancelReason,
+    this.driverRating,
+    this.driverRatingComment,
+    this.passengerRating,
+    this.passengerRatingComment,
   });
 
   Map<String, dynamic> toMap() {
@@ -76,6 +100,13 @@ class RideModel {
       'acceptedOfferId': acceptedOfferId,
       'createdAt': createdAt,
       'matchedAt': matchedAt,
+      'arrivedAt': arrivedAt,
+      'cancelledBy': cancelledBy,
+      'cancelReason': cancelReason,
+      'driverRating': driverRating,
+      'driverRatingComment': driverRatingComment,
+      'passengerRating': passengerRating,
+      'passengerRatingComment': passengerRatingComment,
     };
   }
 
@@ -96,6 +127,13 @@ class RideModel {
       acceptedOfferId: map['acceptedOfferId'],
       createdAt: map['createdAt'] ?? Timestamp.now(),
       matchedAt: map['matchedAt'],
+      arrivedAt: map['arrivedAt'],
+      cancelledBy: map['cancelledBy'],
+      cancelReason: map['cancelReason'],
+      driverRating: (map['driverRating'] as num?)?.toDouble(),
+      driverRatingComment: map['driverRatingComment'],
+      passengerRating: (map['passengerRating'] as num?)?.toDouble(),
+      passengerRatingComment: map['passengerRatingComment'],
     );
   }
 }

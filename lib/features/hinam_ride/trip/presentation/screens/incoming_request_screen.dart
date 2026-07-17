@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:hinam/core/routes/app_routes.dart';
 import 'package:hinam/core/theme/app_colors.dart';
 import 'package:hinam/features/auth/presentation/providers/auth_controller.dart';
 import 'package:hinam/features/hinam_ride/pricing/presentation/widgets/offer_card.dart';
@@ -23,7 +24,19 @@ class IncomingRequestScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(title: const Text('Ride Requests')),
+      appBar: AppBar(
+        title: const Text('Ride Requests'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.history_rounded),
+            tooltip: 'Ride History',
+            onPressed: () => Navigator.of(context).pushNamed(
+              AppRoutes.rideHistory,
+              arguments: (uid: user.uid, isDriver: true),
+            ),
+          ),
+        ],
+      ),
       body: offersAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stackTrace) => Center(child: Text('$error')),

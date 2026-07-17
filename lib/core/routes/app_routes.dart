@@ -14,4 +14,7 @@ class AppRoutes {
   static const manageAssignments = '/manage-assignments';
   static const rideDriverRegistration = '/ride-driver-registration';
   static const ridePassengerRegistration = '/ride-passenger-registration';
+  static const rideTracking = '/ride-tracking';
+  static const rideDriverTrip = '/ride-driver-trip';
+  static const rideHistory = '/ride-history';
 }

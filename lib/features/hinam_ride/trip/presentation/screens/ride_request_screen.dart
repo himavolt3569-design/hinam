@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:hinam/core/routes/app_routes.dart';
 import 'package:hinam/core/theme/app_colors.dart';
 import 'package:hinam/features/auth/presentation/providers/auth_controller.dart';
 import 'package:hinam/features/hinam_ride/pricing/presentation/providers/suggested_fare_provider.dart';
@@ -57,8 +58,10 @@ class _RideRequestScreenState extends ConsumerState<RideRequestScreen> {
     }
   }
 
-  Future<void> _cancelRide(String rideId) async {
-    await ref.read(rideRequestControllerProvider.notifier).cancelRide(rideId);
+  Future<void> _cancelRide(String rideId, String passengerId) async {
+    await ref
+        .read(rideRequestControllerProvider.notifier)
+        .cancelRide(rideId, passengerId: passengerId);
   }
 
   @override
@@ -80,13 +83,29 @@ class _RideRequestScreenState extends ConsumerState<RideRequestScreen> {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(title: const Text('Book a Ride')),
+      appBar: AppBar(
+        title: const Text('Book a Ride'),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.history_rounded),
+            tooltip: 'Ride History',
+            onPressed: () => Navigator.of(context).pushNamed(
+              AppRoutes.rideHistory,
+              arguments: (uid: user.uid, isDriver: false),
+            ),
+          ),
+        ],
+      ),
       body: activeRideAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, stackTrace) => Center(child: Text('$error')),
         data: (activeRide) {
           if (activeRide != null) {
-            return _buildActiveRideView(activeRide, requestState.isLoading);
+            return _buildActiveRideView(
+              activeRide,
+              user.uid,
+              requestState.isLoading,
+            );
           }
           return _buildRequestForm(user.uid, requestState.isLoading);
         },
@@ -110,8 +129,7 @@ class _RideRequestScreenState extends ConsumerState<RideRequestScreen> {
             pickup: _pickup,
             dropoff: _dropoff,
             onPickupChanged: (location) => setState(() => _pickup = location),
-            onDropoffChanged: (location) =>
-                setState(() => _dropoff = location),
+            onDropoffChanged: (location) => setState(() => _dropoff = location),
           ),
 
           const SizedBox(height: 20),
@@ -173,7 +191,11 @@ class _RideRequestScreenState extends ConsumerState<RideRequestScreen> {
     );
   }
 
-  Widget _buildActiveRideView(RideModel ride, bool isCancelling) {
+  Widget _buildActiveRideView(
+    RideModel ride,
+    String passengerId,
+    bool isCancelling,
+  ) {
     return Padding(
       padding: const EdgeInsets.all(20),
       child: Column(
@@ -229,12 +251,20 @@ class _RideRequestScreenState extends ConsumerState<RideRequestScreen> {
 
           if (ride.status == RideStatus.requested)
             OutlinedButton.icon(
-              onPressed: isCancelling ? null : () => _cancelRide(ride.id),
+              onPressed: isCancelling
+                  ? null
+                  : () => _cancelRide(ride.id, passengerId),
               icon: const Icon(Icons.close_rounded, size: 18),
               label: Text(isCancelling ? 'Cancelling…' : 'Cancel Request'),
-              style: OutlinedButton.styleFrom(
-                foregroundColor: AppColors.error,
-              ),
+              style: OutlinedButton.styleFrom(foregroundColor: AppColors.error),
+            )
+          else
+            FilledButton.icon(
+              onPressed: () => Navigator.of(
+                context,
+              ).pushNamed(AppRoutes.rideTracking, arguments: ride.id),
+              icon: const Icon(Icons.map_rounded, size: 18),
+              label: const Text('View Trip'),
             ),
         ],
       ),

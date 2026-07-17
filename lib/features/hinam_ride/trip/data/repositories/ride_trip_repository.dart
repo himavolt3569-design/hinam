@@ -15,8 +15,57 @@ class RideTripRepository {
     return datasource.watchActiveRideForPassenger(passengerId);
   }
 
-  Future<void> cancelRide(String rideId) {
-    return datasource.cancelRide(rideId);
+  Stream<RideModel?> watchRide(String rideId) {
+    return datasource.watchRide(rideId);
+  }
+
+  Future<void> cancelRide(
+    String rideId, {
+    required String cancelledBy,
+    String? cancelReason,
+  }) {
+    return datasource.cancelRide(
+      rideId,
+      cancelledBy: cancelledBy,
+      cancelReason: cancelReason,
+    );
+  }
+
+  Future<void> markArrived(String rideId) {
+    return datasource.markArrived(rideId);
+  }
+
+  Future<void> startTrip(String rideId) {
+    return datasource.startTrip(rideId);
+  }
+
+  Future<void> completeTrip(String rideId) {
+    return datasource.completeTrip(rideId);
+  }
+
+  Future<void> markNoShow(String rideId) {
+    return datasource.markNoShow(rideId);
+  }
+
+  Future<void> submitRating({
+    required String rideId,
+    required bool isDriver,
+    required double rating,
+    String? comment,
+  }) {
+    return datasource.submitRating(
+      rideId: rideId,
+      isDriver: isDriver,
+      rating: rating,
+      comment: comment,
+    );
+  }
+
+  Stream<List<RideModel>> watchRideHistory({
+    required String uid,
+    required bool isDriver,
+  }) {
+    return datasource.watchRideHistory(uid: uid, isDriver: isDriver);
   }
 
   Future<void> createOffer(String rideId, RideOfferModel offer) {
@@ -44,7 +93,11 @@ class RideTripRepository {
     required String offerId,
     required double amount,
   }) {
-    return datasource.counterOffer(rideId: rideId, offerId: offerId, amount: amount);
+    return datasource.counterOffer(
+      rideId: rideId,
+      offerId: offerId,
+      amount: amount,
+    );
   }
 
   Future<void> acceptOffer({

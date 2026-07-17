@@ -17,7 +17,10 @@ class RideTripRemoteDatasource {
     return firestore
         .collection('rides')
         .where('passengerId', isEqualTo: passengerId)
-        .where('status', whereIn: ['requested', 'matched'])
+        .where(
+          'status',
+          whereIn: ['requested', 'matched', 'arrived', 'inProgress'],
+        )
         .orderBy('createdAt', descending: true)
         .limit(1)
         .snapshots()
@@ -28,10 +31,77 @@ class RideTripRemoteDatasource {
         });
   }
 
-  Future<void> cancelRide(String rideId) async {
+  Stream<RideModel?> watchRide(String rideId) {
+    return firestore.collection('rides').doc(rideId).snapshots().map((doc) {
+      if (!doc.exists) return null;
+      return RideModel.fromMap(doc.id, doc.data()!);
+    });
+  }
+
+  Future<void> cancelRide(
+    String rideId, {
+    required String cancelledBy,
+    String? cancelReason,
+  }) async {
     await firestore.collection('rides').doc(rideId).update({
       'status': 'cancelled',
+      'cancelledBy': cancelledBy,
+      'cancelReason': cancelReason,
     });
+  }
+
+  Future<void> markArrived(String rideId) async {
+    await firestore.collection('rides').doc(rideId).update({
+      'status': 'arrived',
+      'arrivedAt': Timestamp.now(),
+    });
+  }
+
+  Future<void> startTrip(String rideId) async {
+    await firestore.collection('rides').doc(rideId).update({
+      'status': 'inProgress',
+    });
+  }
+
+  Future<void> completeTrip(String rideId) async {
+    await firestore.collection('rides').doc(rideId).update({
+      'status': 'completed',
+    });
+  }
+
+  Future<void> markNoShow(String rideId) async {
+    await firestore.collection('rides').doc(rideId).update({
+      'status': 'noShow',
+    });
+  }
+
+  Future<void> submitRating({
+    required String rideId,
+    required bool isDriver,
+    required double rating,
+    String? comment,
+  }) async {
+    final fields = isDriver
+        ? {'passengerRating': rating, 'passengerRatingComment': comment}
+        : {'driverRating': rating, 'driverRatingComment': comment};
+
+    await firestore.collection('rides').doc(rideId).update(fields);
+  }
+
+  Stream<List<RideModel>> watchRideHistory({
+    required String uid,
+    required bool isDriver,
+  }) {
+    return firestore
+        .collection('rides')
+        .where(isDriver ? 'driverId' : 'passengerId', isEqualTo: uid)
+        .orderBy('createdAt', descending: true)
+        .snapshots()
+        .map(
+          (snapshot) => snapshot.docs
+              .map((doc) => RideModel.fromMap(doc.id, doc.data()))
+              .toList(),
+        );
   }
 
   Future<void> createOffer(String rideId, RideOfferModel offer) async {

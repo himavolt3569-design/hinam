@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:hinam/core/routes/app_routes.dart';
 import 'package:hinam/core/theme/app_colors.dart';
 import 'package:hinam/features/hinam_ride/pricing/presentation/providers/negotiation_controller.dart';
 import 'package:hinam/features/hinam_ride/pricing/presentation/widgets/counter_offer_dialog.dart';
@@ -88,7 +89,17 @@ class OfferCard extends ConsumerWidget {
         .read(negotiationControllerProvider.notifier)
         .acceptOffer(rideId: offer.rideId, offerId: offer.id, driverId: driverId);
     if (!context.mounted) return;
-    _showErrorIfAny(context, ref);
+
+    final error = ref.read(negotiationControllerProvider).error;
+    if (error != null) {
+      _showErrorIfAny(context, ref);
+      return;
+    }
+
+    Navigator.of(context).pushReplacementNamed(
+      AppRoutes.rideDriverTrip,
+      arguments: offer.rideId,
+    );
   }
 
   Future<void> _decline(BuildContext context, WidgetRef ref) async {

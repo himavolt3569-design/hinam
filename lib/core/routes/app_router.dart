@@ -13,6 +13,9 @@ import 'package:hinam/features/fleet/presentation/screens/manage_assignments_scr
 import 'package:hinam/features/fleet/presentation/screens/manage_buses_screen.dart';
 import 'package:hinam/features/hinam_ride/driver/presentation/screens/ride_driver_registration_screen.dart';
 import 'package:hinam/features/hinam_ride/passenger/presentation/screens/ride_passenger_registration_screen.dart';
+import 'package:hinam/features/hinam_ride/trip/presentation/screens/ride_driver_trip_screen.dart';
+import 'package:hinam/features/hinam_ride/trip/presentation/screens/ride_history_screen.dart';
+import 'package:hinam/features/hinam_ride/trip/presentation/screens/ride_tracking_screen.dart';
 import 'package:hinam/features/passenger/presentation/screens/public_bus_list_screen.dart';
 import 'package:hinam/features/passenger/presentation/screens/single_bus_map_screen.dart';
 import 'package:hinam/features/school_bus/presentation/screens/school_bus_list_screen.dart';
@@ -36,7 +39,9 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const DashboardScreen());
 
       case AppRoutes.driverRegistration:
-        return MaterialPageRoute(builder: (_) => const DriverRegistrationScreen());
+        return MaterialPageRoute(
+          builder: (_) => const DriverRegistrationScreen(),
+        );
 
       case AppRoutes.publicBusList:
         return MaterialPageRoute(builder: (_) => const PublicBusListScreen());
@@ -63,7 +68,9 @@ class AppRouter {
         return MaterialPageRoute(builder: (_) => const ManageBusesScreen());
 
       case AppRoutes.manageAssignments:
-        return MaterialPageRoute(builder: (_) => const ManageAssignmentsScreen());
+        return MaterialPageRoute(
+          builder: (_) => const ManageAssignmentsScreen(),
+        );
 
       case AppRoutes.rideDriverRegistration:
         return MaterialPageRoute(
@@ -73,6 +80,25 @@ class AppRouter {
       case AppRoutes.ridePassengerRegistration:
         return MaterialPageRoute(
           builder: (_) => const RidePassengerRegistrationScreen(),
+        );
+
+      case AppRoutes.rideTracking:
+        final rideId = settings.arguments as String;
+        return MaterialPageRoute(
+          builder: (_) => RideTrackingScreen(rideId: rideId),
+        );
+
+      case AppRoutes.rideDriverTrip:
+        final rideId = settings.arguments as String;
+        return MaterialPageRoute(
+          builder: (_) => RideDriverTripScreen(rideId: rideId),
+        );
+
+      case AppRoutes.rideHistory:
+        final args = settings.arguments as ({String uid, bool isDriver});
+        return MaterialPageRoute(
+          builder: (_) =>
+              RideHistoryScreen(uid: args.uid, isDriver: args.isDriver),
         );
 
       default:

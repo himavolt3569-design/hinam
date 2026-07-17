@@ -35,7 +35,9 @@ class RideRequestController extends AsyncNotifier<void> {
         createdAt: Timestamp.now(),
       );
 
-      final rideId = await ref.read(rideTripRepositoryProvider).createRide(ride);
+      final rideId = await ref
+          .read(rideTripRepositoryProvider)
+          .createRide(ride);
 
       await ref
           .read(matchingServiceProvider.notifier)
@@ -49,12 +51,14 @@ class RideRequestController extends AsyncNotifier<void> {
     });
   }
 
-  Future<void> cancelRide(String rideId) async {
+  Future<void> cancelRide(String rideId, {required String passengerId}) async {
     state = const AsyncLoading();
 
     state = await AsyncValue.guard(() async {
       await ref.read(matchingServiceProvider.notifier).stopMatching();
-      await ref.read(rideTripRepositoryProvider).cancelRide(rideId);
+      await ref
+          .read(rideTripRepositoryProvider)
+          .cancelRide(rideId, cancelledBy: passengerId);
     });
   }
 }

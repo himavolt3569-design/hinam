@@ -23,6 +23,13 @@ final activeRideProvider = StreamProvider.family<RideModel?, String>((
       .watchActiveRideForPassenger(passengerId);
 });
 
+final rideByIdProvider = StreamProvider.family<RideModel?, String>((
+  ref,
+  rideId,
+) {
+  return ref.watch(rideTripRepositoryProvider).watchRide(rideId);
+});
+
 final rideOffersProvider = StreamProvider.family<List<RideOfferModel>, String>(
   (ref, rideId) {
     return ref.watch(rideTripRepositoryProvider).watchOffersForRide(rideId);

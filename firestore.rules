@@ -27,6 +27,11 @@ service cloud.firestore {
       return get(/databases/$(database)/documents/ride_drivers/$(driverId)).data.verificationStatus == 'approved';
     }
 
+    // Helper: the rides/{rideId} document a ride_transactions/{rideId} entry references
+    function rideOf(rideId) {
+      return get(/databases/$(database)/documents/rides/$(rideId)).data;
+    }
+
     // bus_locations — drivers write their own doc once approved; anyone (even unauthenticated) can read
     match /bus_locations/{driverId} {
       allow read: if true;
@@ -135,6 +140,7 @@ service cloud.firestore {
         (isOwner(resource.data.passengerId)
           && resource.data.status == 'requested'
           && request.resource.data.status == 'cancelled'
+          && request.resource.data.cancelledBy == request.auth.uid
           && request.resource.data.passengerId == resource.data.passengerId
           && request.resource.data.driverId == resource.data.driverId
           && request.resource.data.pickup == resource.data.pickup
@@ -158,7 +164,119 @@ service cloud.firestore {
           && request.resource.data.agreedFare ==
             get(/databases/$(database)/documents/rides/$(rideId)/offers/$(request.resource.data.acceptedOfferId)).data.offerAmount
           && get(/databases/$(database)/documents/rides/$(rideId)/offers/$(request.resource.data.acceptedOfferId)).data.driverId == request.auth.uid
-          && get(/databases/$(database)/documents/rides/$(rideId)/offers/$(request.resource.data.acceptedOfferId)).data.status == 'pending');
+          && get(/databases/$(database)/documents/rides/$(rideId)/offers/$(request.resource.data.acceptedOfferId)).data.status == 'pending')
+        ||
+        // The assigned driver marks arrival at the pickup point.
+        (isOwner(resource.data.driverId)
+          && resource.data.status == 'matched'
+          && request.resource.data.status == 'arrived'
+          && request.resource.data.passengerId == resource.data.passengerId
+          && request.resource.data.driverId == resource.data.driverId
+          && request.resource.data.pickup == resource.data.pickup
+          && request.resource.data.dropoff == resource.data.dropoff
+          && request.resource.data.agreedFare == resource.data.agreedFare
+          && request.resource.data.acceptedOfferId == resource.data.acceptedOfferId)
+        ||
+        // The assigned driver starts the trip.
+        (isOwner(resource.data.driverId)
+          && resource.data.status == 'arrived'
+          && request.resource.data.status == 'inProgress'
+          && request.resource.data.passengerId == resource.data.passengerId
+          && request.resource.data.driverId == resource.data.driverId
+          && request.resource.data.pickup == resource.data.pickup
+          && request.resource.data.dropoff == resource.data.dropoff
+          && request.resource.data.agreedFare == resource.data.agreedFare
+          && request.resource.data.acceptedOfferId == resource.data.acceptedOfferId)
+        ||
+        // The assigned driver completes the trip.
+        (isOwner(resource.data.driverId)
+          && resource.data.status == 'inProgress'
+          && request.resource.data.status == 'completed'
+          && request.resource.data.passengerId == resource.data.passengerId
+          && request.resource.data.driverId == resource.data.driverId
+          && request.resource.data.pickup == resource.data.pickup
+          && request.resource.data.dropoff == resource.data.dropoff
+          && request.resource.data.agreedFare == resource.data.agreedFare
+          && request.resource.data.acceptedOfferId == resource.data.acceptedOfferId)
+        ||
+        // Either participant cancels after a match but before the trip starts.
+        // No reason is required at this stage — only mid-trip cancels mandate one.
+        ((resource.data.status == 'matched' || resource.data.status == 'arrived')
+          && request.resource.data.status == 'cancelled'
+          && (isOwner(resource.data.passengerId) || isOwner(resource.data.driverId))
+          && request.resource.data.cancelledBy == request.auth.uid
+          && request.resource.data.passengerId == resource.data.passengerId
+          && request.resource.data.driverId == resource.data.driverId
+          && request.resource.data.pickup == resource.data.pickup
+          && request.resource.data.dropoff == resource.data.dropoff
+          && request.resource.data.agreedFare == resource.data.agreedFare
+          && request.resource.data.acceptedOfferId == resource.data.acceptedOfferId)
+        ||
+        // Either participant cancels mid-trip. A non-empty reason is mandatory
+        // here per the product spec — this is the one stage where cancellation
+        // is treated as a flagged event rather than routine.
+        (resource.data.status == 'inProgress'
+          && request.resource.data.status == 'cancelled'
+          && (isOwner(resource.data.passengerId) || isOwner(resource.data.driverId))
+          && request.resource.data.cancelledBy == request.auth.uid
+          && request.resource.data.cancelReason is string
+          && request.resource.data.cancelReason.size() > 0
+          && request.resource.data.passengerId == resource.data.passengerId
+          && request.resource.data.driverId == resource.data.driverId
+          && request.resource.data.pickup == resource.data.pickup
+          && request.resource.data.dropoff == resource.data.dropoff
+          && request.resource.data.agreedFare == resource.data.agreedFare
+          && request.resource.data.acceptedOfferId == resource.data.acceptedOfferId)
+        ||
+        // The assigned driver marks a no-show once the post-arrival grace
+        // period has elapsed — a distinct outcome from a cancellation.
+        (resource.data.status == 'arrived'
+          && request.resource.data.status == 'noShow'
+          && isOwner(resource.data.driverId)
+          && resource.data.arrivedAt is timestamp
+          && request.time > resource.data.arrivedAt + duration.value(5, 'm')
+          && request.resource.data.passengerId == resource.data.passengerId
+          && request.resource.data.driverId == resource.data.driverId
+          && request.resource.data.pickup == resource.data.pickup
+          && request.resource.data.dropoff == resource.data.dropoff
+          && request.resource.data.agreedFare == resource.data.agreedFare
+          && request.resource.data.acceptedOfferId == resource.data.acceptedOfferId)
+        ||
+        // The passenger rates the driver, exactly once, after completion.
+        // resource.data.driverRating == null gates this to a first submission
+        // only — a later attempt to change it sees a non-null value and is
+        // rejected by this same guard, with no separate overwrite path.
+        (isOwner(resource.data.passengerId)
+          && resource.data.status == 'completed'
+          && resource.data.driverRating == null
+          && request.resource.data.driverRating is number
+          && request.resource.data.driverRating >= 1
+          && request.resource.data.driverRating <= 5
+          && request.resource.data.status == resource.data.status
+          && request.resource.data.passengerId == resource.data.passengerId
+          && request.resource.data.driverId == resource.data.driverId
+          && request.resource.data.pickup == resource.data.pickup
+          && request.resource.data.dropoff == resource.data.dropoff
+          && request.resource.data.agreedFare == resource.data.agreedFare
+          && request.resource.data.acceptedOfferId == resource.data.acceptedOfferId
+          && request.resource.data.passengerRating == resource.data.passengerRating)
+        ||
+        // The driver rates the passenger, exactly once, after completion —
+        // the mirror image of the clause above.
+        (isOwner(resource.data.driverId)
+          && resource.data.status == 'completed'
+          && resource.data.passengerRating == null
+          && request.resource.data.passengerRating is number
+          && request.resource.data.passengerRating >= 1
+          && request.resource.data.passengerRating <= 5
+          && request.resource.data.status == resource.data.status
+          && request.resource.data.passengerId == resource.data.passengerId
+          && request.resource.data.driverId == resource.data.driverId
+          && request.resource.data.pickup == resource.data.pickup
+          && request.resource.data.dropoff == resource.data.dropoff
+          && request.resource.data.agreedFare == resource.data.agreedFare
+          && request.resource.data.acceptedOfferId == resource.data.acceptedOfferId
+          && request.resource.data.driverRating == resource.data.driverRating);
 
       allow delete: if false;
 
@@ -210,6 +328,68 @@ service cloud.firestore {
 
         allow delete: if false;
       }
+    }
+
+    // ride_transactions — a settlement record for a completed ride, keyed by the ride's own
+    // id rather than a separately generated one: this makes "exactly one transaction per
+    // ride" a structural guarantee (a second attempt at the same path is an update, which
+    // is disallowed below) rather than something only a query could otherwise check.
+    match /ride_transactions/{rideId} {
+      allow read: if isOwner(rideOf(rideId).passengerId)
+        || isOwner(rideOf(rideId).driverId)
+        || isAdmin();
+
+      allow create: if
+        (isOwner(rideOf(rideId).passengerId) || isOwner(rideOf(rideId).driverId))
+        && rideOf(rideId).status == 'completed'
+        && request.resource.data.rideId == rideId
+        && request.resource.data.payerId == rideOf(rideId).passengerId
+        && request.resource.data.payeeId == rideOf(rideId).driverId
+        && request.resource.data.amount == rideOf(rideId).agreedFare
+        && request.resource.data.method == 'cash'
+        && request.resource.data.status == 'completed';
+
+      allow update: if false;
+      allow delete: if false;
+    }
+
+    // ride_reports — either ride participant reports the other. Reachable whenever the ride
+    // has a driver assigned (matched onward) — not gated to any single status, so a report can
+    // be filed mid-trip or after completion. reportedUserId is rule-derived (always "the other
+    // participant"), not client-asserted, so a report can never be filed against an unrelated
+    // third party. Readable by the reporter, the reported party, and admins only — never public.
+    match /ride_reports/{reportId} {
+      allow read: if isOwner(resource.data.reportedBy)
+        || isOwner(resource.data.reportedUserId)
+        || isAdmin();
+
+      allow create: if
+        rideOf(request.resource.data.rideId).driverId != null
+        && (isOwner(rideOf(request.resource.data.rideId).passengerId)
+          || isOwner(rideOf(request.resource.data.rideId).driverId))
+        && request.resource.data.reportedBy == request.auth.uid
+        && request.resource.data.reportedUserId == (
+          rideOf(request.resource.data.rideId).passengerId == request.auth.uid
+            ? rideOf(request.resource.data.rideId).driverId
+            : rideOf(request.resource.data.rideId).passengerId
+        )
+        && request.resource.data.status == 'open'
+        && request.resource.data.reviewedBy == null;
+
+      // Only an admin may move a report toward resolution; the filer's own fields
+      // (rideId, reportedBy, reportedUserId, reason, details) are locked afterward.
+      allow update: if isAdmin()
+        && request.resource.data.reviewedBy == request.auth.uid
+        && request.resource.data.rideId == resource.data.rideId
+        && request.resource.data.reportedBy == resource.data.reportedBy
+        && request.resource.data.reportedUserId == resource.data.reportedUserId
+        && request.resource.data.reason == resource.data.reason
+        && request.resource.data.details == resource.data.details
+        && ((resource.data.status == 'open' && request.resource.data.status == 'reviewed')
+          || ((resource.data.status == 'open' || resource.data.status == 'reviewed')
+            && request.resource.data.status == 'resolved'));
+
+      allow delete: if false;
     }
   }
 }
