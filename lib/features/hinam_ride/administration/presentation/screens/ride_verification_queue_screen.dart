@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:hinam/core/theme/app_colors.dart';
 import 'package:hinam/features/hinam_ride/administration/presentation/providers/ride_admin_providers.dart';
 import 'package:hinam/features/hinam_ride/administration/presentation/widgets/verification_review_card.dart';
 
@@ -29,13 +30,13 @@ class RideVerificationQueueScreen extends ConsumerWidget {
                     width: 80,
                     height: 80,
                     decoration: BoxDecoration(
-                      color: Colors.green.withValues(alpha: 0.08),
+                      color: AppColors.success.withValues(alpha: 0.08),
                       shape: BoxShape.circle,
                     ),
                     child: Icon(
                       Icons.check_circle_outline_rounded,
                       size: 38,
-                      color: Colors.green.withValues(alpha: 0.6),
+                      color: AppColors.success.withValues(alpha: 0.6),
                     ),
                   ),
                   const SizedBox(height: 16),

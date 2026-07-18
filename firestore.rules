@@ -391,5 +391,33 @@ service cloud.firestore {
 
       allow delete: if false;
     }
+
+    // ride_incidents — an SOS trigger from either ride participant. Unlike ride_reports,
+    // this is NOT readable by the other participant — only the triggering user themselves
+    // and admins, since an SOS may be triggered *about* the other participant and telling
+    // them would defeat the feature's purpose.
+    match /ride_incidents/{incidentId} {
+      allow read: if isOwner(resource.data.triggeredBy) || isAdmin();
+
+      allow create: if
+        (isOwner(rideOf(request.resource.data.rideId).passengerId)
+          || isOwner(rideOf(request.resource.data.rideId).driverId))
+        && request.resource.data.triggeredBy == request.auth.uid
+        && request.resource.data.status == 'open'
+        && request.resource.data.acknowledgedBy == null;
+
+      // Only an admin may move an incident toward resolution; the triggering
+      // user's own fields (rideId, triggeredBy, location) are locked afterward.
+      allow update: if isAdmin()
+        && request.resource.data.acknowledgedBy == request.auth.uid
+        && request.resource.data.rideId == resource.data.rideId
+        && request.resource.data.triggeredBy == resource.data.triggeredBy
+        && request.resource.data.location == resource.data.location
+        && ((resource.data.status == 'open' && request.resource.data.status == 'acknowledged')
+          || ((resource.data.status == 'open' || resource.data.status == 'acknowledged')
+            && request.resource.data.status == 'resolved'));
+
+      allow delete: if false;
+    }
   }
 }

@@ -31,4 +31,6 @@ class AppColors {
   static const schoolGreenBg = Color(0xFFF0FDF4);
   static const stopOrange = Color(0xFFEA580C);
   static const stopOrangeBg = Color(0xFFFFF7ED);
+  static const rideAccent = Color(0xFF7C3AED);
+  static const rideAccentBg = Color(0xFFF5F3FF);
 }

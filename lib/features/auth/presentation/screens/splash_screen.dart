@@ -236,9 +236,9 @@ class _HeroChoiceCard extends StatelessWidget {
         child: Ink(
           padding: const EdgeInsets.symmetric(vertical: 22, horizontal: 12),
           decoration: BoxDecoration(
-            color: color.withOpacity(0.06),
+            color: color.withValues(alpha: 0.06),
             borderRadius: BorderRadius.circular(20),
-            border: Border.all(color: color.withOpacity(0.16)),
+            border: Border.all(color: color.withValues(alpha: 0.16)),
           ),
           child: Column(
             children: [
@@ -248,7 +248,9 @@ class _HeroChoiceCard extends StatelessWidget {
                 decoration: BoxDecoration(
                   color: color,
                   borderRadius: BorderRadius.circular(16),
-                  boxShadow: [BoxShadow(color: color.withOpacity(0.30), blurRadius: 12, offset: const Offset(0, 6))],
+                  boxShadow: [
+                    BoxShadow(color: color.withValues(alpha: 0.30), blurRadius: 12, offset: const Offset(0, 6)),
+                  ],
                 ),
                 child: Icon(icon, color: Colors.white, size: 26),
               ),

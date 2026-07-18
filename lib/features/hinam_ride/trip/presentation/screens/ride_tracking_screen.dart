@@ -5,6 +5,7 @@ import 'package:latlong2/latlong.dart';
 
 import 'package:hinam/core/theme/app_colors.dart';
 import 'package:hinam/features/hinam_ride/administration/presentation/widgets/report_form_dialog.dart';
+import 'package:hinam/features/hinam_ride/passenger/presentation/providers/ride_passenger_provider.dart';
 import 'package:hinam/features/hinam_ride/trip/data/models/ride_model.dart';
 import 'package:hinam/features/hinam_ride/trip/presentation/providers/active_ride_provider.dart';
 import 'package:hinam/features/hinam_ride/trip/presentation/providers/cancellation_controller.dart';
@@ -12,6 +13,7 @@ import 'package:hinam/features/hinam_ride/trip/presentation/widgets/cancel_ride_
 import 'package:hinam/features/hinam_ride/trip/presentation/widgets/driver_identity_card.dart';
 import 'package:hinam/features/hinam_ride/trip/presentation/widgets/no_show_banner.dart';
 import 'package:hinam/features/hinam_ride/trip/presentation/widgets/ride_location_marker.dart';
+import 'package:hinam/features/hinam_ride/trip/presentation/widgets/sos_button.dart';
 import 'package:hinam/features/hinam_ride/trip/presentation/widgets/trip_ended_view.dart';
 import 'package:hinam/features/hinam_ride/trip/presentation/widgets/trip_status_bar.dart';
 
@@ -87,6 +89,12 @@ class _TripBody extends ConsumerWidget {
       return TripEndedView(ride: ride, isDriver: false);
     }
 
+    final passengerAsync = ref.watch(
+      ridePassengerByIdProvider(ride.passengerId),
+    );
+    final emergencyContacts =
+        passengerAsync.asData?.value?.emergencyContacts ?? const [];
+
     final pickup = LatLng(ride.pickup.latitude, ride.pickup.longitude);
     final dropoff = LatLng(ride.dropoff.latitude, ride.dropoff.longitude);
 
@@ -141,26 +149,39 @@ class _TripBody extends ConsumerWidget {
         ),
         Padding(
           padding: const EdgeInsets.fromLTRB(20, 0, 20, 20),
-          child: Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              if (ride.driverId != null)
-                Expanded(
-                  child: OutlinedButton.icon(
-                    onPressed: () => _showReportDialog(context),
-                    icon: const Icon(Icons.flag_outlined, size: 18),
-                    label: const Text('Report'),
-                  ),
+              SizedBox(
+                width: double.infinity,
+                child: SosButton(
+                  rideId: ride.id,
+                  emergencyContacts: emergencyContacts,
                 ),
-              if (ride.driverId != null) const SizedBox(width: 12),
-              Expanded(
-                child: OutlinedButton.icon(
-                  onPressed: () => _showCancelDialog(context, ref),
-                  icon: const Icon(Icons.close_rounded, size: 18),
-                  label: const Text('Cancel Ride'),
-                  style: OutlinedButton.styleFrom(
-                    foregroundColor: AppColors.error,
+              ),
+              const SizedBox(height: 12),
+              Row(
+                children: [
+                  if (ride.driverId != null)
+                    Expanded(
+                      child: OutlinedButton.icon(
+                        onPressed: () => _showReportDialog(context),
+                        icon: const Icon(Icons.flag_outlined, size: 18),
+                        label: const Text('Report'),
+                      ),
+                    ),
+                  if (ride.driverId != null) const SizedBox(width: 12),
+                  Expanded(
+                    child: OutlinedButton.icon(
+                      onPressed: () => _showCancelDialog(context, ref),
+                      icon: const Icon(Icons.close_rounded, size: 18),
+                      label: const Text('Cancel Ride'),
+                      style: OutlinedButton.styleFrom(
+                        foregroundColor: AppColors.error,
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ),
             ],
           ),

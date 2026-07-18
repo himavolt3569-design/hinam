@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:hinam/core/theme/app_colors.dart';
 import 'package:hinam/features/hinam_ride/administration/presentation/providers/ride_admin_providers.dart';
 import 'package:hinam/features/hinam_ride/verification/data/models/verification_request_model.dart';
 
@@ -71,16 +72,16 @@ class VerificationReviewCard extends ConsumerWidget {
                     vertical: 5,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.orange.withValues(alpha: 0.1),
+                    color: AppColors.warning.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: Colors.orange.withValues(alpha: 0.3),
+                      color: AppColors.warning.withValues(alpha: 0.3),
                     ),
                   ),
                   child: Text(
                     'Pending',
                     style: text.labelSmall?.copyWith(
-                      color: Colors.orange[700],
+                      color: AppColors.warning,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -143,7 +144,7 @@ class VerificationReviewCard extends ConsumerWidget {
                     icon: const Icon(Icons.check_rounded, size: 16),
                     label: const Text('Approve'),
                     style: FilledButton.styleFrom(
-                      backgroundColor: Colors.green.shade600,
+                      backgroundColor: AppColors.success,
                       minimumSize: const Size(0, 44),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
@@ -199,7 +200,7 @@ class VerificationReviewCard extends ConsumerWidget {
               controller.reject(request, trimmedReason);
             },
             style: FilledButton.styleFrom(
-              backgroundColor: Colors.red,
+              backgroundColor: AppColors.error,
               minimumSize: const Size(0, 40),
             ),
             child: const Text('Reject'),

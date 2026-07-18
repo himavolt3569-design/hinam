@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:hinam/core/theme/app_colors.dart';
 import 'package:hinam/features/hinam_ride/administration/data/models/ride_report_model.dart';
+import 'package:hinam/features/hinam_ride/administration/presentation/providers/ride_participant_name_provider.dart';
 import 'package:hinam/features/hinam_ride/administration/presentation/providers/ride_report_providers.dart';
 
 class ReportReviewCard extends ConsumerWidget {
@@ -14,10 +16,10 @@ class ReportReviewCard extends ConsumerWidget {
     final scheme = Theme.of(context).colorScheme;
     final text = Theme.of(context).textTheme;
     final reporterNameAsync = ref.watch(
-      reportedUserNameProvider(report.reportedBy),
+      rideParticipantNameProvider(report.reportedBy),
     );
     final reportedNameAsync = ref.watch(
-      reportedUserNameProvider(report.reportedUserId),
+      rideParticipantNameProvider(report.reportedUserId),
     );
     final controller = ref.read(reportReviewControllerProvider.notifier);
     final isReviewed = report.status == RideReportStatus.reviewed;
@@ -48,19 +50,19 @@ class ReportReviewCard extends ConsumerWidget {
                 ),
                 decoration: BoxDecoration(
                   color: isReviewed
-                      ? Colors.blue.withValues(alpha: 0.1)
-                      : Colors.orange.withValues(alpha: 0.1),
+                      ? AppColors.primary.withValues(alpha: 0.1)
+                      : AppColors.warning.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                   border: Border.all(
                     color: isReviewed
-                        ? Colors.blue.withValues(alpha: 0.3)
-                        : Colors.orange.withValues(alpha: 0.3),
+                        ? AppColors.primary.withValues(alpha: 0.3)
+                        : AppColors.warning.withValues(alpha: 0.3),
                   ),
                 ),
                 child: Text(
                   isReviewed ? 'Reviewed' : 'Open',
                   style: text.labelSmall?.copyWith(
-                    color: isReviewed ? Colors.blue[700] : Colors.orange[700],
+                    color: isReviewed ? AppColors.primary : AppColors.warning,
                     fontWeight: FontWeight.w600,
                   ),
                 ),

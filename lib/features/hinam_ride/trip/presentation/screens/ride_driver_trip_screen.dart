@@ -14,6 +14,7 @@ import 'package:hinam/features/hinam_ride/trip/presentation/widgets/cancel_ride_
 import 'package:hinam/features/hinam_ride/trip/presentation/widgets/no_show_banner.dart';
 import 'package:hinam/features/hinam_ride/trip/presentation/widgets/passenger_identity_card.dart';
 import 'package:hinam/features/hinam_ride/trip/presentation/widgets/ride_location_marker.dart';
+import 'package:hinam/features/hinam_ride/trip/presentation/widgets/sos_button.dart';
 import 'package:hinam/features/hinam_ride/trip/presentation/widgets/trip_ended_view.dart';
 import 'package:hinam/features/hinam_ride/trip/presentation/widgets/trip_status_bar.dart';
 import 'package:hinam/shared/widgets/loading_button.dart';
@@ -166,7 +167,7 @@ class _DriverTripBody extends ConsumerWidget {
                   if (driverPosition != null)
                     buildRideLocationMarker(
                       LatLng(driverPosition.latitude, driverPosition.longitude),
-                      AppColors.primary,
+                      AppColors.rideAccent,
                       Icons.local_taxi_rounded,
                     ),
                 ],
@@ -192,6 +193,11 @@ class _DriverTripBody extends ConsumerWidget {
                   onPressed: () => _advance(context, ref),
                 ),
               ],
+              const SizedBox(height: 12),
+              SizedBox(
+                width: double.infinity,
+                child: SosButton(rideId: ride.id, emergencyContacts: const []),
+              ),
               const SizedBox(height: 12),
               Row(
                 children: [

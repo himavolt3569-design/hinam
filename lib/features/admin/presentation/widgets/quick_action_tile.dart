@@ -6,6 +6,7 @@ class QuickActionTile extends StatelessWidget {
   final String subtitle;
   final int badge;
   final VoidCallback onTap;
+  final Color? badgeColor;
 
   const QuickActionTile({
     super.key,
@@ -14,6 +15,7 @@ class QuickActionTile extends StatelessWidget {
     required this.subtitle,
     required this.badge,
     required this.onTap,
+    this.badgeColor,
   });
 
   @override
@@ -71,7 +73,7 @@ class QuickActionTile extends StatelessWidget {
                   vertical: 4,
                 ),
                 decoration: BoxDecoration(
-                  color: Colors.orange.shade600,
+                  color: badgeColor ?? Colors.orange.shade600,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(

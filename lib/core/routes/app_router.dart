@@ -11,6 +11,10 @@ import 'package:hinam/features/driver/presentation/screens/dashboard_screen.dart
 import 'package:hinam/features/driver/presentation/screens/driver_registration_screen.dart';
 import 'package:hinam/features/fleet/presentation/screens/manage_assignments_screen.dart';
 import 'package:hinam/features/fleet/presentation/screens/manage_buses_screen.dart';
+import 'package:hinam/features/hinam_ride/administration/presentation/screens/ride_admin_home_screen.dart';
+import 'package:hinam/features/hinam_ride/administration/presentation/screens/ride_incidents_queue_screen.dart';
+import 'package:hinam/features/hinam_ride/administration/presentation/screens/ride_reports_queue_screen.dart';
+import 'package:hinam/features/hinam_ride/administration/presentation/screens/ride_verification_queue_screen.dart';
 import 'package:hinam/features/hinam_ride/driver/presentation/screens/ride_driver_registration_screen.dart';
 import 'package:hinam/features/hinam_ride/passenger/presentation/screens/ride_passenger_registration_screen.dart';
 import 'package:hinam/features/hinam_ride/trip/presentation/screens/ride_driver_trip_screen.dart';
@@ -99,6 +103,24 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (_) =>
               RideHistoryScreen(uid: args.uid, isDriver: args.isDriver),
+        );
+
+      case AppRoutes.rideAdminHome:
+        return MaterialPageRoute(builder: (_) => const RideAdminHomeScreen());
+
+      case AppRoutes.rideVerificationQueue:
+        return MaterialPageRoute(
+          builder: (_) => const RideVerificationQueueScreen(),
+        );
+
+      case AppRoutes.rideReportsQueue:
+        return MaterialPageRoute(
+          builder: (_) => const RideReportsQueueScreen(),
+        );
+
+      case AppRoutes.rideIncidentsQueue:
+        return MaterialPageRoute(
+          builder: (_) => const RideIncidentsQueueScreen(),
         );
 
       default:

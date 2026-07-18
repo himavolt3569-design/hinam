@@ -47,8 +47,8 @@ class DriverIdentityCard extends ConsumerWidget {
             children: [
               const CircleAvatar(
                 radius: 22,
-                backgroundColor: AppColors.primaryBg,
-                child: Icon(Icons.person_rounded, color: AppColors.primary),
+                backgroundColor: AppColors.rideAccentBg,
+                child: Icon(Icons.person_rounded, color: AppColors.rideAccent),
               ),
               const SizedBox(width: 12),
               Expanded(

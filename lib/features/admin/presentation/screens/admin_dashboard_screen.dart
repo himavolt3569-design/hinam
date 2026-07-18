@@ -7,6 +7,9 @@ import 'package:hinam/features/admin/presentation/providers/admin_providers.dart
 import 'package:hinam/features/admin/presentation/widgets/live_bus_tile.dart';
 import 'package:hinam/features/admin/presentation/widgets/quick_action_tile.dart';
 import 'package:hinam/features/auth/presentation/providers/auth_controller.dart';
+import 'package:hinam/features/hinam_ride/administration/presentation/providers/ride_admin_providers.dart';
+import 'package:hinam/features/hinam_ride/administration/presentation/providers/ride_incident_providers.dart';
+import 'package:hinam/features/hinam_ride/administration/presentation/providers/ride_report_providers.dart';
 
 class AdminDashboardScreen extends ConsumerWidget {
   const AdminDashboardScreen({super.key});
@@ -21,6 +24,13 @@ class AdminDashboardScreen extends ConsumerWidget {
     final pendingCount = pendingAsync.asData?.value.length ?? 0;
     final activeCount = activeBusesAsync.asData?.value.length ?? 0;
     final totalDrivers = allDriversAsync.asData?.value.length ?? 0;
+
+    final rideVerificationCount =
+        ref.watch(pendingRideVerificationsProvider).asData?.value.length ?? 0;
+    final rideReportCount =
+        ref.watch(openReportsProvider).asData?.value.length ?? 0;
+    final rideIncidentCount =
+        ref.watch(openIncidentsProvider).asData?.value.length ?? 0;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -98,8 +108,16 @@ class AdminDashboardScreen extends ConsumerWidget {
               title: 'Fleet Management',
               subtitle: 'Manage buses and driver assignments',
               badge: 0,
+              onTap: () => Navigator.pushNamed(context, AppRoutes.manageBuses),
+            ),
+
+            const SizedBox(height: 8),
+
+            _RideAdminSummaryTile(
+              pendingCount: rideVerificationCount + rideReportCount,
+              incidentCount: rideIncidentCount,
               onTap: () =>
-                  Navigator.pushNamed(context, AppRoutes.manageBuses),
+                  Navigator.pushNamed(context, AppRoutes.rideAdminHome),
             ),
 
             const SizedBox(height: 24),
@@ -236,6 +254,146 @@ class _StatCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Links to the Ride admin hub (Phase 19). Unlike [QuickActionTile]'s single
+/// badge, an open SOS incident must stay visually unmistakable from routine
+/// verification/report backlog, so the two counts render as separately
+/// colored badges rather than being summed into one number.
+class _RideAdminSummaryTile extends StatelessWidget {
+  final int pendingCount;
+  final int incidentCount;
+  final VoidCallback onTap;
+
+  const _RideAdminSummaryTile({
+    required this.pendingCount,
+    required this.incidentCount,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final hasIncident = incidentCount > 0;
+
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: AppColors.surface,
+          borderRadius: BorderRadius.circular(18),
+          border: Border.all(
+            color: hasIncident ? AppColors.error : AppColors.border,
+            width: hasIncident ? 1.5 : 1,
+          ),
+        ),
+        child: Row(
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: AppColors.primary.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: const Icon(
+                Icons.shield_rounded,
+                color: AppColors.primary,
+                size: 22,
+              ),
+            ),
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'Hinam Ride Administration',
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    hasIncident
+                        ? '$incidentCount active SOS incident${incidentCount == 1 ? '' : 's'}'
+                        : 'Verification, reports & incidents',
+                    style: TextStyle(
+                      fontSize: 12,
+                      color: hasIncident
+                          ? AppColors.error
+                          : AppColors.textSecondary,
+                      fontWeight: hasIncident
+                          ? FontWeight.w700
+                          : FontWeight.normal,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            if (hasIncident) ...[
+              Container(
+                key: const Key('rideIncidentBadge'),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.error,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Icon(
+                      Icons.emergency_rounded,
+                      color: Colors.white,
+                      size: 12,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      '$incidentCount',
+                      style: const TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+            ],
+            if (pendingCount > 0) ...[
+              Container(
+                key: const Key('ridePendingBadge'),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 4,
+                ),
+                decoration: BoxDecoration(
+                  color: AppColors.warning,
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: Text(
+                  '$pendingCount',
+                  style: const TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 8),
+            ],
+            const Icon(
+              Icons.arrow_forward_ios_rounded,
+              size: 14,
+              color: AppColors.textTertiary,
+            ),
+          ],
+        ),
       ),
     );
   }

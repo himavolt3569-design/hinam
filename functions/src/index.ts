@@ -118,3 +118,66 @@ export const onRideStatusChanged = onDocumentUpdated(
     if (decision) await notifyUser(decision);
   }
 );
+
+/**
+ * Every incident produces the same urgent content — unlike offers/status
+ * changes there is no per-incident branching, but this stays a pure,
+ * directly-testable function for the same reason those two are.
+ */
+export function buildIncidentNotification(
+  incident: DocumentData
+): NotificationContent {
+  return {
+    title: "🚨 SOS Triggered",
+    body: `A ride participant triggered SOS near ${incident.location?.address ?? "an unknown location"}.`,
+  };
+}
+
+/**
+ * Sends through a deliberately separate path from notifyUser: high-priority
+ * delivery hints on both platforms, so this reaches an admin's device with
+ * urgency an ordinary "New Ride Request" push does not carry.
+ */
+async function notifyUrgent(
+  uid: string,
+  notification: NotificationContent
+): Promise<void> {
+  const tokenDoc = await getFirestore().collection("fcm_tokens").doc(uid).get();
+  const token = tokenDoc.data()?.token as string | undefined;
+
+  if (!token) {
+    logger.info(`No FCM token registered for admin ${uid}; skipping push.`);
+    return;
+  }
+
+  try {
+    await getMessaging().send({
+      token,
+      notification,
+      android: { priority: "high" },
+      apns: { headers: { "apns-priority": "10" }, payload: { aps: { sound: "default" } } },
+    });
+  } catch (error) {
+    logger.error(`Failed to send urgent notification to admin ${uid}`, error);
+  }
+}
+
+async function getAdminUids(): Promise<string[]> {
+  const snapshot = await getFirestore().collection("admins").get();
+  return snapshot.docs.map((doc) => doc.id);
+}
+
+export const onIncidentCreated = onDocumentCreated(
+  "ride_incidents/{incidentId}",
+  async (event) => {
+    const incident = event.data?.data();
+    if (!incident) return;
+
+    const notification = buildIncidentNotification(incident);
+    const adminUids = await getAdminUids();
+
+    await Promise.all(
+      adminUids.map((uid) => notifyUrgent(uid, notification))
+    );
+  }
+);

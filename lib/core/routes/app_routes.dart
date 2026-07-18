@@ -17,4 +17,8 @@ class AppRoutes {
   static const rideTracking = '/ride-tracking';
   static const rideDriverTrip = '/ride-driver-trip';
   static const rideHistory = '/ride-history';
+  static const rideAdminHome = '/ride-admin-home';
+  static const rideVerificationQueue = '/ride-verification-queue';
+  static const rideReportsQueue = '/ride-reports-queue';
+  static const rideIncidentsQueue = '/ride-incidents-queue';
 }

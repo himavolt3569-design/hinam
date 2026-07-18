@@ -5,8 +5,6 @@ import 'package:hinam/features/auth/presentation/providers/auth_controller.dart'
 import 'package:hinam/features/hinam_ride/administration/data/datasources/ride_report_remote_datasource.dart';
 import 'package:hinam/features/hinam_ride/administration/data/models/ride_report_model.dart';
 import 'package:hinam/features/hinam_ride/administration/data/repositories/ride_report_repository.dart';
-import 'package:hinam/features/hinam_ride/driver/presentation/providers/ride_driver_provider.dart';
-import 'package:hinam/features/hinam_ride/passenger/presentation/providers/ride_passenger_provider.dart';
 import 'package:hinam/shared/providers/firebase_providers.dart';
 
 final rideReportDatasourceProvider = Provider<RideReportRemoteDatasource>(
@@ -19,24 +17,6 @@ final rideReportRepositoryProvider = Provider<RideReportRepository>(
 
 final openReportsProvider = StreamProvider<List<RideReportModel>>((ref) {
   return ref.watch(rideReportRepositoryProvider).watchOpenReports();
-});
-
-/// Resolves a uid to a display name for the admin review card — a reported
-/// party may be either a ride driver or a ride passenger, so this checks
-/// both existing profile repositories rather than duplicating either one.
-final reportedUserNameProvider = FutureProvider.family<String, String>((
-  ref,
-  uid,
-) async {
-  final driver = await ref.read(rideDriverRepositoryProvider).getDriver(uid);
-  if (driver != null) return driver.fullName;
-
-  final passenger = await ref
-      .read(ridePassengerRepositoryProvider)
-      .getPassenger(uid);
-  if (passenger != null) return passenger.fullName;
-
-  return 'Unknown User';
 });
 
 final reportFilingControllerProvider =
