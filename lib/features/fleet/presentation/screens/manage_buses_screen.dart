@@ -6,6 +6,7 @@ import 'package:hinam/core/theme/app_colors.dart';
 import 'package:hinam/features/fleet/data/models/bus_model.dart';
 import 'package:hinam/features/fleet/presentation/providers/fleet_providers.dart';
 import 'package:hinam/features/fleet/presentation/widgets/bus_form_dialog.dart';
+import 'package:hinam/shared/widgets/empty_state_view.dart';
 
 class ManageBusesScreen extends ConsumerWidget {
   const ManageBusesScreen({super.key});
@@ -20,7 +21,8 @@ class ManageBusesScreen extends ConsumerWidget {
         title: const Text('Fleet Management'),
         actions: [
           TextButton.icon(
-            onPressed: () => Navigator.pushNamed(context, AppRoutes.manageAssignments),
+            onPressed: () =>
+                Navigator.pushNamed(context, AppRoutes.manageAssignments),
             icon: const Icon(Icons.assignment_rounded, size: 18),
             label: const Text('Assignments'),
           ),
@@ -28,32 +30,18 @@ class ManageBusesScreen extends ConsumerWidget {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => showDialog(context: context, builder: (_) => const BusFormDialog()),
+        onPressed: () =>
+            showDialog(context: context, builder: (_) => const BusFormDialog()),
         icon: const Icon(Icons.add_rounded),
         label: const Text('Add Bus'),
       ),
       body: busesAsync.when(
         data: (buses) {
           if (buses.isEmpty) {
-            return Center(
-              child: Padding(
-                padding: const EdgeInsets.all(32),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Container(
-                      width: 72,
-                      height: 72,
-                      decoration: const BoxDecoration(color: AppColors.inputFill, shape: BoxShape.circle),
-                      child: const Icon(Icons.directions_bus_outlined, size: 32, color: AppColors.textTertiary),
-                    ),
-                    const SizedBox(height: 16),
-                    const Text('No buses in fleet', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
-                    const SizedBox(height: 6),
-                    const Text('Tap "Add Bus" to register a bus.', style: TextStyle(fontSize: 13, color: AppColors.textSecondary)),
-                  ],
-                ),
-              ),
+            return const EmptyStateView(
+              icon: Icons.directions_bus_outlined,
+              title: 'No buses in fleet',
+              subtitle: 'Tap "Add Bus" to register a bus.',
             );
           }
 
@@ -91,11 +79,15 @@ class _BusTile extends ConsumerWidget {
             width: 40,
             height: 40,
             decoration: BoxDecoration(
-              color: bus.isPublic ? AppColors.primaryBg : AppColors.schoolGreenBg,
+              color: bus.isPublic
+                  ? AppColors.primaryBg
+                  : AppColors.schoolGreenBg,
               borderRadius: BorderRadius.circular(10),
             ),
             child: Icon(
-              bus.isPublic ? Icons.directions_bus_rounded : Icons.school_rounded,
+              bus.isPublic
+                  ? Icons.directions_bus_rounded
+                  : Icons.school_rounded,
               size: 20,
               color: bus.isPublic ? AppColors.primary : AppColors.schoolGreen,
             ),
@@ -105,10 +97,22 @@ class _BusTile extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(bus.busNumber, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
                 Text(
-                  bus.routeOrSchool.isEmpty ? (bus.isPublic ? 'Public Bus' : 'School Bus') : bus.routeOrSchool,
-                  style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                  bus.busNumber,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                Text(
+                  bus.routeOrSchool.isEmpty
+                      ? (bus.isPublic ? 'Public Bus' : 'School Bus')
+                      : bus.routeOrSchool,
+                  style: const TextStyle(
+                    fontSize: 12,
+                    color: AppColors.textSecondary,
+                  ),
                 ),
               ],
             ),
@@ -116,17 +120,27 @@ class _BusTile extends ConsumerWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
             decoration: BoxDecoration(
-              color: bus.isPublic ? AppColors.primaryBg : AppColors.schoolGreenBg,
+              color: bus.isPublic
+                  ? AppColors.primaryBg
+                  : AppColors.schoolGreenBg,
               borderRadius: BorderRadius.circular(6),
             ),
             child: Text(
               bus.isPublic ? 'Public' : 'School',
-              style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: bus.isPublic ? AppColors.primary : AppColors.schoolGreen),
+              style: TextStyle(
+                fontSize: 10,
+                fontWeight: FontWeight.w600,
+                color: bus.isPublic ? AppColors.primary : AppColors.schoolGreen,
+              ),
             ),
           ),
           const SizedBox(width: 8),
           IconButton(
-            icon: const Icon(Icons.delete_outline_rounded, size: 20, color: AppColors.textTertiary),
+            icon: const Icon(
+              Icons.delete_outline_rounded,
+              size: 20,
+              color: AppColors.textTertiary,
+            ),
             onPressed: () => _confirmDelete(context, ref),
           ),
         ],
@@ -141,7 +155,10 @@ class _BusTile extends ConsumerWidget {
         title: const Text('Delete Bus'),
         content: Text('Remove ${bus.busNumber} from the fleet?'),
         actions: [
-          TextButton(onPressed: () => Navigator.pop(context, false), child: const Text('Cancel')),
+          TextButton(
+            onPressed: () => Navigator.pop(context, false),
+            child: const Text('Cancel'),
+          ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
             style: FilledButton.styleFrom(backgroundColor: AppColors.error),
@@ -156,7 +173,9 @@ class _BusTile extends ConsumerWidget {
         await ref.read(fleetControllerProvider.notifier).deleteBus(bus.id);
       } catch (e) {
         if (context.mounted) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed: $e')));
+          ScaffoldMessenger.of(
+            context,
+          ).showSnackBar(SnackBar(content: Text('Failed: $e')));
         }
       }
     }

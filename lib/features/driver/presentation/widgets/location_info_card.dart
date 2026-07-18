@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 
+import 'package:hinam/core/theme/app_colors.dart';
+
 class LocationInfoCard extends StatelessWidget {
   final Position position;
 
@@ -27,13 +29,13 @@ class LocationInfoCard extends StatelessWidget {
                 width: 32,
                 height: 32,
                 decoration: BoxDecoration(
-                  color: Colors.green.withValues(alpha: 0.1),
+                  color: AppColors.success.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: const Icon(
                   Icons.location_on_rounded,
                   size: 16,
-                  color: Colors.green,
+                  color: AppColors.success,
                 ),
               ),
               const SizedBox(width: 10),
@@ -46,7 +48,7 @@ class LocationInfoCard extends StatelessWidget {
                 width: 8,
                 height: 8,
                 decoration: const BoxDecoration(
-                  color: Colors.green,
+                  color: AppColors.success,
                   shape: BoxShape.circle,
                 ),
               ),
@@ -54,7 +56,7 @@ class LocationInfoCard extends StatelessWidget {
               Text(
                 'Live',
                 style: text.labelSmall?.copyWith(
-                  color: Colors.green,
+                  color: AppColors.success,
                   fontWeight: FontWeight.w600,
                 ),
               ),

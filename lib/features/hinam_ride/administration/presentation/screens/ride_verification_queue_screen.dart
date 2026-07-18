@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hinam/core/theme/app_colors.dart';
 import 'package:hinam/features/hinam_ride/administration/presentation/providers/ride_admin_providers.dart';
 import 'package:hinam/features/hinam_ride/administration/presentation/widgets/verification_review_card.dart';
+import 'package:hinam/shared/widgets/empty_state_view.dart';
 
 class RideVerificationQueueScreen extends ConsumerWidget {
   const RideVerificationQueueScreen({super.key});
@@ -11,50 +12,18 @@ class RideVerificationQueueScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final pendingAsync = ref.watch(pendingRideVerificationsProvider);
-    final scheme = Theme.of(context).colorScheme;
-    final text = Theme.of(context).textTheme;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Ride Verification Queue'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('Ride Verification Queue')),
       body: pendingAsync.when(
         data: (requests) {
           if (requests.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: 80,
-                    height: 80,
-                    decoration: BoxDecoration(
-                      color: AppColors.success.withValues(alpha: 0.08),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.check_circle_outline_rounded,
-                      size: 38,
-                      color: AppColors.success.withValues(alpha: 0.6),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'All caught up!',
-                    style: text.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'No ride verifications pending review.',
-                    style: text.bodyMedium?.copyWith(
-                      color: scheme.onSurface.withValues(alpha: 0.5),
-                    ),
-                  ),
-                ],
-              ),
+            return EmptyStateView(
+              icon: Icons.check_circle_outline_rounded,
+              iconColor: AppColors.success,
+              iconBackgroundColor: AppColors.success.withValues(alpha: 0.08),
+              title: 'All caught up!',
+              subtitle: 'No ride verifications pending review.',
             );
           }
 

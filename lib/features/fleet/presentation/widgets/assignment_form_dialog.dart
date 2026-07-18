@@ -13,7 +13,8 @@ class AssignmentFormDialog extends ConsumerStatefulWidget {
   const AssignmentFormDialog({super.key, this.initialDate});
 
   @override
-  ConsumerState<AssignmentFormDialog> createState() => _AssignmentFormDialogState();
+  ConsumerState<AssignmentFormDialog> createState() =>
+      _AssignmentFormDialogState();
 }
 
 class _AssignmentFormDialogState extends ConsumerState<AssignmentFormDialog> {
@@ -26,7 +27,8 @@ class _AssignmentFormDialogState extends ConsumerState<AssignmentFormDialog> {
   @override
   void initState() {
     super.initState();
-    _date = widget.initialDate ?? DateTime.now().toIso8601String().substring(0, 10);
+    _date =
+        widget.initialDate ?? DateTime.now().toIso8601String().substring(0, 10);
   }
 
   Future<void> _save() async {
@@ -34,7 +36,9 @@ class _AssignmentFormDialogState extends ConsumerState<AssignmentFormDialog> {
 
     setState(() => _isSaving = true);
     try {
-      await ref.read(fleetControllerProvider.notifier).createAssignment(
+      await ref
+          .read(fleetControllerProvider.notifier)
+          .createAssignment(
             busId: _selectedBus!.id,
             driverId: _selectedDriver!.uid,
             driverName: _selectedDriver!.fullName,
@@ -49,8 +53,9 @@ class _AssignmentFormDialogState extends ConsumerState<AssignmentFormDialog> {
     } catch (e) {
       if (mounted) {
         setState(() => _isSaving = false);
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Failed: $e')));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed: $e')));
       }
     }
   }
@@ -76,13 +81,22 @@ class _AssignmentFormDialogState extends ConsumerState<AssignmentFormDialog> {
           Expanded(
             child: DropdownButton<T>(
               value: value,
-              hint: Text(label, style: const TextStyle(fontSize: 14, color: AppColors.textTertiary)),
+              hint: Text(
+                label,
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: AppColors.textTertiary,
+                ),
+              ),
               isExpanded: true,
               underline: const SizedBox.shrink(),
               borderRadius: BorderRadius.circular(10),
               items: items,
               onChanged: onChanged,
-              style: const TextStyle(fontSize: 14, color: AppColors.textPrimary),
+              style: const TextStyle(
+                fontSize: 14,
+                color: AppColors.textPrimary,
+              ),
             ),
           ),
         ],
@@ -94,10 +108,10 @@ class _AssignmentFormDialogState extends ConsumerState<AssignmentFormDialog> {
   Widget build(BuildContext context) {
     final driversAsync = ref.watch(allDriversProvider);
     final busesAsync = ref.watch(allBusesProvider);
-    final canSave = _selectedDriver != null && _selectedBus != null && !_isSaving;
+    final canSave =
+        _selectedDriver != null && _selectedBus != null && !_isSaving;
 
     return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       insetPadding: const EdgeInsets.symmetric(horizontal: 24),
       child: SingleChildScrollView(
         child: Padding(
@@ -115,12 +129,20 @@ class _AssignmentFormDialogState extends ConsumerState<AssignmentFormDialog> {
                       color: AppColors.primaryBg,
                       borderRadius: BorderRadius.circular(10),
                     ),
-                    child: const Icon(Icons.assignment_rounded, color: AppColors.primary, size: 20),
+                    child: const Icon(
+                      Icons.assignment_rounded,
+                      color: AppColors.primary,
+                      size: 20,
+                    ),
                   ),
                   const SizedBox(width: 12),
                   const Text(
                     'New Assignment',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textPrimary,
+                    ),
                   ),
                 ],
               ),
@@ -136,11 +158,16 @@ class _AssignmentFormDialogState extends ConsumerState<AssignmentFormDialog> {
                     lastDate: DateTime.now().add(const Duration(days: 30)),
                   );
                   if (picked != null) {
-                    setState(() => _date = picked.toIso8601String().substring(0, 10));
+                    setState(
+                      () => _date = picked.toIso8601String().substring(0, 10),
+                    );
                   }
                 },
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 14,
+                    vertical: 12,
+                  ),
                   decoration: BoxDecoration(
                     color: AppColors.inputFill,
                     borderRadius: BorderRadius.circular(10),
@@ -148,11 +175,25 @@ class _AssignmentFormDialogState extends ConsumerState<AssignmentFormDialog> {
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.calendar_today_rounded, size: 16, color: AppColors.textSecondary),
+                      const Icon(
+                        Icons.calendar_today_rounded,
+                        size: 16,
+                        color: AppColors.textSecondary,
+                      ),
                       const SizedBox(width: 10),
-                      Text(_date, style: const TextStyle(fontSize: 14, color: AppColors.textPrimary)),
+                      Text(
+                        _date,
+                        style: const TextStyle(
+                          fontSize: 14,
+                          color: AppColors.textPrimary,
+                        ),
+                      ),
                       const Spacer(),
-                      const Icon(Icons.edit_calendar_rounded, size: 14, color: AppColors.textTertiary),
+                      const Icon(
+                        Icons.edit_calendar_rounded,
+                        size: 14,
+                        color: AppColors.textTertiary,
+                      ),
                     ],
                   ),
                 ),
@@ -168,10 +209,15 @@ class _AssignmentFormDialogState extends ConsumerState<AssignmentFormDialog> {
                     label: 'Select Driver',
                     value: _selectedDriver,
                     items: approved
-                        .map((d) => DropdownMenuItem(
-                              value: d,
-                              child: Text(d.fullName, overflow: TextOverflow.ellipsis),
-                            ))
+                        .map(
+                          (d) => DropdownMenuItem(
+                            value: d,
+                            child: Text(
+                              d.fullName,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        )
                         .toList(),
                     onChanged: (v) => setState(() => _selectedDriver = v),
                   );
@@ -188,13 +234,15 @@ class _AssignmentFormDialogState extends ConsumerState<AssignmentFormDialog> {
                   label: 'Select Bus',
                   value: _selectedBus,
                   items: buses
-                      .map((b) => DropdownMenuItem(
-                            value: b,
-                            child: Text(
-                              '${b.busNumber} · ${b.routeOrSchool}',
-                              overflow: TextOverflow.ellipsis,
-                            ),
-                          ))
+                      .map(
+                        (b) => DropdownMenuItem(
+                          value: b,
+                          child: Text(
+                            '${b.busNumber} · ${b.routeOrSchool}',
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      )
                       .toList(),
                   onChanged: (v) => setState(() => _selectedBus = v),
                 ),
@@ -210,7 +258,10 @@ class _AssignmentFormDialogState extends ConsumerState<AssignmentFormDialog> {
                 value: _shift,
                 items: const [
                   DropdownMenuItem(value: 'morning', child: Text('Morning')),
-                  DropdownMenuItem(value: 'afternoon', child: Text('Afternoon')),
+                  DropdownMenuItem(
+                    value: 'afternoon',
+                    child: Text('Afternoon'),
+                  ),
                   DropdownMenuItem(value: 'full', child: Text('Full Day')),
                 ],
                 onChanged: (v) => setState(() => _shift = v ?? 'full'),
@@ -221,7 +272,9 @@ class _AssignmentFormDialogState extends ConsumerState<AssignmentFormDialog> {
                 children: [
                   Expanded(
                     child: OutlinedButton(
-                      onPressed: _isSaving ? null : () => Navigator.pop(context),
+                      onPressed: _isSaving
+                          ? null
+                          : () => Navigator.pop(context),
                       child: const Text('Cancel'),
                     ),
                   ),
@@ -233,7 +286,10 @@ class _AssignmentFormDialogState extends ConsumerState<AssignmentFormDialog> {
                           ? const SizedBox(
                               width: 16,
                               height: 16,
-                              child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2,
+                                color: Colors.white,
+                              ),
                             )
                           : const Text('Assign'),
                     ),

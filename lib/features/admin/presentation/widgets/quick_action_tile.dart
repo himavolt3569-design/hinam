@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'package:hinam/core/theme/app_colors.dart';
+
 class QuickActionTile extends StatelessWidget {
   final IconData icon;
   final String title;
@@ -73,7 +75,7 @@ class QuickActionTile extends StatelessWidget {
                   vertical: 4,
                 ),
                 decoration: BoxDecoration(
-                  color: badgeColor ?? Colors.orange.shade600,
+                  color: badgeColor ?? AppColors.warning,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(

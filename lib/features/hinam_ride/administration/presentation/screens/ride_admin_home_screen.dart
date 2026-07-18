@@ -24,10 +24,7 @@ class RideAdminHomeScreen extends ConsumerWidget {
 
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: const Text('Ride Administration'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('Ride Administration')),
       body: ListView(
         padding: const EdgeInsets.all(20),
         children: [

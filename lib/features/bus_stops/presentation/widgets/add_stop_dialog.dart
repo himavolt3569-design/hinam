@@ -30,14 +30,18 @@ class _AddStopDialogState extends ConsumerState<AddStopDialog> {
     setState(() => _isFetchingLocation = true);
 
     try {
-      final position = await ref.read(locationServiceProvider).getCurrentLocation();
+      final position = await ref
+          .read(locationServiceProvider)
+          .getCurrentLocation();
       setState(() {
         _latitude = position.latitude;
         _longitude = position.longitude;
       });
     } catch (e) {
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(e.toString())));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(e.toString())));
       }
     } finally {
       if (mounted) setState(() => _isFetchingLocation = false);
@@ -51,18 +55,17 @@ class _AddStopDialogState extends ConsumerState<AddStopDialog> {
     setState(() => _isSaving = true);
 
     try {
-      await ref.read(busStopControllerProvider.notifier).addStop(
-            name: name,
-            latitude: _latitude!,
-            longitude: _longitude!,
-          );
+      await ref
+          .read(busStopControllerProvider.notifier)
+          .addStop(name: name, latitude: _latitude!, longitude: _longitude!);
 
       if (mounted) Navigator.pop(context);
     } catch (e) {
       if (mounted) {
         setState(() => _isSaving = false);
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Failed to save stop: $e')));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed to save stop: $e')));
       }
     }
   }
@@ -70,10 +73,10 @@ class _AddStopDialogState extends ConsumerState<AddStopDialog> {
   @override
   Widget build(BuildContext context) {
     final hasLocation = _latitude != null && _longitude != null;
-    final canSave = _nameController.text.trim().isNotEmpty && hasLocation && !_isSaving;
+    final canSave =
+        _nameController.text.trim().isNotEmpty && hasLocation && !_isSaving;
 
     return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       insetPadding: const EdgeInsets.symmetric(horizontal: 24),
       child: Padding(
         padding: const EdgeInsets.all(20),
@@ -90,12 +93,20 @@ class _AddStopDialogState extends ConsumerState<AddStopDialog> {
                     color: AppColors.stopOrangeBg,
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: const Icon(Icons.add_location_alt_rounded, color: AppColors.stopOrange, size: 20),
+                  child: const Icon(
+                    Icons.add_location_alt_rounded,
+                    color: AppColors.stopOrange,
+                    size: 20,
+                  ),
                 ),
                 const SizedBox(width: 12),
                 const Text(
                   'Add Bus Stop',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textPrimary,
+                  ),
                 ),
               ],
             ),
@@ -117,12 +128,19 @@ class _AddStopDialogState extends ConsumerState<AddStopDialog> {
             GestureDetector(
               onTap: _isFetchingLocation ? null : _useCurrentLocation,
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 12,
+                ),
                 decoration: BoxDecoration(
-                  color: hasLocation ? AppColors.successBg : AppColors.inputFill,
+                  color: hasLocation
+                      ? AppColors.successBg
+                      : AppColors.inputFill,
                   borderRadius: BorderRadius.circular(10),
                   border: Border.all(
-                    color: hasLocation ? AppColors.success.withValues(alpha: 0.4) : AppColors.border,
+                    color: hasLocation
+                        ? AppColors.success.withValues(alpha: 0.4)
+                        : AppColors.border,
                   ),
                 ),
                 child: Row(
@@ -131,13 +149,20 @@ class _AddStopDialogState extends ConsumerState<AddStopDialog> {
                       const SizedBox(
                         width: 18,
                         height: 18,
-                        child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.primary),
+                        child: CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: AppColors.primary,
+                        ),
                       )
                     else
                       Icon(
-                        hasLocation ? Icons.check_circle_rounded : Icons.my_location_rounded,
+                        hasLocation
+                            ? Icons.check_circle_rounded
+                            : Icons.my_location_rounded,
                         size: 18,
-                        color: hasLocation ? AppColors.success : AppColors.primary,
+                        color: hasLocation
+                            ? AppColors.success
+                            : AppColors.primary,
                       ),
                     const SizedBox(width: 10),
                     Expanded(
@@ -145,18 +170,25 @@ class _AddStopDialogState extends ConsumerState<AddStopDialog> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            hasLocation ? 'Location captured' : 'Use current location',
+                            hasLocation
+                                ? 'Location captured'
+                                : 'Use current location',
                             style: TextStyle(
                               fontSize: 13,
                               fontWeight: FontWeight.w600,
-                              color: hasLocation ? AppColors.success : AppColors.primary,
+                              color: hasLocation
+                                  ? AppColors.success
+                                  : AppColors.primary,
                             ),
                           ),
                           if (hasLocation) ...[
                             const SizedBox(height: 2),
                             Text(
                               '${_latitude!.toStringAsFixed(5)}, ${_longitude!.toStringAsFixed(5)}',
-                              style: const TextStyle(fontSize: 11, color: AppColors.textTertiary),
+                              style: const TextStyle(
+                                fontSize: 11,
+                                color: AppColors.textTertiary,
+                              ),
                             ),
                           ],
                         ],

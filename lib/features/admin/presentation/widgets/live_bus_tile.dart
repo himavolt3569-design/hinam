@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import 'package:hinam/core/theme/app_colors.dart';
 import 'package:hinam/shared/models/bus_location_model.dart';
 
 class LiveBusTile extends StatelessWidget {
@@ -62,7 +63,7 @@ class LiveBusTile extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                 decoration: BoxDecoration(
-                  color: Colors.green.withValues(alpha: 0.1),
+                  color: AppColors.success.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Row(
@@ -72,7 +73,7 @@ class LiveBusTile extends StatelessWidget {
                       width: 6,
                       height: 6,
                       decoration: const BoxDecoration(
-                        color: Colors.green,
+                        color: AppColors.success,
                         shape: BoxShape.circle,
                       ),
                     ),
@@ -80,7 +81,7 @@ class LiveBusTile extends StatelessWidget {
                     Text(
                       'Live',
                       style: text.labelSmall?.copyWith(
-                        color: Colors.green[700],
+                        color: AppColors.success,
                         fontWeight: FontWeight.w600,
                       ),
                     ),

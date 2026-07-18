@@ -7,12 +7,14 @@ import 'package:hinam/features/passenger/presentation/providers/bus_locations_pr
 import 'package:hinam/features/passenger/presentation/providers/bus_search_provider.dart';
 import 'package:hinam/features/passenger/presentation/widgets/bus_list_card.dart';
 import 'package:hinam/shared/models/bus_location_model.dart';
+import 'package:hinam/shared/widgets/empty_state_view.dart';
 
 class PublicBusListScreen extends ConsumerStatefulWidget {
   const PublicBusListScreen({super.key});
 
   @override
-  ConsumerState<PublicBusListScreen> createState() => _PublicBusListScreenState();
+  ConsumerState<PublicBusListScreen> createState() =>
+      _PublicBusListScreenState();
 }
 
 class _PublicBusListScreenState extends ConsumerState<PublicBusListScreen> {
@@ -48,7 +50,8 @@ class _PublicBusListScreenState extends ConsumerState<PublicBusListScreen> {
             padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
             child: TextField(
               controller: _searchController,
-              onChanged: (v) => ref.read(searchQueryProvider.notifier).update(v),
+              onChanged: (v) =>
+                  ref.read(searchQueryProvider.notifier).update(v),
               decoration: InputDecoration(
                 hintText: 'Search bus number or route…',
                 prefixIcon: const Icon(Icons.search_rounded, size: 20),
@@ -71,7 +74,7 @@ class _PublicBusListScreenState extends ConsumerState<PublicBusListScreen> {
                 final filtered = _filter(buses, query);
 
                 if (buses.isEmpty) {
-                  return _EmptyState(
+                  return const EmptyStateView(
                     icon: Icons.directions_bus_outlined,
                     title: 'No active buses',
                     subtitle: 'No buses are currently tracking their location.',
@@ -79,7 +82,7 @@ class _PublicBusListScreenState extends ConsumerState<PublicBusListScreen> {
                 }
 
                 if (filtered.isEmpty) {
-                  return _EmptyState(
+                  return const EmptyStateView(
                     icon: Icons.search_off_rounded,
                     title: 'No results',
                     subtitle: 'Try a different bus number or route name.',
@@ -105,41 +108,6 @@ class _PublicBusListScreenState extends ConsumerState<PublicBusListScreen> {
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _EmptyState extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String subtitle;
-
-  const _EmptyState({required this.icon, required this.title, required this.subtitle});
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              width: 72,
-              height: 72,
-              decoration: BoxDecoration(
-                color: AppColors.inputFill,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(icon, size: 32, color: AppColors.textTertiary),
-            ),
-            const SizedBox(height: 16),
-            Text(title, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
-            const SizedBox(height: 6),
-            Text(subtitle, textAlign: TextAlign.center, style: const TextStyle(fontSize: 13, color: AppColors.textSecondary)),
-          ],
-        ),
       ),
     );
   }

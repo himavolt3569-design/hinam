@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:hinam/core/theme/app_colors.dart';
 import 'package:hinam/features/bus_stops/data/models/bus_stop_model.dart';
 import 'package:hinam/features/bus_stops/presentation/providers/bus_stop_controller.dart';
 
@@ -91,7 +92,7 @@ class BusStopTile extends ConsumerWidget {
               ref.read(busStopControllerProvider.notifier).deleteStop(stop.id);
             },
             style: FilledButton.styleFrom(
-              backgroundColor: Colors.red,
+              backgroundColor: AppColors.error,
               minimumSize: const Size(0, 40),
             ),
             child: const Text('Delete'),

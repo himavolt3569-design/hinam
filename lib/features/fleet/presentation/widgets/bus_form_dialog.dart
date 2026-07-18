@@ -33,18 +33,25 @@ class _BusFormDialogState extends ConsumerState<BusFormDialog> {
 
     setState(() => _isSaving = true);
     try {
-      await ref.read(fleetControllerProvider.notifier).addBus(
+      await ref
+          .read(fleetControllerProvider.notifier)
+          .addBus(
             busNumber: busNumber,
             busType: _busType,
-            routeName: _busType == 'public' ? _routeController.text.trim() : null,
-            schoolName: _busType == 'school' ? _schoolController.text.trim() : null,
+            routeName: _busType == 'public'
+                ? _routeController.text.trim()
+                : null,
+            schoolName: _busType == 'school'
+                ? _schoolController.text.trim()
+                : null,
           );
       if (mounted) Navigator.pop(context);
     } catch (e) {
       if (mounted) {
         setState(() => _isSaving = false);
-        ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text('Failed: $e')));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed: $e')));
       }
     }
   }
@@ -54,7 +61,6 @@ class _BusFormDialogState extends ConsumerState<BusFormDialog> {
     final canSave = _busNumberController.text.trim().isNotEmpty && !_isSaving;
 
     return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       insetPadding: const EdgeInsets.symmetric(horizontal: 24),
       child: Padding(
         padding: const EdgeInsets.all(20),
@@ -71,12 +77,20 @@ class _BusFormDialogState extends ConsumerState<BusFormDialog> {
                     color: AppColors.primaryBg,
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: const Icon(Icons.directions_bus_rounded, color: AppColors.primary, size: 20),
+                  child: const Icon(
+                    Icons.directions_bus_rounded,
+                    color: AppColors.primary,
+                    size: 20,
+                  ),
                 ),
                 const SizedBox(width: 12),
                 const Text(
                   'Add Bus',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textPrimary,
+                  ),
                 ),
               ],
             ),
@@ -102,7 +116,9 @@ class _BusFormDialogState extends ConsumerState<BusFormDialog> {
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       decoration: BoxDecoration(
-                        color: _busType == 'public' ? AppColors.primary : AppColors.inputFill,
+                        color: _busType == 'public'
+                            ? AppColors.primary
+                            : AppColors.inputFill,
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
@@ -111,7 +127,9 @@ class _BusFormDialogState extends ConsumerState<BusFormDialog> {
                         style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
-                          color: _busType == 'public' ? Colors.white : AppColors.textSecondary,
+                          color: _busType == 'public'
+                              ? Colors.white
+                              : AppColors.textSecondary,
                         ),
                       ),
                     ),
@@ -124,7 +142,9 @@ class _BusFormDialogState extends ConsumerState<BusFormDialog> {
                     child: Container(
                       padding: const EdgeInsets.symmetric(vertical: 10),
                       decoration: BoxDecoration(
-                        color: _busType == 'school' ? AppColors.schoolGreen : AppColors.inputFill,
+                        color: _busType == 'school'
+                            ? AppColors.schoolGreen
+                            : AppColors.inputFill,
                         borderRadius: BorderRadius.circular(8),
                       ),
                       child: Text(
@@ -133,7 +153,9 @@ class _BusFormDialogState extends ConsumerState<BusFormDialog> {
                         style: TextStyle(
                           fontSize: 13,
                           fontWeight: FontWeight.w600,
-                          color: _busType == 'school' ? Colors.white : AppColors.textSecondary,
+                          color: _busType == 'school'
+                              ? Colors.white
+                              : AppColors.textSecondary,
                         ),
                       ),
                     ),

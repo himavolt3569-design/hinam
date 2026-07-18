@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:hinam/core/theme/app_colors.dart';
 import 'package:hinam/features/admin/presentation/providers/admin_providers.dart';
 import 'package:hinam/features/admin/presentation/widgets/driver_approval_card.dart';
+import 'package:hinam/shared/widgets/empty_state_view.dart';
 
 class PendingDriversScreen extends ConsumerWidget {
   const PendingDriversScreen({super.key});
@@ -10,47 +12,18 @@ class PendingDriversScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final pendingAsync = ref.watch(pendingDriversProvider);
-    final scheme = Theme.of(context).colorScheme;
-    final text = Theme.of(context).textTheme;
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Pending Approvals'), centerTitle: true),
+      appBar: AppBar(title: const Text('Pending Approvals')),
       body: pendingAsync.when(
         data: (drivers) {
           if (drivers.isEmpty) {
-            return Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Container(
-                    width: 80,
-                    height: 80,
-                    decoration: BoxDecoration(
-                      color: Colors.green.withValues(alpha: 0.08),
-                      shape: BoxShape.circle,
-                    ),
-                    child: Icon(
-                      Icons.check_circle_outline_rounded,
-                      size: 38,
-                      color: Colors.green.withValues(alpha: 0.6),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  Text(
-                    'All caught up!',
-                    style: text.titleMedium?.copyWith(
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  const SizedBox(height: 4),
-                  Text(
-                    'No drivers pending approval.',
-                    style: text.bodyMedium?.copyWith(
-                      color: scheme.onSurface.withValues(alpha: 0.5),
-                    ),
-                  ),
-                ],
-              ),
+            return EmptyStateView(
+              icon: Icons.check_circle_outline_rounded,
+              iconColor: AppColors.success,
+              iconBackgroundColor: AppColors.success.withValues(alpha: 0.08),
+              title: 'All caught up!',
+              subtitle: 'No drivers pending approval.',
             );
           }
 

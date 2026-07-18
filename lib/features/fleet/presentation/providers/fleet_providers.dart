@@ -9,23 +9,18 @@ final allBusesProvider = StreamProvider<List<BusModel>>((ref) {
   return ref.watch(fleetRepositoryProvider).watchBuses();
 });
 
-final todayAssignmentsProvider = StreamProvider<List<AssignmentModel>>((ref) {
-  final today = DateTime.now().toIso8601String().substring(0, 10);
-  return ref.watch(fleetRepositoryProvider).watchAssignmentsForDate(today);
-});
-
 final activeAssignmentProvider = StreamProvider<AssignmentModel?>((ref) {
   final uid = ref.watch(firebaseAuthProvider).currentUser?.uid;
   if (uid == null) return Stream.value(null);
   final today = DateTime.now().toIso8601String().substring(0, 10);
-  return ref.watch(fleetRepositoryProvider).watchActiveAssignment(
-        driverId: uid,
-        date: today,
-      );
+  return ref
+      .watch(fleetRepositoryProvider)
+      .watchActiveAssignment(driverId: uid, date: today);
 });
 
-final fleetControllerProvider =
-    AsyncNotifierProvider<FleetController, void>(FleetController.new);
+final fleetControllerProvider = AsyncNotifierProvider<FleetController, void>(
+  FleetController.new,
+);
 
 class FleetController extends AsyncNotifier<void> {
   @override
@@ -39,7 +34,9 @@ class FleetController extends AsyncNotifier<void> {
   }) async {
     state = const AsyncLoading();
     try {
-      await ref.read(fleetRepositoryProvider).addBus(
+      await ref
+          .read(fleetRepositoryProvider)
+          .addBus(
             busNumber: busNumber,
             busType: busType,
             routeName: routeName,
@@ -76,7 +73,9 @@ class FleetController extends AsyncNotifier<void> {
   }) async {
     state = const AsyncLoading();
     try {
-      await ref.read(fleetRepositoryProvider).createAssignment(
+      await ref
+          .read(fleetRepositoryProvider)
+          .createAssignment(
             busId: busId,
             driverId: driverId,
             driverName: driverName,

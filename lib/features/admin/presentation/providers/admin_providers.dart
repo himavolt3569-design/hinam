@@ -4,10 +4,6 @@ import 'package:hinam/features/admin/data/repositories/admin_repository.dart';
 import 'package:hinam/shared/models/driver_model.dart';
 import 'package:hinam/shared/models/bus_location_model.dart';
 
-final isAdminProvider = FutureProvider.family<bool, String>((ref, uid) {
-  return ref.read(adminRepositoryProvider).isAdmin(uid);
-});
-
 final pendingDriversProvider = StreamProvider<List<DriverModel>>((ref) {
   return ref.watch(adminRepositoryProvider).watchPendingDrivers();
 });

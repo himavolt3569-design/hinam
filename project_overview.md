@@ -74,6 +74,19 @@ Primary capabilities:
 - Emergency safety features
 - Ride history
 - Ratings and reporting
+- Cash payment settlement
+
+---
+
+# Implementation Notes
+
+A few Hinam Ride data-modeling decisions are worth knowing before reading the code:
+
+- Ride status, verification status, and similar states are modeled as Dart enums, serialized as their string name in Firestore.
+- Ride pricing negotiation is stored as an `offers` subcollection under each ride document, keeping every bid scoped to the ride it belongs to rather than living in a separate top-level collection.
+- A ride driver's live location is visible only to that driver and to administrators — unlike public bus locations, it is never broadcast publicly, since there is no passenger-facing "nearby ride drivers" map.
+
+Full rationale for these and other implementation decisions is recorded phase-by-phase in `PHASES.md`.
 
 ---
 
@@ -125,12 +138,12 @@ Transportation-specific logic must remain inside its own module.
 - Cloud Firestore
 - Firebase Storage
 - Firebase Cloud Messaging
+- Cloud Functions
 
 ## Maps & Location
 
-- Google Maps
+- flutter_map (OpenStreetMap tiles)
 - Geolocator
-- Geocoding
 
 ## Architecture
 

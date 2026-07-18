@@ -5,15 +5,18 @@ import 'package:hinam/core/theme/app_colors.dart';
 import 'package:hinam/features/fleet/data/models/assignment_model.dart';
 import 'package:hinam/features/fleet/data/repositories/fleet_repository.dart';
 import 'package:hinam/features/fleet/presentation/widgets/assignment_form_dialog.dart';
+import 'package:hinam/shared/widgets/empty_state_view.dart';
 
 class ManageAssignmentsScreen extends ConsumerStatefulWidget {
   const ManageAssignmentsScreen({super.key});
 
   @override
-  ConsumerState<ManageAssignmentsScreen> createState() => _ManageAssignmentsScreenState();
+  ConsumerState<ManageAssignmentsScreen> createState() =>
+      _ManageAssignmentsScreenState();
 }
 
-class _ManageAssignmentsScreenState extends ConsumerState<ManageAssignmentsScreen> {
+class _ManageAssignmentsScreenState
+    extends ConsumerState<ManageAssignmentsScreen> {
   late String _selectedDate;
 
   @override
@@ -48,16 +51,25 @@ class _ManageAssignmentsScreenState extends ConsumerState<ManageAssignmentsScree
               onTap: () async {
                 final picked = await showDatePicker(
                   context: context,
-                  initialDate: DateTime.tryParse(_selectedDate) ?? DateTime.now(),
+                  initialDate:
+                      DateTime.tryParse(_selectedDate) ?? DateTime.now(),
                   firstDate: DateTime.now().subtract(const Duration(days: 30)),
                   lastDate: DateTime.now().add(const Duration(days: 30)),
                 );
                 if (picked != null) {
-                  setState(() => _selectedDate = picked.toIso8601String().substring(0, 10));
+                  setState(
+                    () => _selectedDate = picked.toIso8601String().substring(
+                      0,
+                      10,
+                    ),
+                  );
                 }
               },
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 12,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.surface,
                   borderRadius: BorderRadius.circular(10),
@@ -65,16 +77,29 @@ class _ManageAssignmentsScreenState extends ConsumerState<ManageAssignmentsScree
                 ),
                 child: Row(
                   children: [
-                    const Icon(Icons.calendar_today_rounded, size: 16, color: AppColors.primary),
+                    const Icon(
+                      Icons.calendar_today_rounded,
+                      size: 16,
+                      color: AppColors.primary,
+                    ),
                     const SizedBox(width: 10),
                     Text(
-                      _selectedDate == DateTime.now().toIso8601String().substring(0, 10)
+                      _selectedDate ==
+                              DateTime.now().toIso8601String().substring(0, 10)
                           ? 'Today — $_selectedDate'
                           : _selectedDate,
-                      style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                        color: AppColors.textPrimary,
+                      ),
                     ),
                     const Spacer(),
-                    const Icon(Icons.unfold_more_rounded, size: 16, color: AppColors.textTertiary),
+                    const Icon(
+                      Icons.unfold_more_rounded,
+                      size: 16,
+                      color: AppColors.textTertiary,
+                    ),
                   ],
                 ),
               ),
@@ -85,25 +110,10 @@ class _ManageAssignmentsScreenState extends ConsumerState<ManageAssignmentsScree
             child: assignmentsAsync.when(
               data: (assignments) {
                 if (assignments.isEmpty) {
-                  return Center(
-                    child: Padding(
-                      padding: const EdgeInsets.all(32),
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Container(
-                            width: 72,
-                            height: 72,
-                            decoration: const BoxDecoration(color: AppColors.inputFill, shape: BoxShape.circle),
-                            child: const Icon(Icons.assignment_outlined, size: 32, color: AppColors.textTertiary),
-                          ),
-                          const SizedBox(height: 16),
-                          const Text('No assignments', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
-                          const SizedBox(height: 6),
-                          const Text('Tap "Assign" to create a new assignment.', textAlign: TextAlign.center, style: TextStyle(fontSize: 13, color: AppColors.textSecondary)),
-                        ],
-                      ),
-                    ),
+                  return const EmptyStateView(
+                    icon: Icons.assignment_outlined,
+                    title: 'No assignments',
+                    subtitle: 'Tap "Assign" to create a new assignment.',
                   );
                 }
 
@@ -111,7 +121,8 @@ class _ManageAssignmentsScreenState extends ConsumerState<ManageAssignmentsScree
                   padding: const EdgeInsets.fromLTRB(16, 0, 16, 100),
                   itemCount: assignments.length,
                   separatorBuilder: (_, _) => const SizedBox(height: 10),
-                  itemBuilder: (context, i) => _AssignmentCard(assignment: assignments[i]),
+                  itemBuilder: (context, i) =>
+                      _AssignmentCard(assignment: assignments[i]),
                 );
               },
               loading: () => const Center(child: CircularProgressIndicator()),
@@ -127,8 +138,8 @@ class _ManageAssignmentsScreenState extends ConsumerState<ManageAssignmentsScree
 // Local provider scoped to the selected date
 final _assignmentsForDateProvider =
     StreamProvider.family<List<AssignmentModel>, String>((ref, date) {
-  return ref.watch(fleetRepositoryProvider).watchAssignmentsForDate(date);
-});
+      return ref.watch(fleetRepositoryProvider).watchAssignmentsForDate(date);
+    });
 
 class _AssignmentCard extends ConsumerWidget {
   final AssignmentModel assignment;
@@ -165,11 +176,15 @@ class _AssignmentCard extends ConsumerWidget {
                 width: 36,
                 height: 36,
                 decoration: BoxDecoration(
-                  color: isPublic ? AppColors.primaryBg : AppColors.schoolGreenBg,
+                  color: isPublic
+                      ? AppColors.primaryBg
+                      : AppColors.schoolGreenBg,
                   borderRadius: BorderRadius.circular(8),
                 ),
                 child: Icon(
-                  isPublic ? Icons.directions_bus_rounded : Icons.school_rounded,
+                  isPublic
+                      ? Icons.directions_bus_rounded
+                      : Icons.school_rounded,
                   size: 18,
                   color: isPublic ? AppColors.primary : AppColors.schoolGreen,
                 ),
@@ -179,18 +194,39 @@ class _AssignmentCard extends ConsumerWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(assignment.busNumber, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
+                    Text(
+                      assignment.busNumber,
+                      style: const TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
                     if (assignment.routeOrSchool.isNotEmpty)
-                      Text(assignment.routeOrSchool, style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)),
+                      Text(
+                        assignment.routeOrSchool,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
                   ],
                 ),
               ),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(color: statusBg, borderRadius: BorderRadius.circular(6)),
+                decoration: BoxDecoration(
+                  color: statusBg,
+                  borderRadius: BorderRadius.circular(6),
+                ),
                 child: Text(
-                  assignment.status[0].toUpperCase() + assignment.status.substring(1),
-                  style: TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: statusColor),
+                  assignment.status[0].toUpperCase() +
+                      assignment.status.substring(1),
+                  style: TextStyle(
+                    fontSize: 10,
+                    fontWeight: FontWeight.w600,
+                    color: statusColor,
+                  ),
                 ),
               ),
             ],
@@ -198,13 +234,33 @@ class _AssignmentCard extends ConsumerWidget {
           const SizedBox(height: 10),
           Row(
             children: [
-              const Icon(Icons.person_rounded, size: 13, color: AppColors.textTertiary),
+              const Icon(
+                Icons.person_rounded,
+                size: 13,
+                color: AppColors.textTertiary,
+              ),
               const SizedBox(width: 5),
-              Text(assignment.driverName, style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)),
+              Text(
+                assignment.driverName,
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: AppColors.textSecondary,
+                ),
+              ),
               const SizedBox(width: 14),
-              const Icon(Icons.schedule_rounded, size: 13, color: AppColors.textTertiary),
+              const Icon(
+                Icons.schedule_rounded,
+                size: 13,
+                color: AppColors.textTertiary,
+              ),
               const SizedBox(width: 5),
-              Text(assignment.shiftLabel, style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)),
+              Text(
+                assignment.shiftLabel,
+                style: const TextStyle(
+                  fontSize: 12,
+                  color: AppColors.textSecondary,
+                ),
+              ),
             ],
           ),
           if (assignment.isActive) ...[
@@ -218,7 +274,10 @@ class _AssignmentCard extends ConsumerWidget {
                       minimumSize: const Size(0, 36),
                       padding: const EdgeInsets.symmetric(horizontal: 12),
                     ),
-                    child: const Text('Mark Complete', style: TextStyle(fontSize: 12)),
+                    child: const Text(
+                      'Mark Complete',
+                      style: TextStyle(fontSize: 12),
+                    ),
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -242,16 +301,24 @@ class _AssignmentCard extends ConsumerWidget {
     );
   }
 
-  Future<void> _updateStatus(BuildContext context, WidgetRef ref, String status) async {
+  Future<void> _updateStatus(
+    BuildContext context,
+    WidgetRef ref,
+    String status,
+  ) async {
     try {
       if (status == 'completed') {
-        await ref.read(fleetRepositoryProvider).completeAssignment(assignment.id);
+        await ref
+            .read(fleetRepositoryProvider)
+            .completeAssignment(assignment.id);
       } else {
         await ref.read(fleetRepositoryProvider).cancelAssignment(assignment.id);
       }
     } catch (e) {
       if (context.mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed: $e')));
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Failed: $e')));
       }
     }
   }

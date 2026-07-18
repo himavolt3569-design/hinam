@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 class AppColors {
   // Brand
   static const primary = Color(0xFF2563EB);
-  static const primaryDark = Color(0xFF1D4ED8);
   static const primaryBg = Color(0xFFEFF6FF);
 
   // Neutrals (Tailwind slate scale)
@@ -15,7 +14,6 @@ class AppColors {
   static const textTertiary = Color(0xFF94A3B8); // slate-400
 
   static const border = Color(0xFFE2E8F0); // slate-200
-  static const borderStrong = Color(0xFFCBD5E1); // slate-300
   static const inputFill = Color(0xFFF1F5F9); // slate-100
 
   // Semantic

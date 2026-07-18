@@ -47,24 +47,33 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
       return;
     }
 
-    final isBusDriver = await ref.read(driverRepositoryProvider).driverExists(user.uid);
+    final isBusDriver = await ref
+        .read(driverRepositoryProvider)
+        .driverExists(user.uid);
     if (!mounted) return;
     if (isBusDriver) {
       Navigator.pushReplacementNamed(context, AppRoutes.dashboard);
       return;
     }
 
-    final isRideDriver = await ref.read(rideDriverRepositoryProvider).driverExists(user.uid);
+    final isRideDriver = await ref
+        .read(rideDriverRepositoryProvider)
+        .driverExists(user.uid);
     if (!mounted) return;
     if (isRideDriver) {
       Navigator.pushReplacementNamed(context, AppRoutes.rideDriverRegistration);
       return;
     }
 
-    final isRidePassenger = await ref.read(ridePassengerRepositoryProvider).passengerExists(user.uid);
+    final isRidePassenger = await ref
+        .read(ridePassengerRepositoryProvider)
+        .passengerExists(user.uid);
     if (!mounted) return;
     if (isRidePassenger) {
-      Navigator.pushReplacementNamed(context, AppRoutes.ridePassengerRegistration);
+      Navigator.pushReplacementNamed(
+        context,
+        AppRoutes.ridePassengerRegistration,
+      );
       return;
     }
 
@@ -74,7 +83,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: AppColors.background,
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -89,8 +98,15 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                   Container(
                     width: 64,
                     height: 64,
-                    decoration: BoxDecoration(color: AppColors.primary, borderRadius: BorderRadius.circular(16)),
-                    child: const Icon(Icons.directions_bus_rounded, color: Colors.white, size: 32),
+                    decoration: BoxDecoration(
+                      color: AppColors.primary,
+                      borderRadius: BorderRadius.circular(16),
+                    ),
+                    child: const Icon(
+                      Icons.directions_bus_rounded,
+                      color: Colors.white,
+                      size: 32,
+                    ),
                   ),
                   const SizedBox(height: 20),
                   const Text(
@@ -105,7 +121,11 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                   const SizedBox(height: 6),
                   const Text(
                     'Smart Mobility Nepal',
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w400, color: AppColors.textSecondary),
+                    style: TextStyle(
+                      fontSize: 14,
+                      fontWeight: FontWeight.w400,
+                      color: AppColors.textSecondary,
+                    ),
                   ),
                 ],
               ),
@@ -117,7 +137,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                   child: SizedBox(
                     width: 20,
                     height: 20,
-                    child: CircularProgressIndicator(strokeWidth: 2, color: AppColors.primary),
+                    child: CircularProgressIndicator(
+                      strokeWidth: 2,
+                      color: AppColors.primary,
+                    ),
                   ),
                 ),
 
@@ -142,7 +165,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                         icon: Icons.directions_bus_rounded,
                         label: 'Nearby Buses',
                         color: AppColors.primary,
-                        onTap: () => Navigator.pushReplacementNamed(context, AppRoutes.publicBusList),
+                        onTap: () => Navigator.pushReplacementNamed(
+                          context,
+                          AppRoutes.publicBusList,
+                        ),
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -151,7 +177,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                         icon: Icons.school_rounded,
                         label: 'School Bus',
                         color: AppColors.schoolGreen,
-                        onTap: () => Navigator.pushReplacementNamed(context, AppRoutes.schoolBusList),
+                        onTap: () => Navigator.pushReplacementNamed(
+                          context,
+                          AppRoutes.schoolBusList,
+                        ),
                       ),
                     ),
                   ],
@@ -160,7 +189,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                 const SizedBox(height: 20),
                 Row(
                   children: [
-                    Expanded(child: Divider(color: Colors.grey.shade200)),
+                    Expanded(child: Divider(color: AppColors.border)),
                     Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 10),
                       child: Text(
@@ -173,7 +202,7 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                         ),
                       ),
                     ),
-                    Expanded(child: Divider(color: Colors.grey.shade200)),
+                    Expanded(child: Divider(color: AppColors.border)),
                   ],
                 ),
                 const SizedBox(height: 14),
@@ -185,7 +214,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                       child: _GridChoiceTile(
                         icon: Icons.directions_bus_filled_rounded,
                         label: 'Driver',
-                        onTap: () => Navigator.pushReplacementNamed(context, AppRoutes.login),
+                        onTap: () => Navigator.pushReplacementNamed(
+                          context,
+                          AppRoutes.login,
+                        ),
                       ),
                     ),
                     const SizedBox(width: 10),
@@ -193,7 +225,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                       child: _GridChoiceTile(
                         icon: Icons.two_wheeler_rounded,
                         label: 'Ride Driver',
-                        onTap: () => Navigator.pushReplacementNamed(context, AppRoutes.rideDriverRegistration),
+                        onTap: () => Navigator.pushReplacementNamed(
+                          context,
+                          AppRoutes.rideDriverRegistration,
+                        ),
                       ),
                     ),
                     const SizedBox(width: 10),
@@ -201,7 +236,10 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
                       child: _GridChoiceTile(
                         icon: Icons.favorite_rounded,
                         label: 'Book Ride',
-                        onTap: () => Navigator.pushReplacementNamed(context, AppRoutes.ridePassengerRegistration),
+                        onTap: () => Navigator.pushReplacementNamed(
+                          context,
+                          AppRoutes.ridePassengerRegistration,
+                        ),
                       ),
                     ),
                   ],
@@ -219,7 +257,12 @@ class _SplashScreenState extends ConsumerState<SplashScreen> {
 
 /// Large featured card used for the two primary, passenger-facing actions.
 class _HeroChoiceCard extends StatelessWidget {
-  const _HeroChoiceCard({required this.icon, required this.label, required this.color, required this.onTap});
+  const _HeroChoiceCard({
+    required this.icon,
+    required this.label,
+    required this.color,
+    required this.onTap,
+  });
 
   final IconData icon;
   final String label;
@@ -249,7 +292,11 @@ class _HeroChoiceCard extends StatelessWidget {
                   color: color,
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
-                    BoxShadow(color: color.withValues(alpha: 0.30), blurRadius: 12, offset: const Offset(0, 6)),
+                    BoxShadow(
+                      color: color.withValues(alpha: 0.30),
+                      blurRadius: 12,
+                      offset: const Offset(0, 6),
+                    ),
                   ],
                 ),
                 child: Icon(icon, color: Colors.white, size: 26),
@@ -258,7 +305,11 @@ class _HeroChoiceCard extends StatelessWidget {
               Text(
                 label,
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
+                style: const TextStyle(
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textPrimary,
+                ),
               ),
             ],
           ),
@@ -270,7 +321,11 @@ class _HeroChoiceCard extends StatelessWidget {
 
 /// Compact icon tile used for secondary, role-based actions.
 class _GridChoiceTile extends StatelessWidget {
-  const _GridChoiceTile({required this.icon, required this.label, required this.onTap});
+  const _GridChoiceTile({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+  });
 
   final IconData icon;
   final String label;
@@ -286,9 +341,9 @@ class _GridChoiceTile extends StatelessWidget {
         child: Ink(
           padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 8),
           decoration: BoxDecoration(
-            color: Colors.grey.shade50,
+            color: AppColors.inputFill,
             borderRadius: BorderRadius.circular(16),
-            border: Border.all(color: Colors.grey.shade200),
+            border: Border.all(color: AppColors.border),
           ),
           child: Column(
             children: [
@@ -296,9 +351,9 @@ class _GridChoiceTile extends StatelessWidget {
                 width: 38,
                 height: 38,
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  color: AppColors.surface,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: Colors.grey.shade200),
+                  border: Border.all(color: AppColors.border),
                 ),
                 child: Icon(icon, color: AppColors.textPrimary, size: 18),
               ),
@@ -306,7 +361,11 @@ class _GridChoiceTile extends StatelessWidget {
               Text(
                 label,
                 textAlign: TextAlign.center,
-                style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.textSecondary),
+                style: const TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textSecondary,
+                ),
               ),
             ],
           ),
