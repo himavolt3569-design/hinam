@@ -1,5 +1,3 @@
-# AGENTS.md
-
 # Hinam Development Guidelines
 
 This document defines the engineering principles, architectural rules, and development standards for every contributor working on the Hinam project.
