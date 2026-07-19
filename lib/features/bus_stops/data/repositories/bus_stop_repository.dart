@@ -6,7 +6,9 @@ import 'package:hinam/features/bus_stops/data/models/bus_stop_model.dart';
 import 'package:hinam/shared/providers/firebase_providers.dart';
 
 final busStopRepositoryProvider = Provider<BusStopRepository>((ref) {
-  return BusStopRepository(BusStopRemoteDatasource(ref.read(firestoreProvider)));
+  return BusStopRepository(
+    BusStopRemoteDatasource(ref.read(firestoreProvider)),
+  );
 });
 
 class BusStopRepository {

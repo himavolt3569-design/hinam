@@ -20,15 +20,15 @@ final notificationServiceProvider = Provider<NotificationService>((ref) {
 
 final notificationTokenDatasourceProvider =
     Provider<NotificationTokenRemoteDatasource>((ref) {
-  return NotificationTokenRemoteDatasource(ref.read(firestoreProvider));
-});
+      return NotificationTokenRemoteDatasource(ref.read(firestoreProvider));
+    });
 
 final notificationTokenRepositoryProvider =
     Provider<NotificationTokenRepository>((ref) {
-  return NotificationTokenRepository(
-    ref.read(notificationTokenDatasourceProvider),
-  );
-});
+      return NotificationTokenRepository(
+        ref.read(notificationTokenDatasourceProvider),
+      );
+    });
 
 final fcmTokenSyncProvider = Provider<void>((ref) {
   final notificationService = ref.read(notificationServiceProvider);

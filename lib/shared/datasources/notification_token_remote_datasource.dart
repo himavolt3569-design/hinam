@@ -8,10 +8,7 @@ class NotificationTokenRemoteDatasource {
   NotificationTokenRemoteDatasource(this.firestore);
 
   Future<void> saveToken(NotificationTokenModel token) async {
-    await firestore
-        .collection('fcm_tokens')
-        .doc(token.uid)
-        .set(token.toMap());
+    await firestore.collection('fcm_tokens').doc(token.uid).set(token.toMap());
   }
 
   Future<void> deleteToken(String uid) async {

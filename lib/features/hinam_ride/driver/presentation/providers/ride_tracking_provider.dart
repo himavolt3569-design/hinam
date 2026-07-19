@@ -14,8 +14,7 @@ final rideLocationDatasourceProvider = Provider<RideLocationRemoteDatasource>(
 );
 
 final rideTrackingRepositoryProvider = Provider<RideTrackingRepository>(
-  (ref) =>
-      RideTrackingRepository(ref.read(rideLocationDatasourceProvider)),
+  (ref) => RideTrackingRepository(ref.read(rideLocationDatasourceProvider)),
 );
 
 class RideTrackingState {
@@ -57,16 +56,13 @@ class RideTrackingNotifier extends Notifier<RideTrackingState> {
     _subscription = ref
         .read(locationServiceProvider)
         .getLocationStream()
-        .listen(
-          (position) async {
-            state = state.copyWith(isTracking: true, position: position);
+        .listen((position) async {
+          state = state.copyWith(isTracking: true, position: position);
 
-            await ref
-                .read(rideTrackingRepositoryProvider)
-                .updateLocation(driverId: driverId, position: position);
-          },
-          onError: (_) => stopTracking(driverId),
-        );
+          await ref
+              .read(rideTrackingRepositoryProvider)
+              .updateLocation(driverId: driverId, position: position);
+        }, onError: (_) => stopTracking(driverId));
   }
 
   Future<void> stopTracking(String driverId) async {

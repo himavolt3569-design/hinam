@@ -21,12 +21,12 @@ class BusModel {
   String get routeOrSchool => routeName ?? schoolName ?? '';
 
   Map<String, dynamic> toMap() => {
-        'busNumber': busNumber,
-        'busType': busType,
-        'routeName': routeName,
-        'schoolName': schoolName,
-        'createdAt': createdAt,
-      };
+    'busNumber': busNumber,
+    'busType': busType,
+    'routeName': routeName,
+    'schoolName': schoolName,
+    'createdAt': createdAt,
+  };
 
   factory BusModel.fromMap(String id, Map<String, dynamic> map) {
     return BusModel(

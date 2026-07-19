@@ -38,8 +38,10 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
     final driverState = ref.watch(driverProfileProvider);
 
     return driverState.when(
-      loading: () => const Scaffold(body: Center(child: CircularProgressIndicator())),
-      error: (error, _) => Scaffold(body: Center(child: Text(error.toString()))),
+      loading: () =>
+          const Scaffold(body: Center(child: CircularProgressIndicator())),
+      error: (error, _) =>
+          Scaffold(body: Center(child: Text(error.toString()))),
       data: (driver) {
         if (driver == null) {
           return const Scaffold(body: Center(child: Text('Driver not found')));
@@ -71,18 +73,27 @@ class _DashboardBody extends ConsumerWidget {
           children: [
             const Text(
               'Welcome back',
-              style: TextStyle(fontSize: 11, color: AppColors.textSecondary, fontWeight: FontWeight.w400),
+              style: TextStyle(
+                fontSize: 11,
+                color: AppColors.textSecondary,
+                fontWeight: FontWeight.w400,
+              ),
             ),
             Text(
               driver.fullName,
-              style: const TextStyle(fontSize: 15, color: AppColors.textPrimary, fontWeight: FontWeight.w700),
+              style: const TextStyle(
+                fontSize: 15,
+                color: AppColors.textPrimary,
+                fontWeight: FontWeight.w700,
+              ),
               overflow: TextOverflow.ellipsis,
             ),
           ],
         ),
         actions: [
           IconButton(
-            onPressed: () => ref.read(authControllerProvider.notifier).signOut(),
+            onPressed: () =>
+                ref.read(authControllerProvider.notifier).signOut(),
             icon: const Icon(Icons.logout_rounded, size: 20),
             tooltip: 'Logout',
           ),
@@ -97,20 +108,33 @@ class _DashboardBody extends ConsumerWidget {
             if (!driver.isApproved)
               Container(
                 margin: const EdgeInsets.only(bottom: 14),
-                padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 14,
+                  vertical: 12,
+                ),
                 decoration: BoxDecoration(
                   color: AppColors.warningBg,
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: AppColors.warning.withValues(alpha: 0.3)),
+                  border: Border.all(
+                    color: AppColors.warning.withValues(alpha: 0.3),
+                  ),
                 ),
                 child: const Row(
                   children: [
-                    Icon(Icons.pending_rounded, size: 18, color: AppColors.warning),
+                    Icon(
+                      Icons.pending_rounded,
+                      size: 18,
+                      color: AppColors.warning,
+                    ),
                     SizedBox(width: 10),
                     Expanded(
                       child: Text(
                         'Pending approval — tracking will be enabled once an admin reviews your account.',
-                        style: TextStyle(fontSize: 12, color: AppColors.warning, fontWeight: FontWeight.w500),
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: AppColors.warning,
+                          fontWeight: FontWeight.w500,
+                        ),
                       ),
                     ),
                   ],
@@ -124,7 +148,9 @@ class _DashboardBody extends ConsumerWidget {
                 decoration: BoxDecoration(
                   color: AppColors.primaryBg,
                   borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: AppColors.primary.withValues(alpha: 0.25)),
+                  border: Border.all(
+                    color: AppColors.primary.withValues(alpha: 0.25),
+                  ),
                 ),
                 child: Row(
                   children: [
@@ -135,7 +161,11 @@ class _DashboardBody extends ConsumerWidget {
                         color: AppColors.primary,
                         borderRadius: BorderRadius.circular(8),
                       ),
-                      child: const Icon(Icons.assignment_rounded, color: Colors.white, size: 18),
+                      child: const Icon(
+                        Icons.assignment_rounded,
+                        color: Colors.white,
+                        size: 18,
+                      ),
                     ),
                     const SizedBox(width: 12),
                     Expanded(
@@ -144,12 +174,23 @@ class _DashboardBody extends ConsumerWidget {
                         children: [
                           Text(
                             "Today's Assignment — ${activeAssignment.shiftLabel}",
-                            style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.primary),
+                            style: const TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.primary,
+                            ),
                           ),
                           const SizedBox(height: 2),
                           Text(
-                            activeAssignment.busNumber + (activeAssignment.routeOrSchool.isNotEmpty ? ' · ${activeAssignment.routeOrSchool}' : ''),
-                            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
+                            activeAssignment.busNumber +
+                                (activeAssignment.routeOrSchool.isNotEmpty
+                                    ? ' · ${activeAssignment.routeOrSchool}'
+                                    : ''),
+                            style: const TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.textPrimary,
+                            ),
                           ),
                         ],
                       ),
@@ -159,14 +200,21 @@ class _DashboardBody extends ConsumerWidget {
               ),
             ],
 
-            BusInfoCard(busNumber: driver.busNumber, isPublic: isPublic, isApproved: driver.isApproved),
+            BusInfoCard(
+              busNumber: driver.busNumber,
+              isPublic: isPublic,
+              isApproved: driver.isApproved,
+            ),
 
             if (routeOrSchool != null) ...[
               const SizedBox(height: 10),
               RouteSchoolTile(isPublic: isPublic, value: routeOrSchool),
             ],
 
-            if (isTracking) ...[const SizedBox(height: 10), TrackingStatusBar(isTracking: isTracking)],
+            if (isTracking) ...[
+              const SizedBox(height: 10),
+              TrackingStatusBar(isTracking: isTracking),
+            ],
 
             if (trackingState.position != null) ...[
               const SizedBox(height: 10),
@@ -177,15 +225,18 @@ class _DashboardBody extends ConsumerWidget {
               const SizedBox(height: 10),
               StudentCounterTile(
                 count: trackingState.studentCount,
-                onIncrement: () => ref.read(trackingProvider.notifier).incrementStudentCount(),
-                onDecrement: () => ref.read(trackingProvider.notifier).decrementStudentCount(),
+                onIncrement: () =>
+                    ref.read(trackingProvider.notifier).incrementStudentCount(),
+                onDecrement: () =>
+                    ref.read(trackingProvider.notifier).decrementStudentCount(),
               ),
             ],
 
             const SizedBox(height: 24),
 
             OutlinedButton.icon(
-              onPressed: () => Navigator.pushNamed(context, AppRoutes.manageBusStops),
+              onPressed: () =>
+                  Navigator.pushNamed(context, AppRoutes.manageBusStops),
               icon: const Icon(Icons.signpost_rounded, size: 18),
               label: const Text('Manage Bus Stops'),
             ),
@@ -200,9 +251,14 @@ class _DashboardBody extends ConsumerWidget {
                           : ref.read(trackingProvider.notifier).startTracking();
                     }
                   : null,
-              icon: Icon(isTracking ? Icons.stop_rounded : Icons.location_on_rounded, size: 20),
+              icon: Icon(
+                isTracking ? Icons.stop_rounded : Icons.location_on_rounded,
+                size: 20,
+              ),
               label: Text(isTracking ? 'Stop Tracking' : 'Start Tracking'),
-              style: FilledButton.styleFrom(backgroundColor: isTracking ? AppColors.error : null),
+              style: FilledButton.styleFrom(
+                backgroundColor: isTracking ? AppColors.error : null,
+              ),
             ),
 
             const SizedBox(height: 20),

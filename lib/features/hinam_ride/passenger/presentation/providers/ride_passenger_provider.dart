@@ -5,8 +5,7 @@ import 'package:hinam/features/hinam_ride/passenger/data/models/ride_passenger_m
 import 'package:hinam/features/hinam_ride/passenger/data/repositories/ride_passenger_repository.dart';
 import 'package:hinam/shared/providers/firebase_providers.dart';
 
-final ridePassengerDatasourceProvider =
-    Provider<RidePassengerRemoteDatasource>(
+final ridePassengerDatasourceProvider = Provider<RidePassengerRemoteDatasource>(
   (ref) => RidePassengerRemoteDatasource(ref.read(firestoreProvider)),
 );
 
@@ -16,5 +15,6 @@ final ridePassengerRepositoryProvider = Provider<RidePassengerRepository>(
 
 final ridePassengerByIdProvider =
     FutureProvider.family<RidePassengerModel?, String>(
-  (ref, uid) => ref.watch(ridePassengerRepositoryProvider).getPassenger(uid),
-);
+      (ref, uid) =>
+          ref.watch(ridePassengerRepositoryProvider).getPassenger(uid),
+    );

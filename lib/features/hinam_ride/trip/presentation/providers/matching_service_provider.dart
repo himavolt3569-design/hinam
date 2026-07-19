@@ -9,10 +9,9 @@ import 'package:hinam/features/hinam_ride/trip/data/models/ride_offer_model.dart
 import 'package:hinam/shared/providers/firebase_providers.dart';
 import 'active_ride_provider.dart';
 
-final matchingServiceProvider =
-    NotifierProvider<MatchingServiceNotifier, void>(
-      MatchingServiceNotifier.new,
-    );
+final matchingServiceProvider = NotifierProvider<MatchingServiceNotifier, void>(
+  MatchingServiceNotifier.new,
+);
 
 class MatchingServiceNotifier extends Notifier<void> {
   static const defaultOfferTimeout = Duration(seconds: 20);

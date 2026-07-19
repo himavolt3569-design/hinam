@@ -50,9 +50,17 @@ class _PickupDropoffPickerState extends State<PickupDropoffPicker> {
   Widget build(BuildContext context) {
     final markers = <Marker>[
       if (widget.pickup != null)
-        _buildMarker(widget.pickup!, AppColors.success, Icons.trip_origin_rounded),
+        _buildMarker(
+          widget.pickup!,
+          AppColors.success,
+          Icons.trip_origin_rounded,
+        ),
       if (widget.dropoff != null)
-        _buildMarker(widget.dropoff!, AppColors.error, Icons.location_on_rounded),
+        _buildMarker(
+          widget.dropoff!,
+          AppColors.error,
+          Icons.location_on_rounded,
+        ),
     ];
 
     return Column(

@@ -7,7 +7,9 @@ import 'package:hinam/shared/models/bus_location_model.dart';
 import 'package:hinam/shared/providers/firebase_providers.dart';
 
 final trackingRepositoryProvider = Provider<TrackingRepository>((ref) {
-  return TrackingRepository(TrackingRemoteDatasource(ref.read(firestoreProvider)));
+  return TrackingRepository(
+    TrackingRemoteDatasource(ref.read(firestoreProvider)),
+  );
 });
 
 class TrackingRepository {

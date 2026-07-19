@@ -63,8 +63,9 @@ class RideDriverModel {
       vehicleType: map['vehicleType'] ?? '',
       vehiclePlate: map['vehiclePlate'] ?? '',
       licenseNumber: map['licenseNumber'] ?? '',
-      verificationStatus:
-          VerificationStatus.fromValue(map['verificationStatus'] ?? 'pending'),
+      verificationStatus: VerificationStatus.fromValue(
+        map['verificationStatus'] ?? 'pending',
+      ),
       isOnline: map['isOnline'] ?? false,
       ratingAvg: (map['ratingAvg'] ?? 0.0).toDouble(),
       totalRides: map['totalRides'] ?? 0,

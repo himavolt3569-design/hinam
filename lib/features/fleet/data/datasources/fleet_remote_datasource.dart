@@ -15,7 +15,9 @@ class FleetRemoteDatasource {
         .collection('buses')
         .orderBy('busNumber')
         .snapshots()
-        .map((s) => s.docs.map((d) => BusModel.fromMap(d.id, d.data())).toList());
+        .map(
+          (s) => s.docs.map((d) => BusModel.fromMap(d.id, d.data())).toList(),
+        );
   }
 
   Future<void> addBus(BusModel bus) async {
@@ -34,7 +36,9 @@ class FleetRemoteDatasource {
         .where('date', isEqualTo: date)
         .snapshots()
         .map((s) {
-          final list = s.docs.map((d) => AssignmentModel.fromMap(d.id, d.data())).toList();
+          final list = s.docs
+              .map((d) => AssignmentModel.fromMap(d.id, d.data()))
+              .toList();
           list.sort((a, b) => b.createdAt.compareTo(a.createdAt));
           return list;
         });
@@ -51,9 +55,11 @@ class FleetRemoteDatasource {
         .where('status', isEqualTo: 'active')
         .limit(1)
         .snapshots()
-        .map((s) => s.docs.isEmpty
-            ? null
-            : AssignmentModel.fromMap(s.docs.first.id, s.docs.first.data()));
+        .map(
+          (s) => s.docs.isEmpty
+              ? null
+              : AssignmentModel.fromMap(s.docs.first.id, s.docs.first.data()),
+        );
   }
 
   Future<void> addAssignment(AssignmentModel assignment) async {
@@ -61,6 +67,8 @@ class FleetRemoteDatasource {
   }
 
   Future<void> updateAssignmentStatus(String id, String status) async {
-    await firestore.collection('assignments').doc(id).update({'status': status});
+    await firestore.collection('assignments').doc(id).update({
+      'status': status,
+    });
   }
 }

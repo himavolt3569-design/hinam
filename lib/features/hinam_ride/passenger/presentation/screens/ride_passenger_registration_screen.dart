@@ -46,9 +46,7 @@ class _RidePassengerRegistrationScreenState
     Future.microtask(() {
       final user = ref.read(authControllerProvider.notifier).currentUser();
       if (user != null) {
-        ref
-            .read(ridePassengerProfileProvider.notifier)
-            .loadPassenger(user.uid);
+        ref.read(ridePassengerProfileProvider.notifier).loadPassenger(user.uid);
       }
     });
   }
@@ -80,9 +78,7 @@ class _RidePassengerRegistrationScreenState
 
     if (!_requiredDocuments.keys.every(_documents.containsKey)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please upload all required documents.'),
-        ),
+        const SnackBar(content: Text('Please upload all required documents.')),
       );
       return;
     }

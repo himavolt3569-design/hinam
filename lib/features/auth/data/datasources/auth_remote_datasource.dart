@@ -23,7 +23,9 @@ class AuthRemoteDatasource {
 
       verificationFailed: (FirebaseAuthException e) {
         if (!completer.isCompleted) {
-          completer.completeError(Exception(e.message ?? 'Verification failed.'));
+          completer.completeError(
+            Exception(e.message ?? 'Verification failed.'),
+          );
         }
       },
 

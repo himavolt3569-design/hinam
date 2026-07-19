@@ -16,11 +16,9 @@ class BusStopController extends AsyncNotifier<void> {
   }) async {
     state = const AsyncLoading();
     try {
-      await ref.read(busStopRepositoryProvider).addBusStop(
-            name: name,
-            latitude: latitude,
-            longitude: longitude,
-          );
+      await ref
+          .read(busStopRepositoryProvider)
+          .addBusStop(name: name, latitude: latitude, longitude: longitude);
       state = const AsyncData(null);
     } catch (e, st) {
       state = AsyncError(e, st);

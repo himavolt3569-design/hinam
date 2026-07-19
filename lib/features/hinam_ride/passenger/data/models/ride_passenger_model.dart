@@ -14,10 +14,7 @@ class EmergencyContact {
   }
 
   factory EmergencyContact.fromMap(Map<String, dynamic> map) {
-    return EmergencyContact(
-      name: map['name'] ?? '',
-      phone: map['phone'] ?? '',
-    );
+    return EmergencyContact(name: map['name'] ?? '', phone: map['phone'] ?? '');
   }
 }
 

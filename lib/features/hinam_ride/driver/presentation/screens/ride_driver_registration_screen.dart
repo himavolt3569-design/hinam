@@ -84,9 +84,7 @@ class _RideDriverRegistrationScreenState
 
     if (!_requiredDocuments.keys.every(_documents.containsKey)) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please upload all required documents.'),
-        ),
+        const SnackBar(content: Text('Please upload all required documents.')),
       );
       return;
     }

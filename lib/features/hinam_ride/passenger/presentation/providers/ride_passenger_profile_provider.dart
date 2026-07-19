@@ -8,8 +8,7 @@ final ridePassengerProfileProvider =
       RidePassengerProfileNotifier.new,
     );
 
-class RidePassengerProfileNotifier
-    extends AsyncNotifier<RidePassengerModel?> {
+class RidePassengerProfileNotifier extends AsyncNotifier<RidePassengerModel?> {
   @override
   Future<RidePassengerModel?> build() async {
     return null;

@@ -14,12 +14,10 @@ final rideVerificationDatasourceProvider =
       (ref) => RideVerificationRemoteDatasource(ref.read(firestoreProvider)),
     );
 
-final rideVerificationRepositoryProvider =
-    Provider<RideVerificationRepository>(
-      (ref) => RideVerificationRepository(
-        ref.read(rideVerificationDatasourceProvider),
-      ),
-    );
+final rideVerificationRepositoryProvider = Provider<RideVerificationRepository>(
+  (ref) =>
+      RideVerificationRepository(ref.read(rideVerificationDatasourceProvider)),
+);
 
 final submitVerificationControllerProvider =
     AsyncNotifierProvider<SubmitVerificationController, void>(

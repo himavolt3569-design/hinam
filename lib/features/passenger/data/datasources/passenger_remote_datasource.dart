@@ -24,6 +24,8 @@ class PassengerRemoteDatasource {
         .collection('bus_locations')
         .doc(driverId)
         .snapshots()
-        .map((doc) => doc.exists ? BusLocationModel.fromMap(doc.data()!) : null);
+        .map(
+          (doc) => doc.exists ? BusLocationModel.fromMap(doc.data()!) : null,
+        );
   }
 }

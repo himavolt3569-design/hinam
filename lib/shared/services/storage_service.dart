@@ -7,10 +7,7 @@ class StorageService {
 
   StorageService(this.storage);
 
-  Future<String> uploadFile({
-    required String path,
-    required File file,
-  }) async {
+  Future<String> uploadFile({required String path, required File file}) async {
     final ref = storage.ref(path);
     final snapshot = await ref.putFile(file).snapshotEvents.last;
     return snapshot.ref.getDownloadURL();

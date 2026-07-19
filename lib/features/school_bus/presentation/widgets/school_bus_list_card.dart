@@ -29,7 +29,11 @@ class SchoolBusListCard extends StatelessWidget {
                 color: AppColors.schoolGreenBg,
                 borderRadius: BorderRadius.circular(10),
               ),
-              child: const Icon(Icons.school_rounded, color: AppColors.schoolGreen, size: 22),
+              child: const Icon(
+                Icons.school_rounded,
+                color: AppColors.schoolGreen,
+                size: 22,
+              ),
             ),
             const SizedBox(width: 14),
             Expanded(
@@ -38,23 +42,37 @@ class SchoolBusListCard extends StatelessWidget {
                 children: [
                   Text(
                     bus.schoolName ?? bus.busNumber,
-                    style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: AppColors.textPrimary),
+                    style: const TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textPrimary,
+                    ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
                   const SizedBox(height: 2),
                   Text(
                     'Bus: ${bus.busNumber}',
-                    style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                    style: const TextStyle(
+                      fontSize: 12,
+                      color: AppColors.textSecondary,
+                    ),
                   ),
                   const SizedBox(height: 4),
                   Row(
                     children: [
-                      const Icon(Icons.person_rounded, size: 12, color: AppColors.textTertiary),
+                      const Icon(
+                        Icons.person_rounded,
+                        size: 12,
+                        color: AppColors.textTertiary,
+                      ),
                       const SizedBox(width: 4),
                       Text(
                         bus.driverName.isEmpty ? 'Driver' : bus.driverName,
-                        style: const TextStyle(fontSize: 11, color: AppColors.textTertiary),
+                        style: const TextStyle(
+                          fontSize: 11,
+                          color: AppColors.textTertiary,
+                        ),
                       ),
                       const SizedBox(width: 10),
                       Container(
@@ -68,14 +86,21 @@ class SchoolBusListCard extends StatelessWidget {
                       const SizedBox(width: 4),
                       Text(
                         '${bus.speedKmh.toStringAsFixed(0)} km/h',
-                        style: const TextStyle(fontSize: 11, color: AppColors.textTertiary),
+                        style: const TextStyle(
+                          fontSize: 11,
+                          color: AppColors.textTertiary,
+                        ),
                       ),
                     ],
                   ),
                 ],
               ),
             ),
-            const Icon(Icons.chevron_right_rounded, size: 18, color: AppColors.textTertiary),
+            const Icon(
+              Icons.chevron_right_rounded,
+              size: 18,
+              color: AppColors.textTertiary,
+            ),
           ],
         ),
       ),

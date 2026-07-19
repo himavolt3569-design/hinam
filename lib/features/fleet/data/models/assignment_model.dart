@@ -44,18 +44,18 @@ class AssignmentModel {
   }
 
   Map<String, dynamic> toMap() => {
-        'busId': busId,
-        'driverId': driverId,
-        'driverName': driverName,
-        'busNumber': busNumber,
-        'busType': busType,
-        'routeName': routeName,
-        'schoolName': schoolName,
-        'shift': shift,
-        'date': date,
-        'status': status,
-        'createdAt': createdAt,
-      };
+    'busId': busId,
+    'driverId': driverId,
+    'driverName': driverName,
+    'busNumber': busNumber,
+    'busType': busType,
+    'routeName': routeName,
+    'schoolName': schoolName,
+    'shift': shift,
+    'date': date,
+    'status': status,
+    'createdAt': createdAt,
+  };
 
   factory AssignmentModel.fromMap(String id, Map<String, dynamic> map) {
     return AssignmentModel(

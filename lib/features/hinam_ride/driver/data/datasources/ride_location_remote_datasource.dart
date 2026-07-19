@@ -15,9 +15,9 @@ class RideLocationRemoteDatasource {
   }
 
   Future<void> clearLocation(String driverId) async {
-    await firestore.collection('ride_locations').doc(driverId).set(
-      {'isOnline': false, 'updatedAt': Timestamp.now()},
-      SetOptions(merge: true),
-    );
+    await firestore.collection('ride_locations').doc(driverId).set({
+      'isOnline': false,
+      'updatedAt': Timestamp.now(),
+    }, SetOptions(merge: true));
   }
 }

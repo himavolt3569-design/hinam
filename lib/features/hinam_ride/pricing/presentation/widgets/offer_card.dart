@@ -66,7 +66,9 @@ class OfferCard extends ConsumerWidget {
               const SizedBox(width: 8),
               Expanded(
                 child: OutlinedButton(
-                  onPressed: isBusy ? null : () => _showCounterDialog(context, ref),
+                  onPressed: isBusy
+                      ? null
+                      : () => _showCounterDialog(context, ref),
                   child: const Text('Counter'),
                 ),
               ),
@@ -87,7 +89,11 @@ class OfferCard extends ConsumerWidget {
   Future<void> _accept(BuildContext context, WidgetRef ref) async {
     await ref
         .read(negotiationControllerProvider.notifier)
-        .acceptOffer(rideId: offer.rideId, offerId: offer.id, driverId: driverId);
+        .acceptOffer(
+          rideId: offer.rideId,
+          offerId: offer.id,
+          driverId: driverId,
+        );
     if (!context.mounted) return;
 
     final error = ref.read(negotiationControllerProvider).error;
@@ -96,10 +102,9 @@ class OfferCard extends ConsumerWidget {
       return;
     }
 
-    Navigator.of(context).pushReplacementNamed(
-      AppRoutes.rideDriverTrip,
-      arguments: offer.rideId,
-    );
+    Navigator.of(
+      context,
+    ).pushReplacementNamed(AppRoutes.rideDriverTrip, arguments: offer.rideId);
   }
 
   Future<void> _decline(BuildContext context, WidgetRef ref) async {

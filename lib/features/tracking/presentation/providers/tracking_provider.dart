@@ -46,23 +46,22 @@ class TrackingNotifier extends Notifier<TrackingState> {
     _subscription = ref
         .read(locationServiceProvider)
         .getLocationStream()
-        .listen(
-          (position) async {
-            state = state.copyWith(isTracking: true, position: position);
+        .listen((position) async {
+          state = state.copyWith(isTracking: true, position: position);
 
-            await ref.read(trackingRepositoryProvider).updateLocation(
-                  driverId: driver.uid,
-                  driverName: driver.fullName,
-                  busNumber: busNumber,
-                  busType: busType,
-                  routeName: routeName,
-                  schoolName: schoolName,
-                  position: position,
-                  studentCount: state.studentCount,
-                );
-          },
-          onError: (_) => stopTracking(),
-        );
+          await ref
+              .read(trackingRepositoryProvider)
+              .updateLocation(
+                driverId: driver.uid,
+                driverName: driver.fullName,
+                busNumber: busNumber,
+                busType: busType,
+                routeName: routeName,
+                schoolName: schoolName,
+                position: position,
+                studentCount: state.studentCount,
+              );
+        }, onError: (_) => stopTracking());
   }
 
   Future<void> stopTracking() async {

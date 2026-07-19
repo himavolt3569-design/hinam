@@ -13,7 +13,9 @@ final publicBusesProvider = Provider<AsyncValue<List<BusLocationModel>>>((ref) {
       .whenData((buses) => buses.where((b) => b.busType == 'public').toList());
 });
 
-final singleBusProvider =
-    StreamProvider.family<BusLocationModel?, String>((ref, driverId) {
+final singleBusProvider = StreamProvider.family<BusLocationModel?, String>((
+  ref,
+  driverId,
+) {
   return ref.watch(passengerRepositoryProvider).watchSingleBus(driverId);
 });

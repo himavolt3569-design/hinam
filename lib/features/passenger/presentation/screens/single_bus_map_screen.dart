@@ -55,9 +55,23 @@ class _SingleBusMapScreenState extends ConsumerState<SingleBusMapScreen> {
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(title, style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
+            Text(
+              title,
+              style: const TextStyle(
+                fontSize: 15,
+                fontWeight: FontWeight.w700,
+                color: AppColors.textPrimary,
+              ),
+            ),
             if (subtitle.isNotEmpty)
-              Text(subtitle, style: const TextStyle(fontSize: 11, color: AppColors.textSecondary, fontWeight: FontWeight.w400)),
+              Text(
+                subtitle,
+                style: const TextStyle(
+                  fontSize: 11,
+                  color: AppColors.textSecondary,
+                  fontWeight: FontWeight.w400,
+                ),
+              ),
           ],
         ),
         actions: [
@@ -92,7 +106,8 @@ class _SingleBusMapScreenState extends ConsumerState<SingleBusMapScreen> {
                 ),
                 children: [
                   TileLayer(
-                    urlTemplate: 'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
+                    urlTemplate:
+                        'https://tile.openstreetmap.org/{z}/{x}/{y}.png',
                     userAgentPackageName: 'com.hinam.app',
                   ),
                   if (bus != null && bus.isTracking)
@@ -100,19 +115,28 @@ class _SingleBusMapScreenState extends ConsumerState<SingleBusMapScreen> {
                   stopsAsync.when(
                     data: (stops) => MarkerLayer(
                       markers: stops
-                          .map((s) => Marker(
-                                point: LatLng(s.latitude, s.longitude),
-                                width: 32,
-                                height: 32,
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: AppColors.stopOrange,
-                                    shape: BoxShape.circle,
-                                    border: Border.all(color: Colors.white, width: 2),
+                          .map(
+                            (s) => Marker(
+                              point: LatLng(s.latitude, s.longitude),
+                              width: 32,
+                              height: 32,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: AppColors.stopOrange,
+                                  shape: BoxShape.circle,
+                                  border: Border.all(
+                                    color: Colors.white,
+                                    width: 2,
                                   ),
-                                  child: const Icon(Icons.signpost_rounded, color: Colors.white, size: 14),
                                 ),
-                              ))
+                                child: const Icon(
+                                  Icons.signpost_rounded,
+                                  color: Colors.white,
+                                  size: 14,
+                                ),
+                              ),
+                            ),
+                          )
                           .toList(),
                     ),
                     loading: () => const MarkerLayer(markers: []),
@@ -139,7 +163,10 @@ class _SingleBusMapScreenState extends ConsumerState<SingleBusMapScreen> {
                   alignment: Alignment.center,
                   child: Container(
                     margin: const EdgeInsets.only(bottom: 140),
-                    padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 20,
+                      vertical: 12,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.surface,
                       borderRadius: BorderRadius.circular(10),
@@ -148,9 +175,19 @@ class _SingleBusMapScreenState extends ConsumerState<SingleBusMapScreen> {
                     child: const Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.location_off_rounded, size: 16, color: AppColors.textSecondary),
+                        Icon(
+                          Icons.location_off_rounded,
+                          size: 16,
+                          color: AppColors.textSecondary,
+                        ),
                         SizedBox(width: 8),
-                        Text('Bus is not currently tracking', style: TextStyle(fontSize: 13, color: AppColors.textSecondary)),
+                        Text(
+                          'Bus is not currently tracking',
+                          style: TextStyle(
+                            fontSize: 13,
+                            color: AppColors.textSecondary,
+                          ),
+                        ),
                       ],
                     ),
                   ),
@@ -176,7 +213,11 @@ class _SingleBusMapScreenState extends ConsumerState<SingleBusMapScreen> {
           shape: BoxShape.circle,
           border: Border.all(color: Colors.white, width: 3),
           boxShadow: [
-            BoxShadow(color: color.withValues(alpha: 0.4), blurRadius: 10, offset: const Offset(0, 4)),
+            BoxShadow(
+              color: color.withValues(alpha: 0.4),
+              blurRadius: 10,
+              offset: const Offset(0, 4),
+            ),
           ],
         ),
         child: Icon(
@@ -204,7 +245,13 @@ class _BusInfoPanel extends StatelessWidget {
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(14),
         border: Border.all(color: AppColors.border),
-        boxShadow: [BoxShadow(color: Colors.black.withValues(alpha: 0.06), blurRadius: 12, offset: const Offset(0, 4))],
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: 0.06),
+            blurRadius: 12,
+            offset: const Offset(0, 4),
+          ),
+        ],
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
@@ -216,16 +263,34 @@ class _BusInfoPanel extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(bus!.busNumber, style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
+                    Text(
+                      bus!.busNumber,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textPrimary,
+                      ),
+                    ),
                     if (bus!.routeOrSchool.isNotEmpty)
-                      Text(bus!.routeOrSchool, style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)),
+                      Text(
+                        bus!.routeOrSchool,
+                        style: const TextStyle(
+                          fontSize: 12,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
                   ],
                 ),
               ),
               Container(
-                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 10,
+                  vertical: 5,
+                ),
                 decoration: BoxDecoration(
-                  color: bus!.isTracking ? AppColors.successBg : AppColors.inputFill,
+                  color: bus!.isTracking
+                      ? AppColors.successBg
+                      : AppColors.inputFill,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Text(
@@ -233,7 +298,9 @@ class _BusInfoPanel extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w600,
-                    color: bus!.isTracking ? AppColors.success : AppColors.textTertiary,
+                    color: bus!.isTracking
+                        ? AppColors.success
+                        : AppColors.textTertiary,
                   ),
                 ),
               ),
@@ -242,12 +309,23 @@ class _BusInfoPanel extends StatelessWidget {
           const SizedBox(height: 10),
           Row(
             children: [
-              _InfoChip(icon: Icons.person_rounded, label: bus!.driverName.isEmpty ? 'Driver' : bus!.driverName),
+              _InfoChip(
+                icon: Icons.person_rounded,
+                label: bus!.driverName.isEmpty ? 'Driver' : bus!.driverName,
+              ),
               const SizedBox(width: 12),
-              _InfoChip(icon: Icons.speed_rounded, label: '${bus!.speedKmh.toStringAsFixed(0)} km/h'),
-              if (!bus!.isTracking && bus!.busType == 'school' && bus!.studentCount > 0) ...[
+              _InfoChip(
+                icon: Icons.speed_rounded,
+                label: '${bus!.speedKmh.toStringAsFixed(0)} km/h',
+              ),
+              if (!bus!.isTracking &&
+                  bus!.busType == 'school' &&
+                  bus!.studentCount > 0) ...[
                 const SizedBox(width: 12),
-                _InfoChip(icon: Icons.people_rounded, label: '${bus!.studentCount} students'),
+                _InfoChip(
+                  icon: Icons.people_rounded,
+                  label: '${bus!.studentCount} students',
+                ),
               ],
             ],
           ),
@@ -270,7 +348,10 @@ class _InfoChip extends StatelessWidget {
       children: [
         Icon(icon, size: 13, color: AppColors.textTertiary),
         const SizedBox(width: 4),
-        Text(label, style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)),
+        Text(
+          label,
+          style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+        ),
       ],
     );
   }

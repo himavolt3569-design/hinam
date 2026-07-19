@@ -91,10 +91,7 @@ class _CounterOfferDialogState extends State<CounterOfferDialog> {
           onPressed: () => Navigator.pop(context),
           child: const Text('Cancel'),
         ),
-        FilledButton(
-          onPressed: _submit,
-          child: const Text('Send'),
-        ),
+        FilledButton(onPressed: _submit, child: const Text('Send')),
       ],
     );
   }

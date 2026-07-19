@@ -47,8 +47,7 @@ class FleetRepository {
   Stream<AssignmentModel?> watchActiveAssignment({
     required String driverId,
     required String date,
-  }) =>
-      datasource.watchActiveAssignment(driverId: driverId, date: date);
+  }) => datasource.watchActiveAssignment(driverId: driverId, date: date);
 
   Future<void> createAssignment({
     required String busId,

@@ -16,7 +16,8 @@ class RideOnlineStatusController extends AsyncNotifier<void> {
 
   Future<void> toggle(String driverId) async {
     final driver = ref.read(rideDriverProfileProvider).asData?.value;
-    if (driver == null || driver.verificationStatus != VerificationStatus.approved) {
+    if (driver == null ||
+        driver.verificationStatus != VerificationStatus.approved) {
       state = AsyncValue.error(
         StateError('Only approved drivers can go online.'),
         StackTrace.current,
