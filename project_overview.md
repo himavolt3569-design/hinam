@@ -53,6 +53,7 @@ Each service is implemented as an independent feature module. Authentication, no
 - Cash payment settlement, recorded per ride
 - In-trip reporting, reviewed by admins
 - SOS / emergency incident triggering, with high-priority push notifications to admins
+- Driver leaderboard: verified, currently online drivers ranked by completed ride count
 
 ## Administration
 
@@ -202,6 +203,7 @@ A few data-modeling decisions are worth knowing before reading the code:
 - Ride status, verification status, and similar states are modeled as Dart enums, serialized as their string name in Firestore.
 - Ride pricing negotiation is stored as an `offers` subcollection under each ride document, keeping every bid scoped to the ride it belongs to rather than living in a separate top-level collection.
 - A ride driver's live location is visible only to that driver and to administrators — unlike public bus locations, it is never broadcast publicly, since there is no passenger-facing "nearby ride drivers" map.
+- A driver's online/offline status is tracked in two places for different audiences: `ride_locations.isOnline` (owner/admin-read only, alongside live coordinates) drives trip matching, while `ride_drivers.isOnline` (broadly readable) is a location-free mirror of the same flag, kept in sync by the online/offline toggle, for features like the driver leaderboard that need to know who's online without exposing GPS position.
 
 Full rationale for these and other Hinam Ride implementation decisions is recorded in `PHASES.md`.
 

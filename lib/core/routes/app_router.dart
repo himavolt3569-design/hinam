@@ -16,6 +16,7 @@ import 'package:hinam/features/hinam_ride/administration/presentation/screens/ri
 import 'package:hinam/features/hinam_ride/administration/presentation/screens/ride_reports_queue_screen.dart';
 import 'package:hinam/features/hinam_ride/administration/presentation/screens/ride_verification_queue_screen.dart';
 import 'package:hinam/features/hinam_ride/driver/presentation/screens/ride_driver_registration_screen.dart';
+import 'package:hinam/features/hinam_ride/driver/presentation/screens/ride_leaderboard_screen.dart';
 import 'package:hinam/features/hinam_ride/passenger/presentation/screens/ride_passenger_registration_screen.dart';
 import 'package:hinam/features/hinam_ride/trip/presentation/screens/ride_driver_trip_screen.dart';
 import 'package:hinam/features/hinam_ride/trip/presentation/screens/ride_history_screen.dart';
@@ -122,6 +123,9 @@ class AppRouter {
         return MaterialPageRoute(
           builder: (_) => const RideIncidentsQueueScreen(),
         );
+
+      case AppRoutes.rideLeaderboard:
+        return MaterialPageRoute(builder: (_) => const RideLeaderboardScreen());
 
       default:
         return MaterialPageRoute(builder: (_) => const SplashScreen());

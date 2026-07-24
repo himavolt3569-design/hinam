@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:hinam/features/hinam_ride/driver/presentation/providers/ride_driver_profile_provider.dart';
+import 'package:hinam/features/hinam_ride/driver/presentation/providers/ride_driver_provider.dart';
 import 'package:hinam/features/hinam_ride/driver/presentation/providers/ride_tracking_provider.dart';
 import 'package:hinam/features/hinam_ride/verification/data/models/verification_request_model.dart'
     show VerificationStatus;
@@ -36,6 +37,13 @@ class RideOnlineStatusController extends AsyncNotifier<void> {
       } else {
         await notifier.startTracking(driverId);
       }
+
+      // ride_locations (the tracking source of truth above) is only readable by
+      // the driver themself and admins, so it can't back a leaderboard. Mirror
+      // the flag onto ride_drivers, which is broadly readable, instead.
+      await ref
+          .read(rideDriverRepositoryProvider)
+          .setOnlineStatus(driverId, !isTracking);
     });
   }
 }

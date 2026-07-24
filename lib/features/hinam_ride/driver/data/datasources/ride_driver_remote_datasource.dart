@@ -29,4 +29,24 @@ class RideDriverRemoteDatasource {
 
     return RideDriverModel.fromMap(doc.data()!);
   }
+
+  Future<void> setOnlineStatus(String uid, bool isOnline) async {
+    await firestore.collection('ride_drivers').doc(uid).update({
+      'isOnline': isOnline,
+    });
+  }
+
+  Stream<List<RideDriverModel>> watchLeaderboard() {
+    return firestore
+        .collection('ride_drivers')
+        .where('verificationStatus', isEqualTo: 'approved')
+        .where('isOnline', isEqualTo: true)
+        .orderBy('totalRides', descending: true)
+        .snapshots()
+        .map(
+          (snapshot) => snapshot.docs
+              .map((doc) => RideDriverModel.fromMap(doc.data()))
+              .toList(),
+        );
+  }
 }

@@ -26,6 +26,7 @@ See [project_overview.md](project_overview.md) for the full architecture descrip
 - Cash payment settlement recorded per ride
 - In-trip reporting and admin report review
 - SOS / emergency incident triggering with high-priority admin push notifications
+- Driver leaderboard ranking verified, currently online drivers by completed ride count
 
 **Administration**
 - Driver approval workflows (bus and Ride)

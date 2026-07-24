@@ -28,6 +28,12 @@ class IncomingRequestScreen extends ConsumerWidget {
         title: const Text('Ride Requests'),
         actions: [
           IconButton(
+            icon: const Icon(Icons.emoji_events_outlined),
+            tooltip: 'Driver Leaderboard',
+            onPressed: () =>
+                Navigator.of(context).pushNamed(AppRoutes.rideLeaderboard),
+          ),
+          IconButton(
             icon: const Icon(Icons.history_rounded),
             tooltip: 'Ride History',
             onPressed: () => Navigator.of(context).pushNamed(

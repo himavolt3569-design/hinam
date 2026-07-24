@@ -21,4 +21,5 @@ class AppRoutes {
   static const rideVerificationQueue = '/ride-verification-queue';
   static const rideReportsQueue = '/ride-reports-queue';
   static const rideIncidentsQueue = '/ride-incidents-queue';
+  static const rideLeaderboard = '/ride-leaderboard';
 }

@@ -17,4 +17,12 @@ class RideDriverRepository {
   Future<RideDriverModel?> getDriver(String uid) {
     return datasource.getDriver(uid);
   }
+
+  Future<void> setOnlineStatus(String uid, bool isOnline) {
+    return datasource.setOnlineStatus(uid, isOnline);
+  }
+
+  Stream<List<RideDriverModel>> watchLeaderboard() {
+    return datasource.watchLeaderboard();
+  }
 }
