@@ -10,7 +10,7 @@ Hinam is a single Flutter application that unifies three independent transportat
 
 - **Public Bus Tracking** — live bus locations and bus stop information for passengers.
 - **School Bus Tracking** — live tracking of school buses for parents.
-- **Hinam Ride** — a women-focused ride-sharing service: driver/passenger verification, trip matching, negotiable pricing, live tracking, safety features, ratings, and cash settlement.
+- **Hinam Ride** — a women-focused ride-sharing service: driver document verification, trip matching, negotiable pricing, live tracking, safety features, ratings, and cash settlement.
 
 Each service is implemented as an independent feature module. Authentication, notifications, storage, theme, and navigation are shared platform infrastructure used by every service.
 
@@ -43,7 +43,7 @@ Each service is implemented as an independent feature module. Authentication, no
 
 ## Hinam Ride
 
-- Separate driver and passenger registration, gated on document verification
+- Separate driver and passenger registration; drivers are gated on document verification
 - Driver online/offline status with live location broadcasting (visible only to that driver and to admins)
 - Trip requests matched to the nearest available, verified, online driver
 - Sequential, negotiable price offers per ride
@@ -142,7 +142,7 @@ Registers a vehicle, submits verification documents, goes online/offline, accept
 
 ## Ride Passenger
 
-Registers a profile, submits verification documents, requests rides, negotiates pricing, rates drivers.
+Registers a profile, requests rides, negotiates pricing, rates drivers.
 
 ## Administrator
 
@@ -166,8 +166,8 @@ A returning authenticated user's role is resolved once at launch, in priority or
 | `bus_stops/{stopId}` | Bus stop directory |
 | `fcm_tokens/{uid}` | Push notification token per user |
 | `ride_drivers/{uid}` | Ride driver profiles and verification status |
-| `ride_passengers/{uid}` | Ride passenger profiles and verification status |
-| `ride_verifications/{requestId}` | Shared driver/passenger verification queue |
+| `ride_passengers/{uid}` | Ride passenger profiles |
+| `ride_verifications/{requestId}` | Ride driver document verification queue |
 | `ride_locations/{driverId}` | Live ride driver location (driver + admin only) |
 | `rides/{rideId}` | Ride requests and trip lifecycle |
 | `rides/{rideId}/offers/{offerId}` | Sequential price offers, scoped to their ride |
@@ -204,6 +204,7 @@ A few data-modeling decisions are worth knowing before reading the code:
 - Ride pricing negotiation is stored as an `offers` subcollection under each ride document, keeping every bid scoped to the ride it belongs to rather than living in a separate top-level collection.
 - A ride driver's live location is visible only to that driver and to administrators — unlike public bus locations, it is never broadcast publicly, since there is no passenger-facing "nearby ride drivers" map.
 - A driver's online/offline status is tracked in two places for different audiences: `ride_locations.isOnline` (owner/admin-read only, alongside live coordinates) drives trip matching, while `ride_drivers.isOnline` (broadly readable) is a location-free mirror of the same flag, kept in sync by the online/offline toggle, for features like the driver leaderboard that need to know who's online without exposing GPS position.
+- Only ride drivers are document-verified (driving license, vehicle registration) through the shared `hinam_ride/verification/` submodule. Ride passengers are not: `RidePassengerModel` has no `verificationStatus` field, and passenger registration completes as soon as the profile is created — there is no review step to wait for.
 
 Full rationale for these and other Hinam Ride implementation decisions is recorded in `PHASES.md`.
 

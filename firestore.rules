@@ -89,15 +89,13 @@ service cloud.firestore {
     // ride_passengers — unlike ride_drivers, readable only by the owner and admins: this document
     // carries emergency-contact phone numbers with no legitimate broad-read use case.
     // emergencyContacts is capped at 3 entries (mirrors RidePassengerModel.maxEmergencyContacts).
+    // Passengers are not document-verified, unlike ride drivers: there is no verificationStatus field.
     match /ride_passengers/{passengerId} {
       allow read: if isOwner(passengerId) || isAdmin();
       allow create: if isOwner(passengerId)
-        && request.resource.data.verificationStatus == 'pending'
         && request.resource.data.emergencyContacts.size() <= 3;
       allow update: if isAdmin()
-        || (isOwner(passengerId)
-            && request.resource.data.verificationStatus == resource.data.verificationStatus
-            && request.resource.data.emergencyContacts.size() <= 3);
+        || (isOwner(passengerId) && request.resource.data.emergencyContacts.size() <= 3);
       allow delete: if isAdmin();
     }
 

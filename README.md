@@ -16,7 +16,7 @@ See [project_overview.md](project_overview.md) for the full architecture descrip
 - Route and driver visibility per school
 
 **Hinam Ride** (women-focused ride-sharing)
-- Separate driver and passenger registration with document verification
+- Separate driver and passenger registration; drivers are verified via uploaded documents
 - Driver online/offline status with live location broadcasting
 - Trip requests matched to the nearest verified, online driver
 - Sequential, negotiable price offers per ride

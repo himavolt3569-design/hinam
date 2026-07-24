@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,10 +8,6 @@ import 'package:hinam/features/hinam_ride/passenger/data/models/ride_passenger_m
 import 'package:hinam/features/hinam_ride/passenger/presentation/providers/ride_passenger_profile_provider.dart';
 import 'package:hinam/features/hinam_ride/passenger/presentation/providers/ride_passenger_provider.dart';
 import 'package:hinam/features/hinam_ride/passenger/presentation/widgets/ride_passenger_registration_form.dart';
-import 'package:hinam/features/hinam_ride/verification/data/models/verification_request_model.dart';
-import 'package:hinam/features/hinam_ride/verification/presentation/providers/ride_verification_provider.dart';
-import 'package:hinam/features/hinam_ride/verification/presentation/widgets/document_upload_tile.dart';
-import 'package:hinam/features/hinam_ride/verification/presentation/widgets/verification_status_banner.dart';
 import 'package:hinam/shared/widgets/loading_button.dart';
 
 class RidePassengerRegistrationScreen extends ConsumerStatefulWidget {
@@ -26,8 +20,6 @@ class RidePassengerRegistrationScreen extends ConsumerStatefulWidget {
 
 class _RidePassengerRegistrationScreenState
     extends ConsumerState<RidePassengerRegistrationScreen> {
-  static const _requiredDocuments = {'idPhoto': 'Citizenship / ID Photo'};
-
   final _formKey = GlobalKey<FormState>();
   final _fullNameController = TextEditingController();
 
@@ -35,7 +27,6 @@ class _RidePassengerRegistrationScreenState
   final List<EmergencyContactControllers> _contacts = [
     EmergencyContactControllers(),
   ];
-  final Map<String, File> _documents = {};
 
   bool _isSaving = false;
   bool _isSubmitted = false;
@@ -76,13 +67,6 @@ class _RidePassengerRegistrationScreenState
   Future<void> _completeRegistration() async {
     if (!_formKey.currentState!.validate()) return;
 
-    if (!_requiredDocuments.keys.every(_documents.containsKey)) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Please upload all required documents.')),
-      );
-      return;
-    }
-
     final user = ref.read(authControllerProvider.notifier).currentUser();
     if (user == null || user.phoneNumber == null) return;
 
@@ -94,7 +78,6 @@ class _RidePassengerRegistrationScreenState
         fullName: _fullNameController.text.trim(),
         phoneNumber: user.phoneNumber!,
         gender: _gender,
-        verificationStatus: VerificationStatus.pending,
         emergencyContacts: _contacts
             .map(
               (contact) => EmergencyContact(
@@ -111,14 +94,6 @@ class _RidePassengerRegistrationScreenState
       await ref
           .read(ridePassengerRepositoryProvider)
           .createPassenger(passenger);
-
-      await ref
-          .read(submitVerificationControllerProvider.notifier)
-          .submit(
-            subjectType: VerificationSubjectType.passenger,
-            subjectId: user.uid,
-            documents: _documents,
-          );
 
       if (!mounted) return;
       setState(() => _isSubmitted = true);
@@ -155,11 +130,8 @@ class _RidePassengerRegistrationScreenState
           error: (error, stackTrace) =>
               SizedBox(height: 300, child: Center(child: Text('$error'))),
           data: (passenger) {
-            if (_isSubmitted) {
-              return _buildSubmittedState(VerificationStatus.pending);
-            }
-            if (passenger != null) {
-              return _buildSubmittedState(passenger.verificationStatus);
+            if (_isSubmitted || passenger != null) {
+              return _buildRegisteredState();
             }
             return _buildForm();
           },
@@ -219,26 +191,8 @@ class _RidePassengerRegistrationScreenState
 
           const SizedBox(height: 20),
 
-          Text(
-            'Verification Documents',
-            style: Theme.of(
-              context,
-            ).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w700),
-          ),
-
-          const SizedBox(height: 10),
-
-          for (final entry in _requiredDocuments.entries)
-            DocumentUploadTile(
-              label: entry.value,
-              file: _documents[entry.key],
-              onPicked: (file) => setState(() => _documents[entry.key] = file),
-            ),
-
-          const SizedBox(height: 10),
-
           LoadingButton(
-            text: 'Submit for Review',
+            text: 'Complete Registration',
             isLoading: _isSaving,
             onPressed: _completeRegistration,
           ),
@@ -246,7 +200,7 @@ class _RidePassengerRegistrationScreenState
           const SizedBox(height: 12),
 
           const Text(
-            'Your profile will be reviewed before you can book a ride.',
+            'You can start requesting rides right after registering.',
             textAlign: TextAlign.center,
             style: TextStyle(fontSize: 12, color: AppColors.textTertiary),
           ),
@@ -257,7 +211,7 @@ class _RidePassengerRegistrationScreenState
     );
   }
 
-  Widget _buildSubmittedState(VerificationStatus status) {
+  Widget _buildRegisteredState() {
     return Column(
       children: [
         const SizedBox(height: 80),
@@ -276,7 +230,7 @@ class _RidePassengerRegistrationScreenState
         ),
         const SizedBox(height: 20),
         const Text(
-          'Your Ride Passenger Application',
+          "You're Registered",
           style: TextStyle(
             fontSize: 20,
             fontWeight: FontWeight.w700,
@@ -285,12 +239,10 @@ class _RidePassengerRegistrationScreenState
         ),
         const SizedBox(height: 8),
         const Text(
-          'We will notify you once your documents have been reviewed.',
+          'You can now request rides with Hinam Ride.',
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 14, color: AppColors.textSecondary),
         ),
-        const SizedBox(height: 20),
-        VerificationStatusBanner(status: status),
       ],
     );
   }

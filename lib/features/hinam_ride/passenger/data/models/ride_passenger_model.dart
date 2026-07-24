@@ -1,8 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'package:hinam/features/hinam_ride/verification/data/models/verification_request_model.dart'
-    show VerificationStatus;
-
 class EmergencyContact {
   final String name;
   final String phone;
@@ -25,7 +22,6 @@ class RidePassengerModel {
   final String fullName;
   final String phoneNumber;
   final String gender;
-  final VerificationStatus verificationStatus;
   final List<EmergencyContact> emergencyContacts;
   final double ratingAvg;
   final int totalRides;
@@ -36,7 +32,6 @@ class RidePassengerModel {
     required this.fullName,
     required this.phoneNumber,
     required this.gender,
-    required this.verificationStatus,
     required this.emergencyContacts,
     required this.ratingAvg,
     required this.totalRides,
@@ -49,7 +44,6 @@ class RidePassengerModel {
       'fullName': fullName,
       'phoneNumber': phoneNumber,
       'gender': gender,
-      'verificationStatus': verificationStatus.name,
       'emergencyContacts': emergencyContacts.map((c) => c.toMap()).toList(),
       'ratingAvg': ratingAvg,
       'totalRides': totalRides,
@@ -63,9 +57,6 @@ class RidePassengerModel {
       fullName: map['fullName'] ?? '',
       phoneNumber: map['phoneNumber'] ?? '',
       gender: map['gender'] ?? '',
-      verificationStatus: VerificationStatus.fromValue(
-        map['verificationStatus'] ?? 'pending',
-      ),
       emergencyContacts: ((map['emergencyContacts'] as List?) ?? [])
           .map(
             (contact) =>

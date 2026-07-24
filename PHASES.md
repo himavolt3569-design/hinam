@@ -1,6 +1,6 @@
 # Hinam Ride — Development History
 
-This document is a historical record of how the Hinam Ride feature was built, not an active roadmap. All 25 planned phases (0–24) have been completed.
+This document is a historical record of how the Hinam Ride feature was built, not an active roadmap. All 26 planned phases (0–25) have been completed.
 
 Hinam's other transportation services — Public Bus, School Bus, and their shared admin/fleet tooling — predate this rollout and are not covered here; see [project_overview.md](project_overview.md) for their current state.
 
@@ -107,3 +107,7 @@ Reconciled `project_overview.md` with the shipped system (corrected the mapping/
 ## Phase 24 — Driver Leaderboard
 
 Added a driver-facing leaderboard ranking verified, currently online ride drivers by `totalRides`, entered from `IncomingRequestScreen`. Along the way, fixed a latent gap: `ride_drivers.isOnline` was declared on `RideDriverModel` but never written by the online/offline toggle — only `ride_locations.isOnline` (owner/admin-read only, since it carries live GPS coordinates) was kept current. `RideOnlineStatusController.toggle` now mirrors the flag onto `ride_drivers` as well, since that collection is broadly readable (`isAuth()`) and holds no location data, making it the correct backing field for any cross-driver visibility feature. The leaderboard query (`verificationStatus == approved && isOnline == true`, ordered by `totalRides` descending) needed one new composite index on `ride_drivers`.
+
+## Phase 25 — Passenger Government ID Requirement Removed
+
+Removed the Government ID (citizenship) document upload from Ride Passenger registration. `RidePassengerRegistrationScreen` no longer collects a document, calls the verification submodule, or shows a pending/approved/rejected status — registration now completes as soon as the profile is saved. `RidePassengerModel` no longer carries `verificationStatus` (it had no code path that ever changed it once document upload was removed, and keeping it would have meant passengers being stuck showing "pending review" forever). `firestore.rules`' `ride_passengers` match block dropped the corresponding field checks on `create`/`update` accordingly. The `verification/` submodule, `ride_verifications` collection, and the shared `VerificationStatus`/`VerificationSubjectType` enums were left untouched — they're still exactly what Ride Driver verification (Phase 5/6) runs on, unchanged by this phase.
